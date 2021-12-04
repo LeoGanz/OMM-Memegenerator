@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const Picture = require("./picture");
-const Comment = require("./comment");
+// const Picture = require("./picture");
+// const Comment = require("./comment");
 
 const Schema = mongoose.Schema;
 
@@ -12,8 +12,8 @@ const UserSchema = new Schema(
         email: String,
         //accounts: ...
         dateOfCreation: String,
-        lastEdited: [Picture],
-        lastComments: [Comment],
+        // lastEdited: [Picture],
+        // lastComments: [Comment],
     }
 );
 

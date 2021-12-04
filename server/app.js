@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var registerRouter = require('./routes/register');
+var constantRouter = require('./routes/constant.js');
 
 var app = express();
 var mongoose = require('mongoose');
@@ -22,22 +24,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use((req, res, next) => {
-    const jwt = require('njwt')
-    const {token} = req.query;
-    jwt.verify(token, 'top-secret', (err, verifiedJwt) => {
-        if (err) {
-            res.status(401).send(err.message)
-        } else {
-            // if verification successful, continue with next middlewares
-            console.log(verifiedJwt)
-            next()
-        }
-    })
-})
-
-
+app.use('/register', registerRouter);
+app.user(constantRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

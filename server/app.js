@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+var mongoose = require('mongoose');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,8 +20,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/register', (req, res,next) => {
+  const MongoDB = 'mongodb://localhost:27017/user';
+  mongoose.connect(mongoDB);
+  const db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+  console.log('db connection initiated');
+
+
+});
+
+
+
+
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

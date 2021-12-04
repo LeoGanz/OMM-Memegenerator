@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import UserSchema from "./userSchema";
-import CommentSchema from "./commentSchema";
+import User from "./user";
+import Comment from "./comment";
 
 const Schema = mongoose.Schema;
 
-const PictureSchema = new Schema(
+const Picture = new Schema(
     {
         name: String,
         desc: String,
@@ -12,14 +12,14 @@ const PictureSchema = new Schema(
             data: Buffer,
             contentType: String,
         },
-        creator: UserSchema,
+        creator: User,
         dateOfCreation: String,
-        upVoters: [UserSchema],
-        downVoters: [UserSchema],
-        comments: [CommentSchema],
+        upVoters: [User],
+        downVoters: [User],
+        comments: [Comment],
         metadata: String,
         format: {width: Number, height: Number, pixels: Number},
     }
 );
 
-export default mongoose.model('picture', PictureSchema);
+export default mongoose.model('picture', Picture);

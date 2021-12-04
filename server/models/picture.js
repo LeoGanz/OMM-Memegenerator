@@ -4,7 +4,7 @@ import Comment from "./comment";
 
 const Schema = mongoose.Schema;
 
-const Picture = new Schema(
+const PictureSchema = new Schema(
     {
         name: String,
         desc: String,
@@ -22,4 +22,4 @@ const Picture = new Schema(
     }
 );
 
-export default mongoose.model('picture', Picture);
+export default mongoose.model('picture', PictureSchema);

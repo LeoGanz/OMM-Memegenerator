@@ -4,7 +4,7 @@ import Comment from "./comment";
 
 const Schema = mongoose.Schema;
 
-const User = new Schema(
+const UserSchema = new Schema(
     {
         username: String,
         fullName: String,
@@ -17,4 +17,4 @@ const User = new Schema(
     }
 );
 
-export default mongoose.model('user', User);
+export default mongoose.model('user', UserSchema);

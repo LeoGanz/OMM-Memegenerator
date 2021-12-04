@@ -3,7 +3,7 @@ import User from "./user";
 
 const Schema = mongoose.Schema;
 
-const Comment = new Schema(
+const CommentSchema = new Schema(
     {
         dateOfCreation: String,
         creator: User,
@@ -11,4 +11,4 @@ const Comment = new Schema(
     }
 );
 
-export default mongoose.model('user', Comment);
+export default mongoose.model('user', CommentSchema);

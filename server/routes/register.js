@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+import User from '../models/user.js'
 
 router.get('/register', (req, res, next) => {
     var promise = new Promise(function (resolve, reject) {
@@ -26,16 +27,15 @@ router.get('/register', (req, res, next) => {
                 const jwtTokenString = token.compact();
 
                 const user = {      //TODO: check how credentials are send over with the request
-                    username:,
-                    fullName:,
+                    username: "harry69",
+                    fullName: "harry potter",
                     password: jwtTokenString,
-                    email:,
+                    email: 'h.potter@howarts.de',
                     dateOfCreation: creationDate,
                     lastEdited: [],
                     lastComments: []
                 };
-                const savedUser = new User(user);
-                savedUser.save().then(doc => {
+                User.create(user).then(doc => {
                     next();
                 }).catch(err => { //TODO: check for any suitable error handling
                 });

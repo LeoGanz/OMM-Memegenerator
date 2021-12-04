@@ -13,8 +13,6 @@ var loginRouter = require('./routes/login.js');
 var app = express();
 var mongoose = require('mongoose');
 
-import User from "/models/user.js";
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

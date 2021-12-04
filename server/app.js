@@ -52,14 +52,29 @@ app.use('/register', (req, res, next) => {
                 lastComments: []
             };
             const savedUser = new User(user);
-            savedUser.save().then(doc => {      //TODO: check for any suitable error handling
-            }).catch(err => {
+            savedUser.save().then(doc => {
+                next();
+            }).catch(err => { //TODO: check for any suitable error handling
             });
         } else {
             //TODO: Consider what to do, when the registration token is already in the db
         }
     })
 });
+
+app.use((req, res, next) => {
+    const jwt = require('njwt')
+    const {token} = req.query;
+    jwt.verify(token, 'top-secret', (err, verifiedJwt) => {
+        if (err) {
+            res.status(401).send(err.message)
+        } else {
+            // if verification successful, continue with next middlewares
+            console.log(verifiedJwt)
+            next()
+        }
+    })
+})
 
 
 app.use('/', indexRouter);

@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
-app.use(constantRouter);
+//app.use(constantRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

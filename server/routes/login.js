@@ -32,9 +32,9 @@ router.get('/login', (req, res, next) => {
             res.status(401).send()
             return
         } else {
-            next();
+            //next();
         }
     })
 });
 
-module.exports = router;
+module.exports= router;

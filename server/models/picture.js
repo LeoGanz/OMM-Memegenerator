@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
-import User from "./user";
-import Comment from "./comment";
+const mongoose = require("mongoose");
+const User = require("./user");
+const Comment = require("./comment");
 
-const Schema = mongoose.Schema;
+const {Schema} = mongoose;
 
 const PictureSchema = new Schema(
     {
         name: String,
         desc: String,
-        img:{
+        img: {
             data: Buffer,
             contentType: String,
         },
@@ -18,8 +18,9 @@ const PictureSchema = new Schema(
         downVoters: [User],
         comments: [Comment],
         metadata: String,
-        format: {width: Number, height: Number, pixels: Number},
+        format: {width: Number, height: Number, pixels: Number}
     }
 );
 
-export default mongoose.model('picture', PictureSchema);
+module.exports = mongoose.model('picture', PictureSchema);
+module.exports = PictureSchema;

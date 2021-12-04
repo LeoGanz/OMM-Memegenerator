@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-import User from '../models/user.js'
+var User = require('../models/user.js')
 
 router.get('/register', (req, res, next) => {
 

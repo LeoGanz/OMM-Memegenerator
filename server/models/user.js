@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import Picture from "./picture";
-import Comment from "./comment";
+const mongoose = require("mongoose");
+const Picture = require("./picture");
+const Comment = require("./comment");
 
 const Schema = mongoose.Schema;
 
@@ -17,4 +17,5 @@ const UserSchema = new Schema(
     }
 );
 
-export default mongoose.model('user', UserSchema);
+module.exports = mongoose.model('user', UserSchema);
+module.exporst = UserSchema;

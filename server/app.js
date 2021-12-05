@@ -42,10 +42,10 @@ app.use('/register', (req, res, next) => {
                 const creationDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
                     + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
-                const jwt = require('njwt');
-                const claims = {username: username};
+                const claims = {username: 'h.potter@hpwgwarts.de'};
                 const token = jwt.create(claims, 'top-sectret');
                 const jwtTokenString = token.compact();
+
 
                 const user = {      //TODO: check how credentials are send over with the request
                     username: "harry69",
@@ -117,7 +117,7 @@ app.use('/login', (req, res, next) => {
 //constant checking if someone is logged in
 app.use((req, res, next) => {
     const jwt = require('njwt')
-    const {token} = req.query;
+    const { token } = req.query;
     jwt.verify(token, 'top-secret', (err, verifiedJwt) => {
         if (err) {
             res.status(401).send(err.message)

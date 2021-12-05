@@ -11,6 +11,7 @@ var app = express();
 var mongoose = require('mongoose');
 var User = require('./models/user');
 const jwt = require("njwt");
+const mongoDB = 'mongodb://localhost:27017/user';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,111 +23,138 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+function checkForToken(token) {
+    let isThere = false;
+    jwt.verify(token, "top-secret", (err, verifiedJwt) => {
+        console.log(verifiedJwt);
+        console.log(token);
+        if (err) {
+            console.log(err);
+        } else {
+            isThere = true;
+            console.log(verifiedJwt);
+        }
+    })
+    return isThere;
+}
+
 
 //register-activity
 app.use('/register', (req, res, next) => {
+    if (!checkForToken(req.query.token)) {
 
-    var connected;
-    const mongoDB = 'mongodb://localhost:27017/user';
-    var promise = new Promise(function (resolve, reject) {
-        mongoose.connect(mongoDB);
-        const db = mongoose.connection;
-        db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-        console.log('db connection initiated');
+        mongoose.connect(mongoDB).then(function (resolve, reject) {
+            const db = mongoose.connection;
+            db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+            console.log('db connection initiated');
 
-        //TODO: Get credentials of user
+            /**TODO: Get credentials of user and insert in {}*/
+            let name;
+            let pw;
+            User.find({}, (err, l) => {
+                if (err) {
+                    const today = new Date();
+                    const creationDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+                        + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
-        User.find({password: userToken}, (err, l) => {
-            if (err) {
-                const today = new Date();
-                const creationDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-                    + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                    let inputCredentials = req.headers.authorization;
+                    if (inputCredentials !== undefined) {
+                        inputCredentials = inputCredentials.split(" ")[1];
+                        let namePw = inputCredentials.split(":");
+                        name = namePw[0];
+                        pw = namePw[1];
+                    } else {
+                        return;
+                    }
 
-                const claims = {username: 'h.potter@hpwgwarts.de'};
-                const token = jwt.create(claims, 'top-sectret');
-                const jwtTokenString = token.compact();
+                    const claims = {username: name};
+                    const token = jwt.create(claims, 'top-secret');
+                    const jwtTokenString = token.compact();
 
+                    const user = {
+                        /**TODO: check how credentials are send over with the
+                         request and substitute the ones here*/
+                        username: "harry69",
+                        fullName: "harry potter",
+                        password: pw,
+                        currentToken: jwtTokenString,
+                        email: name,
+                        dateOfCreation: creationDate,
+                        lastEdited: [],
+                        lastComments: []
+                    };
 
-                const user = {      //TODO: check how credentials are send over with the request
-                    username: "harry69",
-                    fullName: "harry potter",
-                    password: jwtTokenString,
-                    email: 'h.potter@howarts.de',
-                    dateOfCreation: creationDate,
-                    lastEdited: [],
-                    lastComments: []
-                };
-
-                User.create(user).then(doc => {
-                    connected = true;
-                }).catch(err => {
-                    connected = false; //TODO: check for any suitable error handling
-                });
-            } else {
-                //TODO: Consider what to do, when the registration token is already in the db
-            }
-        })
-    })
-    promise.then(function (value) {
-        if (connected) {
-            next();
-        } else {
-            res.set('WWW-Authenticate', 'Basic realm="401"')
-            res.status(401).send()
-            return;
-        }
-    })
+                    User.create(user).then(doc => {
+                        next();
+                    }).catch(err => {
+                        //TODO: check for any suitable error handling
+                    });
+                } else {
+                    //TODO: Consider what to do, when the registration credentials are already in the db
+                }
+            })
+        });
+    } else {
+        next();
+    }
 });
 
 
 //login activity
 app.use('/login', (req, res, next) => {
-    const mongoDB = 'mongodb://localhost:27017/user';
-    mongoose.connect(mongoDB);
-    const db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-    console.log('db connection initiated');
 
-    var loginInput = req.headers.authorization
-    var userToken;
-    var givenEmail;
-    console.log(loginInput)
-    if (loginInput !== undefined) {
-        loginInput = loginInput.split(' ')[1];
-        loginInput = Buffer.from(loginInput, 'base64').toString('ascii');
-        var listInput = loginInput.split(':');
-        userToken = listInput[1];
-        givenEmail = loginInput[0];
-        console.log("in login")
+
+    if (!checkForToken(req.query.token)) {
+        mongoose.connect(mongoDB).then(function (resolve, reject) {
+            const db = mongoose.connection;
+            db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+            console.log('db connection initiated');
+
+            //TODO: Get credentials of user and insert in {}
+            let name;
+            let pw;
+            let inputCredentials = req.headers.authorization;
+            if (inputCredentials !== undefined) {
+                inputCredentials = inputCredentials.split(" ")[1];
+                let namePw = inputCredentials.split(":");
+                name = namePw[0];
+                pw = namePw[1];
+            } else {
+                return;
+            }
+
+            User.find({email: name, password: pw}, (err, l) => {
+                if (err) {
+                    res.set('WWW-Authenticate', 'Basic realm="401"')
+                    res.status(401).send()
+                    return;
+                } else {
+                    const claims = {permission: 'read-data', username: 'student'};
+                    const token = jwt.create(claims, 'something-top-secret');
+                    const jwtTokenSting = token.compact();
+                    User.findOneAndUpdate({
+                        email: name,
+                        password: pw
+                    }, {currentToken: jwtTokenSting}, {new: true});
+                    next();
+                }
+            })
+        });
     } else {
-        console.log("missed login")
-        return;
+        next();
     }
-
-    User.find({email: givenEmail, password: userToken}, (err, l) => {
-        if (err) {
-            res.set('WWW-Authenticate', 'Basic realm="401"')
-            res.status(401).send()
-            return;
-        } else {
-            next();
-        }
-    })
 });
 
 //constant checking if someone is logged in
 app.use((req, res, next) => {
-    const jwt = require('njwt')
-    const { token } = req.query;
-    jwt.verify(token, 'top-secret', (err, verifiedJwt) => {
-        if (err) {
-            res.status(401).send(err.message)
-        } else {
-            // if verification successful, continue with next middlewares
-            console.log(verifiedJwt)
-            next()
-        }
-    })
+    const {token} = req.query;
+    let err = checkForToken(token);
+    if (!err) {
+        res.status(401).send(err.message)
+    } else {
+        // if verification successful, continue with next middlewares
+        next()
+    }
 });
 
 

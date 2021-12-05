@@ -9,11 +9,13 @@ const UserSchema = new Schema(
         username: String,
         fullName: String,
         password: String,
+        currentToken: String,
         email: String,
         //accounts: ...
         dateOfCreation: String,
         lastEdited: [Picture],
         lastComments: [Comment],
+
     }
 );
 

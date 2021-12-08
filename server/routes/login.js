@@ -1,6 +1,5 @@
 var express = require('express');
 const mongoose = require("mongoose");
-const User = require("../models/user");
 const jwt = require("njwt");
 var router = express.Router();
 const mongoDB = 'mongodb://localhost:27017/user';

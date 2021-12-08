@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
+var registerRouter = require('./routes/register');
 
 var app = express();
 var mongoose = require('mongoose');
@@ -40,79 +41,19 @@ function checkForToken(token) {
 }
 
 
-//register-activity
-app.use('/register', (req, res, next) => {
-    if (!checkForToken(req.query.token)) {
 
-        mongoose.connect(mongoDB).then(function (resolve, reject) {
-            const db = mongoose.connection;
-            db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-            console.log('db connection initiated');
-
-            /**TODO: Get credentials of user and insert in {}*/
-            let name;
-            let pw;
-            User.find({}, (err, l) => {
-                if (err) {
-                    const today = new Date();
-                    const creationDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-                        + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
-                    let inputCredentials = req.headers.authorization;
-                    if (inputCredentials !== undefined) {
-                        inputCredentials = inputCredentials.split(" ")[1];
-                        let namePw = inputCredentials.split(":");
-                        name = namePw[0];
-                        pw = namePw[1];
-                    } else {
-                        return;
-                    }
-
-                    const claims = {username: name};
-                    const token = jwt.create(claims, 'top-secret');
-                    const jwtTokenString = token.compact();
-
-                    const user = {
-                        /**TODO: check how credentials are send over with the
-                         request and substitute the ones here*/
-                        username: "harry69",
-                        fullName: "harry potter",
-                        password: pw,
-                        currentToken: jwtTokenString,
-                        email: name,
-                        dateOfCreation: creationDate,
-                        lastEdited: [],
-                        lastComments: []
-                    };
-
-                    User.create(user).then(doc => {
-                        next();
-                    }).catch(err => {
-                        //TODO: check for any suitable error handling
-                    });
-                } else {
-                    //TODO: Consider what to do, when the registration credentials are already in the db
-                }
-            })
-        });
-    } else {
-        next();
-    }
-});
-
-
-//login activity
-app.use('/login', loginRouter);
+app.use('/register', registerRouter); //register-activity
+app.use('/login', loginRouter); //login activity
 
 //constant checking if someone is logged in
 app.use((req, res, next) => {
     const {token} = req.query;
     let err = checkForToken(token);
     if (!err) {
-        res.status(401).send(err.message)
+        res.status(401).send(err.message);
     } else {
         // if verification successful, continue with next middlewares
-        next()
+        next();
     }
 });
 

@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var loginRouter = require('./routes/login');
 
 var app = express();
 var mongoose = require('mongoose');
@@ -101,49 +102,7 @@ app.use('/register', (req, res, next) => {
 
 
 //login activity
-app.use('/login', (req, res, next) => {
-
-
-    if (!checkForToken(req.query.token)) {
-        mongoose.connect(mongoDB).then(function (resolve, reject) {
-            const db = mongoose.connection;
-            db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-            console.log('db connection initiated');
-
-            //TODO: Get credentials of user and insert in {}
-            let name;
-            let pw;
-            let inputCredentials = req.headers.authorization;
-            if (inputCredentials !== undefined) {
-                inputCredentials = inputCredentials.split(" ")[1];
-                let namePw = inputCredentials.split(":");
-                name = namePw[0];
-                pw = namePw[1];
-            } else {
-                return;
-            }
-
-            User.find({email: name, password: pw}, (err, l) => {
-                if (err) {
-                    res.set('WWW-Authenticate', 'Basic realm="401"')
-                    res.status(401).send()
-                    return;
-                } else {
-                    const claims = {permission: 'read-data', username: 'student'};
-                    const token = jwt.create(claims, 'something-top-secret');
-                    const jwtTokenSting = token.compact();
-                    User.findOneAndUpdate({
-                        email: name,
-                        password: pw
-                    }, {currentToken: jwtTokenSting}, {new: true});
-                    next();
-                }
-            })
-        });
-    } else {
-        next();
-    }
-});
+app.use('/login', loginRouter);
 
 //constant checking if someone is logged in
 app.use((req, res, next) => {

@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require("mongoose");
-const jwt = require("njwt");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017';
 let utils = require("../utils");
@@ -36,8 +35,8 @@ router.get('/', (req, res, next) => {
                 }
             });
         }).catch(() => {
-            console.log("503: Connection do db failed");
-            res.status(503).send("Connection do db failed");
+            console.log("503: Connection to db failed");
+            res.status(503).send("Connection to db failed");
             return;
         });
     } else {

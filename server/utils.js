@@ -1,7 +1,4 @@
-const express = require('express');
-const mongoose = require("mongoose");
 const jwt = require("njwt");
-const mongoDB = 'mongodb://localhost:27017';
 
 module.exports = function () {
     this.checkForToken = function (token) {

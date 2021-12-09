@@ -1,7 +1,7 @@
-var express = require('express');
+const express = require('express');
 const mongoose = require("mongoose");
 const jwt = require("njwt");
-var router = express.Router();
+const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017/user';
 
 function checkForToken(token) {
@@ -30,7 +30,9 @@ router.get('/', (req, res, next) => {
             let pw;
             let inputCredentials = req.headers.authorization;
             if (inputCredentials !== undefined) {
-
+                let namePW = inputCredentials.split(" ");
+                name = namePW[0];
+                pw = namePW[1];
             } else {
                 res.status(401).send("No user-credentials given");
                 return;

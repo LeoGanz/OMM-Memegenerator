@@ -34,12 +34,14 @@ router.get('/', (req, res, next) => {
                 name = namePW[0];
                 pw = namePW[1];
             } else {
+                console.log("401: No user-credentials given");
                 res.status(401).send("No user-credentials given");
                 return;
             }
 
             db.collection("users").findOne({username: name, password: pw}, (err) => {
                 if (err) {
+                    console.log("401: Wrong user-credentials given");
                     res.status(401).send("Wrong user-credentials given");
                     return;
                 } else {

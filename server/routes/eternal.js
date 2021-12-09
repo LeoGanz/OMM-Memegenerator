@@ -3,26 +3,12 @@ const mongoose = require("mongoose");
 const jwt = require("njwt");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017';
-
-function checkForToken(token) {
-    let isThere = false;
-    jwt.verify(token, "top-secret", (err, verifiedJwt) => {
-        console.log(verifiedJwt);
-        console.log(token);
-        if (err) {
-            console.log(err);
-        } else {
-            isThere = true;
-            console.log(verifiedJwt);
-        }
-    })
-    return isThere;
-}
+let utils = require("../utils");
 
 router.get('/', (req, res, next) => {
     const token = req.query.token;
     const credentials = req.headers.authorization;
-    if (checkForToken(token)) {
+    if (utils.checkForToken(token)) {
         next();
     } else if (credentials !== undefined) {
         mongoose.connect(mongoDB).then(() => {

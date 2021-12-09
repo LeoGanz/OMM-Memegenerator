@@ -4,22 +4,7 @@ const jwt = require("njwt");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017';
 const md5 = require('md5');
-
-
-function checkForToken(token) {
-    let isThere = false;
-    jwt.verify(token, "top-secret", (err, verifiedJwt) => {
-        console.log(verifiedJwt);
-        console.log(token);
-        if (err) {
-            console.log(err);
-        } else {
-            isThere = true;
-            console.log(verifiedJwt);
-        }
-    })
-    return isThere;
-}
+let utils = require("../utils");
 
 function checkUsernameInDatabase(db, username) {
     let lst;
@@ -89,7 +74,7 @@ function createToken(name) {
 }
 
 router.post("/", (req, res, next) => {
-    if (!checkForToken(req.query.token)) {
+    if (!utils.checkForToken(req.query.token)) {
         if (req.headers.authorization !== null) {
             next();
         } else {

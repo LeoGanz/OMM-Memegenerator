@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const jwt = require("njwt");
 const mongoDB = 'mongodb://localhost:27017';
 
-module.exports = function (checkForToken) {
+module.exports = function () {
     this.checkForToken = function (token) {
         let isThere = false;
         jwt.verify(token, "top-secret", (err, verifiedJwt) => {

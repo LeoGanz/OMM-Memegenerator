@@ -4,9 +4,10 @@ const jwt = require("njwt");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017';
 let utils = require("../utils");
+let ut = new utils();
 
 router.get('/', (req, res, next) => {
-    if (!utils.checkForToken(req.query.token)) {
+    if (!ut.checkForToken(req.query.token)) {
         mongoose.connect(mongoDB).then(() => {
             const db = mongoose.connection;
             db.on('error', console.error.bind(console, 'MongoDB connection error:'));

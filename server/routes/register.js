@@ -5,6 +5,7 @@ const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017';
 const md5 = require('md5');
 let utils = require("../utils");
+let ut = new utils();
 
 function checkUsernameInDatabase(db, username) {
     let lst;
@@ -74,7 +75,7 @@ function createToken(name) {
 }
 
 router.post("/", (req, res, next) => {
-    if (!utils.checkForToken(req.query.token)) {
+    if (!ut.checkForToken(req.query.token)) {
         if (req.headers.authorization !== null) {
             next();
         } else {

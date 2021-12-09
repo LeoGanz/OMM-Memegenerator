@@ -4,11 +4,12 @@ const jwt = require("njwt");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017';
 let utils = require("../utils");
+let ut = new utils();
 
 router.get('/', (req, res, next) => {
     const token = req.query.token;
     const credentials = req.headers.authorization;
-    if (utils.checkForToken(token)) {
+    if (ut.checkForToken(token)) {
         next();
     } else if (credentials !== undefined) {
         mongoose.connect(mongoDB).then(() => {

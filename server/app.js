@@ -8,6 +8,7 @@ let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
+let eternalRouter = require('./routes/eternal');
 
 let app = express();
 const jwt = require("njwt");
@@ -30,20 +31,11 @@ app.use('/register', registerRouter); //register-activity
 app.use('/login', loginRouter); //login activity
 
 //constant checking if someone is logged in
-app.use((req, res, next) => {
-    const {token} = req.query;
-    let err = ut.checkForToken(token);
-    if (!err) {
-        res.status(401).send(err.message);
-    } else {
-        // if verification successful, continue with next middlewares
-        next();
-    }
-});
+app.use(eternalRouter);
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', usersRouter); //displaying all users
 
 
 // catch 404 and forward to error handler

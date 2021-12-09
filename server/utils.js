@@ -23,9 +23,9 @@ module.exports = function () {
         return creationDate;
     }
 
-    this.checkInDB = function (db, collection, part){
+    this.checkInDB = function (db, collection, part) {
         let lst;
-        db.collection(collection).findOne(part, (err,l) => {
+        db.collection(collection).findOne(part, (err, l) => {
             if (err) {
                 lst = [];
             } else {
@@ -33,6 +33,16 @@ module.exports = function () {
             }
         });
         return lst;
+    }
+
+    this.findUpdateSingleValueDB = function (db, collection, partFind, partUpdate) {
+        db.collection(collection).findOneAndUpdate(partFind, partUpdate, (err) => {
+            if (err) {
+                return false;
+            } else {
+                return true;
+            }
+        });
     }
 }
 

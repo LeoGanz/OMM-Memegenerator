@@ -29,13 +29,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/register', registerRouter); //register-activity
 app.use('/login', loginRouter); //login activity
-
+app.use('/users', usersRouter); //displaying all users
 //constant checking if someone is logged in
 app.use(eternalRouter);
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter); //displaying all users
+
 
 
 // catch 404 and forward to error handler

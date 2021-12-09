@@ -7,42 +7,6 @@ const md5 = require('md5');
 let utils = require("../utils");
 let ut = new utils();
 
-function checkUsernameInDatabase(db, username) {
-    let lst;
-    db.collection("users").findOne({username: username}, (err, l) => {
-        if (err) {
-            lst = [];
-        } else {
-            lst = l;
-        }
-    });
-    return lst;
-}
-
-function checkEmailInDatabase(db, email) {
-    let lst;
-    db.collection("users").findOne({email: email}, (err, l) => {
-        if (err) {
-            lst = [];
-        } else {
-            lst = l;
-        }
-    });
-    return lst;
-}
-
-function checkFullNameInDatabase(db, fullName) {
-    let lst;
-    db.collection("users").findOne({fullName: fullName}, (err, l) => {
-        if (err) {
-            lst = [];
-        } else {
-            lst = l;
-        }
-    });
-    return lst;
-}
-
 function checkForFullnessAndPrint(users, fullNames, emails) {
     if (users.length > 0 && fullNames.length > 0 && emails.length > 0) {
         return true;
@@ -58,13 +22,6 @@ function checkForFullnessAndPrint(users, fullNames, emails) {
         }
         return false;
     }
-}
-
-function giveBackDateString() {
-    const today = new Date();
-    const creationDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-        + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    return creationDate;
 }
 
 function createToken(name) {
@@ -89,14 +46,14 @@ router.post("/", (req, res, next) => {
                 let password = req.query.password;
                 let email = req.query.email;
 
-                let foundUsers = checkUsernameInDatabase(db, username);
-                let foundFullNames = checkFullNameInDatabase(db, fullName);
-                let foundEmails = checkEmailInDatabase(db, email);
+                let foundUsers = ut.checkInDB(db,"users", {username: username});
+                let foundFullNames = ut.checkInDB(db,"users", {fullName: fullName});
+                let foundEmails = ut.checkInDB(db, "users", {email: email});
 
                 if (checkForFullnessAndPrint(foundUsers, foundFullNames, foundEmails)) {
 
                     //Main code
-                    let creationDate = giveBackDateString();
+                    let creationDate = ut.giveBackDateString();
                     let hashedPw = md5(password);
                     let tokenString = createToken(username);
 

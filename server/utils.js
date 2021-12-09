@@ -15,6 +15,25 @@ module.exports = function () {
         });
         return isThere;
     };
+
+    this.giveBackDateString = function () {
+        const today = new Date();
+        const creationDate = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+            + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        return creationDate;
+    }
+
+    this.checkInDB = function (db, collection, part){
+        let lst;
+        db.collection(collection).findOne(part, (err,l) => {
+            if (err) {
+                lst = [];
+            } else {
+                lst = l;
+            }
+        });
+        return lst;
+    }
 }
 
 

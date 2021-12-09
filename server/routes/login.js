@@ -21,39 +21,33 @@ function checkForToken(token) {
 
 router.get('/', (req, res, next) => {
     if (!checkForToken(req.query.token)) {
-        mongoose.connect(mongoDB)
-        const db = mongoose.connection;
-        db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-        console.log('db connection initiated');
+        mongoose.connect(mongoDB).then(() => {
+            const db = mongoose.connection;
+            db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+            console.log('db connection initiated');
 
-        let name;
-        let pw;
-        let inputCredentials = req.headers.authorization;
-        if (inputCredentials !== undefined) {
-            inputCredentials = inputCredentials.split(" ")[1];
-            let namePw = inputCredentials.split(":");
-            name = namePw[0];
-            pw = namePw[1];
-        } else {
-            res.set('WWW-Authenticate', 'Basic realm="401"')
-            res.status(401).send()
-            return;
-        }
+            let name;
+            let pw;
+            let inputCredentials = req.headers.authorization;
+            if (inputCredentials !== undefined) {
 
-        db.collection("users").findOne({email: name, password: pw}, (err, l) => {
-            if (err) {
-                res.set('WWW-Authenticate', 'Basic realm="401"')
-                res.status(401).send()
-                return;
             } else {
-                const claims = {permission: 'read-data', username: 'student'};
-                const token = jwt.create(claims, 'something-top-secret');
-                const jwtTokenSting = token.compact();
-                db.collection("users").findOneAndUpdate({
-                    email: name,
-                    password: pw
-                }, {$set: {currentToken: jwtTokenSting}}).then(() => next());
+                res.status(401).send("No user-credentials given");
+                return;
             }
+
+            db.collection("users").findOne({username: name, password: pw}, (err) => {
+                if (err) {
+                    res.status(401).send("Wrong user-credentials given");
+                    return;
+                } else {
+                    next();
+                }
+            });
+        }).catch(() => {
+            console.log("503: Connection do db failed");
+            res.status(503).send("Connection do db failed");
+            return;
         });
     } else {
         next();

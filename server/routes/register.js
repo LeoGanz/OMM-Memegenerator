@@ -61,13 +61,13 @@ function checkForFullnessAndPrint(users, fullNames, emails) {
     if (users.length > 0 && fullNames.length > 0 && emails.length > 0) {
         return true;
     } else {
-        if (foundUsers.length == 0) {
+        if (users.length === 0) {
             console.log("Username already exists");
         }
-        if (foundFullNames.length == 0) {
+        if (fullNames.length === 0) {
             console.log("You are already registered");
         }
-        if (foundEmails.length == 0) {
+        if (emails.length === 0) {
             console.log("There already exist a user with this email")
         }
         return false;
@@ -114,7 +114,7 @@ router.post("/", (req, res, next) => {
                     let hashedPw = md5(password);
                     let tokenString = createToken(username);
 
-                    const user = {
+                    const user = new User({
                         username: username,
                         fullName: fullName,
                         password: hashedPw,
@@ -123,9 +123,10 @@ router.post("/", (req, res, next) => {
                         dateOfCreation: creationDate,
                         lastEdited: [],
                         lastComments: [],
-                    }
+                    });
 
                     db.collection("users").insertOne(user).then(() => {
+                        res.send(username + " " + hashedPw + " " + tokenString);
                         next()
                     });
                 } else {
@@ -134,7 +135,7 @@ router.post("/", (req, res, next) => {
                     return;
                 }
 
-            }).catch(err => {
+            }).catch(() => {
                 console.log("503: Connection do db failed");
                 res.status(503).send("Connection do db failed");
                 return;

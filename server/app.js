@@ -10,10 +10,7 @@ var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
 
 var app = express();
-var mongoose = require('mongoose');
-var User = require('./models/user');
 const jwt = require("njwt");
-const mongoDB = 'mongodb://localhost:27017/user';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

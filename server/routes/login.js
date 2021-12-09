@@ -12,12 +12,12 @@ router.get('/', (req, res, next) => {
             db.on('error', console.error.bind(console, 'MongoDB connection error:'));
             console.log('db connection initiated');
 
-            let name;
+            let email;
             let pw;
             let inputCredentials = req.headers.authorization;
             if (inputCredentials !== undefined) {
                 let namePW = inputCredentials.split(" ");
-                name = namePW[0];
+                email = namePW[0];
                 pw = namePW[1];
             } else {
                 console.log("401: No user-credentials given");
@@ -25,7 +25,7 @@ router.get('/', (req, res, next) => {
                 return;
             }
 
-            db.collection("users").findOne({username: name, password: pw}, (err) => {
+            db.collection("users").findOne({email: email, password: pw}, (err) => {
                 if (err) {
                     console.log("401: Wrong user-credentials given");
                     res.status(401).send("Wrong user-credentials given");

@@ -11,9 +11,6 @@ let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
 
 let app = express();
-const jwt = require("njwt");
-const utils = require("utils");
-let ut = new utils();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

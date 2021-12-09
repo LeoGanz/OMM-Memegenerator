@@ -69,7 +69,7 @@ router.post("/", (req, res, next) => {
                     });
 
                     db.collection("users").insertOne(user).then(() => {
-                        res.send(username + " " + hashedPw + " " + tokenString);
+                        res.send(email + " " + hashedPw + " " + tokenString);
                         next()
                     });
                 } else {

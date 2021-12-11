@@ -9,6 +9,7 @@ let usersRouter = require('./routes/users');
 let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
+let multer = require('multer');
 
 let app = express();
 
@@ -33,6 +34,8 @@ app.use(eternalRouter);
 
 app.use('/', indexRouter);
 
+
+//Image Storage
 
 
 // catch 404 and forward to error handler

@@ -6,6 +6,7 @@ const mongoDB = 'mongodb://localhost:27017';
 const md5 = require('md5');
 let utils = require("../utils");
 let ut = new utils();
+let userSchema = require("../models/userSchema.js");
 
 function checkForFullnessAndPrint(users, fullNames, emails) {
     if (users.length > 0 && fullNames.length > 0 && emails.length > 0) {

@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 const mongoose = require("mongoose");
 const mongoDB = 'mongodb://localhost:27017';
 let utils = require("../utils");

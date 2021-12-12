@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
-const mongoDB = 'mongodb://localhost:27017';
+const mongoDB = 'mongodb://localhost:27017/users';
 let utils = require("../utils");
 let ut = new utils();
 

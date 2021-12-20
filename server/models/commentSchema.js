@@ -11,5 +11,5 @@ const commentSchema = new Schema(
     }
 );
 
-module.exports.default = mongoose.model('comment', commentSchema);
 module.exports = commentSchema;
+module.exports = mongoose.model('comment', commentSchema);

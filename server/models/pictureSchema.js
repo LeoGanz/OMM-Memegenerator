@@ -22,5 +22,5 @@ const pictureSchema = new Schema(
     }
 );
 
-module.exports.default = mongoose.model('picture', pictureSchema);
 module.exports = pictureSchema;
+module.exports = mongoose.model('picture', pictureSchema);

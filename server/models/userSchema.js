@@ -16,5 +16,6 @@ const userSchema = new Schema({
     lastComments: [commentSchema],
 });
 
-module.exports.default = mongoose.model("user", userSchema);
+
 module.exports = userSchema;
+module.exports = mongoose.model("user", userSchema);

@@ -1,4 +1,5 @@
 const jwt = require("njwt");
+const userSchema = require("./models/userSchema");
 
 module.exports = function () {
     this.checkForToken = function (token) {
@@ -23,9 +24,9 @@ module.exports = function () {
         return creationDate;
     }
 
-    this.checkInDB = function (db, collection, part) {
+    this.checkInDB = function (schema, part) {
         let lst;
-        db.collection(collection).findOne(part, (err, l) => {
+        schema.find(part, (err, l) => {
             if (err) {
                 lst = [];
             } else {
@@ -35,8 +36,8 @@ module.exports = function () {
         return lst;
     }
 
-    this.findUpdateSingleValueDB = function (db, collection, partFind, partUpdate) {
-        db.collection(collection).findOneAndUpdate(partFind, partUpdate, (err) => {
+    this.findUpdateSingleValueDB = function (schema, partFind, partUpdate) {
+        schema.findOneAndUpdate(partFind, partUpdate, (err) => {
             if (err) {
                 return false;
             } else {

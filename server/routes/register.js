@@ -9,16 +9,16 @@ let ut = new utils();
 let userSchema = require("../models/userSchema.js");
 
 function checkForFullnessAndPrint(users, fullNames, emails) {
-    if (users.length > 0 && fullNames.length > 0 && emails.length > 0) {
+    if (users.length === 0 && fullNames.length === 0 && emails.length === 0) {
         return true;
     } else {
-        if (users.length === 0) {
+        if (users.length !== 0) {
             console.log("Username already exists");
         }
-        if (fullNames.length === 0) {
+        if (fullNames.length !== 0) {
             console.log("You are already registered");
         }
-        if (emails.length === 0) {
+        if (emails.length !== 0) {
             console.log("There already exist a user with this email")
         }
         return false;
@@ -47,9 +47,9 @@ router.post("/", (req, res, next) => {
                 let password = req.query.password;
                 let email = req.query.email;
 
-                let foundUsers = ut.checkInDB(db,"users", {username: username});
-                let foundFullNames = ut.checkInDB(db,"users", {fullName: fullName});
-                let foundEmails = ut.checkInDB(db, "users", {email: email});
+                let foundUsers = ut.checkInDB(userSchema, {username: username});
+                let foundFullNames = ut.checkInDB(userSchema, {fullName: fullName});
+                let foundEmails = ut.checkInDB(userSchema, {email: email});
 
                 if (checkForFullnessAndPrint(foundUsers, foundFullNames, foundEmails)) {
 
@@ -58,7 +58,7 @@ router.post("/", (req, res, next) => {
                     let hashedPw = md5(password);
                     let tokenString = createToken(username);
 
-                    const user = new User({
+                    const user = new userSchema({
                         username: username,
                         fullName: fullName,
                         password: hashedPw,
@@ -69,9 +69,9 @@ router.post("/", (req, res, next) => {
                         lastComments: [],
                     });
 
-                    db.collection("users").insertOne(user).then(() => {
+                    userSchema.create(user).then(() => {
                         res.send(email + " " + hashedPw + " " + tokenString);
-                        next()
+                        next();
                     });
                 } else {
                     console.log("502: Some of the given user parameters already exists");

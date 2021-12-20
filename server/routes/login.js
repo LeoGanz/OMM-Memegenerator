@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017/users';
 let utils = require("../utils");
+const userSchema = require("../models/userSchema");
 let ut = new utils();
 
 router.get('/', (req, res, next) => {
@@ -25,7 +26,7 @@ router.get('/', (req, res, next) => {
                 return;
             }
 
-            db.collection("users").findOne({email: email, password: pw}, (err) => {
+            userSchema.find({email: email, password: pw}, (err) => {
                 if (err) {
                     console.log("401: Wrong user-credentials given");
                     res.status(401).send("Wrong user-credentials given");

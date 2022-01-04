@@ -14,10 +14,8 @@ router.get('/', function (req, res, next) {
         console.log('db connection initiated');
         userSchema.find({}, (err, lst) => {
             if (err) {
-                console.log("not found");
                 res.status(500).send("Some problem with the database");
             } else {
-                console.log("found");
                 res.send(lst);
             }
         });

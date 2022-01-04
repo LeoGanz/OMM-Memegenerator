@@ -8,6 +8,72 @@ let utils = require("../utils");
 let ut = new utils();
 let userSchema = require("../models/userSchema.js");
 
+router.post("/", (req, res, next) => {
+    console.log("route reached");
+    if (!ut.checkForToken(req.query.token)) {
+        if (req.headers.authorization !== null) {
+            console.log("authorized user");
+            next();
+        } else {
+            mongoose.connect(mongoDB).then(() => {
+                const db = mongoose.connection;
+                db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+                console.log('db connection initiated');
+
+                let username = req.body.username;
+                let fullName = req.body.fullName;
+                let password = req.body.password;
+                let email = req.body.email;
+
+                let foundUsers = ut.checkInDB(userSchema, {username: username});
+                let foundFullNames = ut.checkInDB(userSchema, {fullName: fullName});
+                let foundEmails = ut.checkInDB(userSchema, {email: email});
+
+                if (checkForFullnessAndPrint(foundUsers, foundFullNames, foundEmails)) {
+
+                    //Main code
+                    let creationDate = ut.giveBackDateString();
+                    let hashedPw = md5(password);
+                    let tokenString = createToken(username);
+
+                    const users = mongoose.model('users', userSchema);
+                    const user = new users({
+                        username: username,
+                        fullName: fullName,
+                        password: hashedPw,
+                        currentToken: tokenString,
+                        email: email,
+                        dateOfCreation: creationDate,
+                        lastEdited: [],
+                        lastComments: [],
+                    });
+                    console.log(creationDate);
+                    user.save((err) => {
+                        if(err){
+                            console.log("failed");
+                        } else {
+                            console.log("succeeded");
+                        }
+                    });
+                } else {
+                    console.log("502: Some of the given user parameters already exists");
+                    res.status(502).send("Some of the given user parameters already exists");
+                    return;
+                }
+
+            }).catch(() => {
+                console.log("503: Connection to db failed");
+                res.status(503).send("Connection to db failed");
+                return;
+            });
+        }
+    } else {
+        console.log("503: No logged-in user can register a user");
+        res.status(503).send("No logged-in user can register a user");
+        return;
+    }
+});
+
 function checkForFullnessAndPrint(users, fullNames, emails) {
     if (users.length === 0 && fullNames.length === 0 && emails.length === 0) {
         return true;
@@ -31,65 +97,5 @@ function createToken(name) {
     const jwtTokenString = token.compact();
     return jwtTokenString;
 }
-
-router.post("/", (req, res, next) => {
-    if (!ut.checkForToken(req.query.token)) {
-        if (req.headers.authorization !== null) {
-            next();
-        } else {
-            mongoose.connect(mongoDB).then(() => {
-                const db = mongoose.connection;
-                db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-                console.log('db connection initiated');
-
-                let username = req.query.username;
-                let fullName = req.query.fullName;
-                let password = req.query.password;
-                let email = req.query.email;
-
-                let foundUsers = ut.checkInDB(userSchema, {username: username});
-                let foundFullNames = ut.checkInDB(userSchema, {fullName: fullName});
-                let foundEmails = ut.checkInDB(userSchema, {email: email});
-
-                if (checkForFullnessAndPrint(foundUsers, foundFullNames, foundEmails)) {
-
-                    //Main code
-                    let creationDate = ut.giveBackDateString();
-                    let hashedPw = md5(password);
-                    let tokenString = createToken(username);
-
-                    const user = new userSchema({
-                        username: username,
-                        fullName: fullName,
-                        password: hashedPw,
-                        currentToken: tokenString,
-                        email: email,
-                        dateOfCreation: creationDate,
-                        lastEdited: [],
-                        lastComments: [],
-                    });
-
-                    userSchema.create(user).then(() => {
-                        res.send(email + " " + hashedPw + " " + tokenString);
-                        next();
-                    });
-                } else {
-                    console.log("502: Some of the given user parameters already exists");
-                    res.status(502).send("Some of the given user parameters already exists");
-                    return;
-                }
-
-            }).catch(() => {
-                console.log("503: Connection to db failed");
-                res.status(503).send("Connection to db failed");
-                return;
-            });
-        }
-    } else {
-        console.log("503: No logged-in user can register a user");
-        res.status(503).send("No logged-in user can register a user");
-        return;
-    }
-});
 
 module.exports = router;

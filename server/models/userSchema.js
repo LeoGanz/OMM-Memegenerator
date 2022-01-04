@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const pictureSchema = require("./pictureSchema");
-const commentSchema = require("./commentSchema");
 
 const Schema = mongoose.Schema;
 
@@ -12,10 +10,8 @@ const userSchema = new Schema({
     email: String,
     //accounts: ...
     dateOfCreation: String,
-    lastEdited: [pictureSchema],
-    lastComments: [commentSchema],
+    lastEdited: [{type: Schema.Types.ObjectId, ref: 'picture'}],
+    lastComments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
 });
 
-
-module.exports = userSchema;
 module.exports = mongoose.model("user", userSchema);

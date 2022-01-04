@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-const userSchema = require("./userSchema");
-const commentSchema = require("./commentSchema");
 
-const {Schema} = mongoose;
+const Schema = mongoose.Schema;
 
 const pictureSchema = new Schema(
     {
@@ -12,15 +10,14 @@ const pictureSchema = new Schema(
             data: Buffer,
             contentType: String,
         },
-        creator: userSchema,
+        creator: {type: Schema.Types.ObjectId, ref: 'user'},
         dateOfCreation: String,
-        upVoters: [userSchema],
-        downVoters: [userSchema],
-        comments: [commentSchema],
+        upVoters: [{type: Schema.Types.ObjectId, ref: 'user'}],
+        downVoters: [{type: Schema.Types.ObjectId, ref: 'user'}],
+        comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
         metadata: String,
         format: {width: Number, height: Number, pixels: Number}
     }
 );
 
-module.exports = pictureSchema;
 module.exports = mongoose.model('picture', pictureSchema);

@@ -30,16 +30,18 @@ router.post("/", (req, res, next) => {
                 let foundEmails = ut.checkInDB(userSchema, {email: email});
 
                 // console.log(foundUsers, foundFullNames, foundEmails);
+                // console.log(req.body)
+                // console.log(username, fullName, password, email);
 
                 if (checkForFullnessAndPrint(foundUsers, foundFullNames, foundEmails)) {
 
                     //Main code
                     let creationDate = ut.giveBackDateString();
-                    let hashedPw = md5(password);
+                    let hashedPw = password;
                     let tokenString = createToken(username);
 
 
-                    console.log("everything defined");
+                    // console.log("everything defined");
                     // const users = mongoose.model('users', userSchema);
                     const user = new userSchema({
                         username: username,
@@ -51,9 +53,10 @@ router.post("/", (req, res, next) => {
                         lastEdited: [],
                         lastComments: [],
                     });
-                    console.log(creationDate);
+                    // console.log(creationDate);
                     userSchema.create(user).then(_ => {
-                        console.log("succeeded");
+                        console.log("registration succeeded");
+                        next();
                     });
                 } else {
                     console.log("502: Some of the given user parameters already exists");

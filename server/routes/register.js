@@ -31,21 +31,21 @@ router.post("/", (req, res, next) => {
                                 res.status(503).send("Connection to db failed");
                                 return;
                             } else {
-                                if (lst === []) {
+                                if (lst.length == 0) {
                                     userSchema.find({fullName: fullName}, (err, lst) => {
                                         if (err) {
                                             console.log("503: Connection to db failed; error: " + err);
                                             res.status(503).send("Connection to db failed");
                                             return;
                                         } else {
-                                            if (lst === []) {
+                                            if (lst.length == 0) {
                                                 userSchema.find({email: email}, (err, lst) => {
                                                     if (err) {
                                                         console.log("503: Connection to db failed; error: " + err);
                                                         res.status(503).send("Connection to db failed");
                                                         return;
                                                     } else {
-                                                        if (lst === []) {
+                                                        if (lst.length == 0) {
 
                                                             // console.log(req.body)
                                                             // console.log(username, fullName, password, email);

@@ -33,7 +33,7 @@ app.use('/users', usersRouter); //displaying all users
 app.use(eternalRouter);
 
 
-app.use('/', indexRouter);
+app.use(indexRouter);
 
 
 //Image Storage

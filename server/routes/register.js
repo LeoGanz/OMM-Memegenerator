@@ -29,7 +29,7 @@ router.post("/", (req, res, next) => {
                 let foundFullNames = ut.checkInDB(userSchema, {fullName: fullName});
                 let foundEmails = ut.checkInDB(userSchema, {email: email});
 
-                // console.log(foundUsers, foundFullNames, foundEmails);
+                console.log(foundUsers, foundFullNames, foundEmails);
                 // console.log(req.body)
                 // console.log(username, fullName, password, email);
 

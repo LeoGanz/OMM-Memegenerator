@@ -1,5 +1,4 @@
 const jwt = require("njwt");
-const userSchema = require("./models/userSchema");
 
 module.exports = function () {
     this.checkForToken = function (token) {

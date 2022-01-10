@@ -9,10 +9,10 @@ let ut = new utils();
 let userSchema = require("../models/userSchema.js");
 
 router.post("/", (req, res, next) => {
-    console.log("route reached");
+    // console.log("route reached");
     if (!ut.checkForToken(req.query.token)) {
-        if (req.headers.authorization !== null) {
-            console.log("authorized user");
+        if (req.headers.authorization !== undefined) {
+            console.log("authorized user: " + req.headers.authorization);
             next();
         } else {
             mongoose.connect(mongoDB).then(() => {
@@ -29,6 +29,8 @@ router.post("/", (req, res, next) => {
                 let foundFullNames = ut.checkInDB(userSchema, {fullName: fullName});
                 let foundEmails = ut.checkInDB(userSchema, {email: email});
 
+                // console.log(foundUsers, foundFullNames, foundEmails);
+
                 if (checkForFullnessAndPrint(foundUsers, foundFullNames, foundEmails)) {
 
                     //Main code
@@ -36,8 +38,10 @@ router.post("/", (req, res, next) => {
                     let hashedPw = md5(password);
                     let tokenString = createToken(username);
 
-                    const users = mongoose.model('users', userSchema);
-                    const user = new users({
+
+                    console.log("everything defined");
+                    // const users = mongoose.model('users', userSchema);
+                    const user = new userSchema({
                         username: username,
                         fullName: fullName,
                         password: hashedPw,
@@ -48,12 +52,8 @@ router.post("/", (req, res, next) => {
                         lastComments: [],
                     });
                     console.log(creationDate);
-                    user.save((err) => {
-                        if(err){
-                            console.log("failed");
-                        } else {
-                            console.log("succeeded");
-                        }
+                    userSchema.create(user).then(_ => {
+                        console.log("succeeded");
                     });
                 } else {
                     console.log("502: Some of the given user parameters already exists");
@@ -61,8 +61,8 @@ router.post("/", (req, res, next) => {
                     return;
                 }
 
-            }).catch(() => {
-                console.log("503: Connection to db failed");
+            }).catch(err => {
+                console.log("503: Connection to db failed; error: " + err);
                 res.status(503).send("Connection to db failed");
                 return;
             });
@@ -75,7 +75,7 @@ router.post("/", (req, res, next) => {
 });
 
 function checkForFullnessAndPrint(users, fullNames, emails) {
-    if (users.length === 0 && fullNames.length === 0 && emails.length === 0) {
+    if ((users === undefined || users.length === 0) && (users === undefined || fullNames.length === 0) && (emails === undefined || emails.length === 0)) {
         return true;
     } else {
         if (users.length !== 0) {

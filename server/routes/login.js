@@ -9,7 +9,7 @@ let ut = new utils();
 
 router.get('/', (req, res, next) => {
     jwt.verify(req.query.token, "top-secret", (err) => {
-        if (!err) {
+        if (err) {
             mongoose.connect(mongoDB).then(() => {
                 const db = mongoose.connection;
                 db.on('error', console.error.bind(console, 'MongoDB connection error:'));

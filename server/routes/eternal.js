@@ -30,7 +30,6 @@ router.get('/', (req, res, next) => {
                         next();
                     }
                 });
-
             }).catch(() => {
                 console.log("503: Connection to db failed");
                 res.status(503).send("Connection to db failed");

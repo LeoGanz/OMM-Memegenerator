@@ -22,17 +22,14 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-
-
+app.use('/users', usersRouter); //displaying all users
 app.use('/register', registerRouter); //register-activity
 app.use('/login', loginRouter); //login activity
-app.use('/users', usersRouter); //displaying all users
+app.use(express.static(path.join(__dirname, 'public')));
+
 //constant checking if someone is logged in
 app.use(eternalRouter);
-
-
 app.use(indexRouter);
 
 
@@ -41,6 +38,7 @@ app.use(indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
+    console.log("somehow landed here");
     next(createError(404));
 });
 

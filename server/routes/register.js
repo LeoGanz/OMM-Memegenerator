@@ -50,7 +50,7 @@ router.post("/", (req, res) => {
                                                             //Main code
                                                             let creationDate = ut.giveBackDateString();
                                                             let hashedPw = password;
-                                                            let tokenString = ut.createToken(username);
+                                                            let tokenString = ut.createToken(email);
 
 
                                                             // console.log("everything defined");

@@ -2,16 +2,17 @@ const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017/users';
-let utils = require("../utils");
 const userSchema = require("../models/userSchema");
+const utils = require("../utils");
+const ut = new utils();
 const jwt = require("njwt");
 
 router.get('/', (req, res, next) => {
     jwt.verify(req.query.token, "top-secret", (err) => {
+        console.log(err)
         if (err) {
             mongoose.connect(mongoDB).then(() => {
-                    const db = mongoose.connection;
-                    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+                    mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
                     console.log('db connection initiated');
 
                     let email;
@@ -30,15 +31,25 @@ router.get('/', (req, res, next) => {
                         if (err) {
                             console.log("503: Connection to db failed");
                             res.status(503).send("Connection to db failed");
-                            return;
                         } else {
-                            if (lst.length != 0) {
-                                const currentToken = lst[0].currentToken;
-                                res.status(200).send(currentToken);
+                            if (lst.length !== 0) {
+                                let tokenString = ut.createToken(email);
+                                userSchema.findOneAndUpdate({
+                                    email: email,
+                                    password: pw
+                                }, {currentToken: tokenString}, (err) => {
+                                    if (err){
+                                        console.log("401: Wrong user-credentials given");
+                                        res.status(401).send("Wrong user-credentials given");
+                                    }else{
+                                        res.status(200).send(tokenString);
+                                    }
+                                })
+
                             } else {
                                 console.log("401: Wrong user-credentials given");
                                 res.status(401).send("Wrong user-credentials given");
-                                return;
+
                             }
                         }
                     });
@@ -46,11 +57,11 @@ router.get('/', (req, res, next) => {
             ).catch(() => {
                 console.log("503: Connection to db failed");
                 res.status(503).send("Connection to db failed");
-                return;
             });
         } else {
             console.log("401: You are already logged in");
             res.status(401).send("You are already logged in");
+            next();
         }
     })
 })

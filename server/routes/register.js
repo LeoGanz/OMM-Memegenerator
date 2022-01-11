@@ -54,7 +54,7 @@ router.post("/", (req, res, next) => {
                                                             //Main code
                                                             let creationDate = ut.giveBackDateString();
                                                             let hashedPw = password;
-                                                            let tokenString = createToken(username);
+                                                            let tokenString = ut.createToken(username);
 
 
                                                             // console.log("everything defined");
@@ -111,29 +111,5 @@ router.post("/", (req, res, next) => {
         }
     )
 });
-
-function checkForFullnessAndPrint(users, fullNames, emails) {
-    if ((users === undefined || users.length === 0) && (users === undefined || fullNames.length === 0) && (emails === undefined || emails.length === 0)) {
-        return true;
-    } else {
-        if (users.length !== 0) {
-            console.log("Username already exists");
-        }
-        if (fullNames.length !== 0) {
-            console.log("You are already registered");
-        }
-        if (emails.length !== 0) {
-            console.log("There already exist a user with this email")
-        }
-        return false;
-    }
-}
-
-function createToken(name) {
-    const claims = {username: name};
-    const token = jwt.create(claims, 'top-secret');
-    const jwtTokenString = token.compact();
-    return jwtTokenString;
-}
 
 module.exports = router;

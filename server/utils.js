@@ -7,10 +7,18 @@ module.exports = function () {
             + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     }
 
-    this.createToken =  function (name) {
+    this.createToken = function (name) {
         const claims = {username: name};
         const token = jwt.create(claims, 'top-secret');
         return token.compact();
+    }
+
+    this.adjustToken = function (request) {
+        let token = request.query.token
+        if(token === undefined){
+            token = ""
+        }
+        return token;
     }
 }
 

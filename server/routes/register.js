@@ -9,10 +9,7 @@ let userSchema = require("../models/userSchema.js");
 
 router.post("/", (req, res) => {
     // console.log("route reached");
-    let token = req.query.token
-    if(token === undefined){
-        token = ""
-    }
+    let token = ut.adjustToken(req);
     jwt.verify(token, "top-secret", (err) => {
             if (err) {
                 if (req.headers.authorization !== undefined) {

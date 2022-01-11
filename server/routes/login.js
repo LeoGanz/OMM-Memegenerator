@@ -8,10 +8,7 @@ const ut = new utils();
 const jwt = require("njwt");
 
 router.get('/', (req, res) => {
-    let token = req.query.token
-    if(token === undefined){
-        token = ""
-    }
+    let token = ut.adjustToken(req);
     jwt.verify(token, "top-secret", (err) => {
         if (err) {
             mongoose.connect(mongoDB).then(() => {

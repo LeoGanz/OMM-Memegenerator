@@ -9,7 +9,11 @@ let userSchema = require("../models/userSchema.js");
 
 router.post("/", (req, res) => {
     // console.log("route reached");
-    jwt.verify(req.query.token, "top-secret", (err) => {
+    let token = req.query.token
+    if(token === undefined){
+        token = ""
+    }
+    jwt.verify(token, "top-secret", (err) => {
             if (err) {
                 if (req.headers.authorization !== undefined) {
                     console.log("502: you already have an account");

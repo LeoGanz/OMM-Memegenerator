@@ -7,14 +7,16 @@ const utils = require("../utils");
 const ut = new utils();
 const jwt = require("njwt");
 
-router.get('/', (req, res, next) => {
-    jwt.verify(req.query.token, "top-secret", (err) => {
-        console.log(err)
+router.get('/', (req, res) => {
+    let token = req.query.token
+    if(token === undefined){
+        token = ""
+    }
+    jwt.verify(token, "top-secret", (err) => {
         if (err) {
             mongoose.connect(mongoDB).then(() => {
                     mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
                     console.log('db connection initiated');
-
                     let email;
                     let pw;
                     let inputCredentials = req.headers.authorization;
@@ -49,7 +51,6 @@ router.get('/', (req, res, next) => {
                             } else {
                                 console.log("401: Wrong user-credentials given");
                                 res.status(401).send("Wrong user-credentials given");
-
                             }
                         }
                     });
@@ -61,7 +62,6 @@ router.get('/', (req, res, next) => {
         } else {
             console.log("401: You are already logged in");
             res.status(401).send("You are already logged in");
-            next();
         }
     })
 })

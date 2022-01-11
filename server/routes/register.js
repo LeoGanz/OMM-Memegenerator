@@ -7,17 +7,16 @@ let utils = require("../utils");
 let ut = new utils();
 let userSchema = require("../models/userSchema.js");
 
-router.post("/", (req, res, next) => {
+router.post("/", (req, res) => {
     // console.log("route reached");
     jwt.verify(req.query.token, "top-secret", (err) => {
             if (err) {
                 if (req.headers.authorization !== undefined) {
-                    console.log("authorized user: " + req.headers.authorization);
-                    next();
+                    console.log("502: you already have an account");
+                    res.status(502).send("You already have an account");
                 } else {
                     mongoose.connect(mongoDB).then(() => {
-                        const db = mongoose.connection;
-                        db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+                        mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
                         console.log('db connection initiated');
 
                         let username = req.body.username;
@@ -29,23 +28,20 @@ router.post("/", (req, res, next) => {
                             if (err) {
                                 console.log("503: Connection to db failed; error: " + err);
                                 res.status(503).send("Connection to db failed");
-                                return;
                             } else {
-                                if (lst.length == 0) {
+                                if (lst.length === 0) {
                                     userSchema.find({fullName: fullName}, (err, lst) => {
                                         if (err) {
                                             console.log("503: Connection to db failed; error: " + err);
                                             res.status(503).send("Connection to db failed");
-                                            return;
                                         } else {
-                                            if (lst.length == 0) {
+                                            if (lst.length === 0) {
                                                 userSchema.find({email: email}, (err, lst) => {
                                                     if (err) {
                                                         console.log("503: Connection to db failed; error: " + err);
                                                         res.status(503).send("Connection to db failed");
-                                                        return;
                                                     } else {
-                                                        if (lst.length == 0) {
+                                                        if (lst.length === 0) {
 
                                                             // console.log(req.body)
                                                             // console.log(username, fullName, password, email);
@@ -77,21 +73,18 @@ router.post("/", (req, res, next) => {
                                                         } else {
                                                             console.log("502: this email already has an account");
                                                             res.status(502).send("This email already has an account");
-                                                            return;
                                                         }
                                                     }
                                                 });
                                             } else {
                                                 console.log("502: you already have an account");
                                                 res.status(502).send("You already have an account");
-                                                return;
                                             }
                                         }
                                     });
                                 } else {
                                     console.log("502: username already exists");
                                     res.status(502).send("username already exists");
-                                    return;
                                 }
                             }
                         });
@@ -100,13 +93,11 @@ router.post("/", (req, res, next) => {
                     }).catch(err => {
                         console.log("503: Connection to db failed; error: " + err);
                         res.status(503).send("Connection to db failed");
-                        return;
                     });
                 }
             } else {
                 console.log("503: No logged-in user can register a user");
                 res.status(503).send("No logged-in user can register a user");
-                return;
             }
         }
     )

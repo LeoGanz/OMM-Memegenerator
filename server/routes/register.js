@@ -72,6 +72,7 @@ router.post("/", (req, res, next) => {
                                                             // console.log(creationDate);
                                                             userSchema.create(user).then(_ => {
                                                                 console.log("registration succeeded");
+                                                                res.send(tokenString);
                                                                 next();
                                                             });
                                                         } else {

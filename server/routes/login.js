@@ -5,7 +5,6 @@ const mongoDB = 'mongodb://localhost:27017/users';
 let utils = require("../utils");
 const userSchema = require("../models/userSchema");
 const jwt = require("njwt");
-let ut = new utils();
 
 router.get('/', (req, res, next) => {
     jwt.verify(req.query.token, "top-secret", (err) => {
@@ -28,12 +27,13 @@ router.get('/', (req, res, next) => {
                     return;
                 }
 
-                userSchema.find({email: email, password: pw}, (err) => {
+                userSchema.find({email: email, password: pw}, (err,lst) => {
                     if (err) {
                         console.log("401: Wrong user-credentials given");
                         res.status(401).send("Wrong user-credentials given");
                         return;
                     } else {
+                        res.send(lst[0].currentToken);
                         next();
                     }
                 });

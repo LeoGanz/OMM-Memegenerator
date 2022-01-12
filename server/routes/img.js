@@ -36,7 +36,7 @@ router.get("/", (req, res) => {
     });
 })
 
-router.post('/', upload.single('image'), (req, res, next) => {
+router.post('/', upload.single('image'), (req, res) => {
     const uploads_dir = path.join(__dirname + '/uploads/' + req.file.filename);
     console.log(uploads_dir);
     const img = {

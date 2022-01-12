@@ -1,8 +1,6 @@
 const express = require('express');
-const mongoose = require("mongoose");
 const jwt = require("njwt");
 const router = express.Router();
-const mongoDB = 'mongodb://localhost:27017';
 const userSchema = require("../models/userSchema");
 
 router.get('/', (req, res, next) => {

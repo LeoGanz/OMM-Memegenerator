@@ -10,9 +10,20 @@ let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
 let imgRouter = require('./routes/img');
-
-
+const mongoose = require("mongoose");
+require('body-parser');
+const fs = require('fs');
+require('dotenv/config');
 let app = express();
+
+mongoose.connect(process.env.MONGO_URL,
+    {useNewUrlParser: true, useUnifiedTopology: true}, err => {
+        if (err) {
+            console.log("503: Connection to db failed");
+        }
+        mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+        console.log('db connection initiated');
+    });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

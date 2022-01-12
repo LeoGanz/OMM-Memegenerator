@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017/images';
-const imgSchema = require("../models/imageSchema");
+const imgSchema = require("../models/pictureSchema");
 const utils = require("../utils");
 const ut = new utils();
 const multer = require('multer');
@@ -37,11 +37,13 @@ router.get("/", (req, res) => {
 })
 
 router.post('/', upload.single('image'), (req, res, next) => {
+    const uploads_dir = path.join(__dirname + '/uploads/' + req.file.filename);
+    console.log(uploads_dir);
     const img = {
         name: req.body.name,
         desc: req.body.desc,
         img: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+            data: fs.readFileSync(uploads_dir),
             contentType: 'image/png'
         }
     };

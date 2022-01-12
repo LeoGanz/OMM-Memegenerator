@@ -51,7 +51,8 @@ router.post('/', upload.single('image'), (req, res) => {
                     return s1 + "/";
                 }
             })
-            const uploads_dir = path.join(preDir + '/uploads/' + req.body.name);
+            console.log(req.file);
+            const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             const img = {
                 name: req.body.name,
@@ -73,12 +74,11 @@ router.post('/', upload.single('image'), (req, res) => {
                 }
             };
 
-            pictureSchema.create(img, (err, img) => {
+            pictureSchema.create(img, (err) => {
                 if (err) {
                     console.log(err);
                 } else {
                     console.log("img saved");
-                    img.save();
                     res.redirect('/');
                 }
             });

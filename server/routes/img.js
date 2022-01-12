@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require("mongoose");
 const router = express.Router();
 const mongoDB = 'mongodb://localhost:27017/images';
-const imgSchema = require("../models/pictureSchema");
+const pictureSchema = require("../models/pictureSchema");
 const utils = require("../utils");
 const ut = new utils();
 const multer = require('multer');
@@ -24,7 +24,7 @@ router.get("/", (req, res) => {
     mongoose.connect(mongoDB).then(() => {
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
         console.log('db connection initiated');
-        imgSchema.find({}, (err, items) => {
+        pictureSchema.find({}, (err, items) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Image not findable' + err);
@@ -47,7 +47,7 @@ router.post('/', upload.single('image'), (req, res, next) => {
             contentType: 'image/png'
         }
     };
-    imgSchema.create(img, (err, item) => {
+    pictureSchema.create(img, (err, item) => {
         if (err) {
             console.log(err);
         }

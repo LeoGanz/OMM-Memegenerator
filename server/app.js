@@ -3,13 +3,13 @@ let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
-let multer = require('multer');
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
+let imgRouter = require('./routes/img');
 
 
 let app = express();
@@ -22,6 +22,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+
+app.use('/', imgRouter); //showing images
 
 app.use('/users', usersRouter); //displaying all users
 app.use('/register', registerRouter); //register-activity

@@ -6,6 +6,7 @@ const utils = require("../utils");
 const ut = new utils();
 const multer = require('multer');
 const path = require("path");
+const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -42,8 +43,15 @@ router.post('/', upload.single('image'), (req, res) => {
                 res.status(503).send("No user with this token found");
             }
             const createUser = lst[0];
-            const uploads_dir = path.join(__dirname + '/uploads/' + req.file.filename);
-            console.log(uploads_dir);
+            let preDir = __dirname.split('\\')
+            preDir = preDir.reduce((s1, s2) => {
+                if (s2 !== "routes") {
+                    return s1 + "/" + s2;
+                } else {
+                    return s1 + "/";
+                }
+            })
+            const uploads_dir = path.join(preDir + '/uploads/' + req.body.name);
             const dateString = ut.giveBackDateString();
             const img = {
                 name: req.body.name,
@@ -52,7 +60,7 @@ router.post('/', upload.single('image'), (req, res) => {
                     data: fs.readFileSync(uploads_dir),
                     contentType: 'image/png'
                 },
-                creator: {createUser},
+                creator: createUser,
                 dateOfCreation: dateString,
                 upVoters: [],
                 downVoters: [],
@@ -65,11 +73,12 @@ router.post('/', upload.single('image'), (req, res) => {
                 }
             };
 
-            pictureSchema.create(img, (err) => {
+            pictureSchema.create(img, (err, img) => {
                 if (err) {
                     console.log(err);
                 } else {
                     console.log("img saved");
+                    img.save();
                     res.redirect('/');
                 }
             });

@@ -41,7 +41,7 @@ router.post('/', upload.single('image'), (req, res) => {
     mongoose.connect(mongoDBUsers).then(() => {
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
         console.log('db connection initiated');
-        userSchema.find({currentToken: req.query.token}, (err, lst) => {
+        userSchema.find({currentToken: req.body.token}, (err, lst) => {
             if (err) {
                 console.log("503: Connection to db failed");
                 res.status(503).send("Connection to db failed");
@@ -71,9 +71,9 @@ router.post('/', upload.single('image'), (req, res) => {
                         comments: [],
                         metadata: req.body.metadata,
                         format: {
-                            width: req.body.width,
-                            height: req.body.height,
-                            pixels: req.body.pixels
+                            width: parseFloat(req.body.width),
+                            height: parseFloat(req.body.height),
+                            pixels: parseFloat(req.body.pixels)
                         }
                     };
 

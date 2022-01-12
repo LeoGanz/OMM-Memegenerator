@@ -77,11 +77,11 @@ router.post('/', upload.single('image'), (req, res) => {
                         }
                     };
 
-                    pictureSchema.create(img, (err, item) => {
+                    pictureSchema.create(img, (err) => {
                         if (err) {
                             console.log(err);
                         } else {
-                            item.save();
+                            console.log("img saved");
                             res.redirect('/');
                         }
                     });

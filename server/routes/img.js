@@ -51,15 +51,16 @@ router.post('/', upload.single('image'), (req, res) => {
                     return s1 + "/";
                 }
             })
-            console.log(req.file);
-            const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
+
+            // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             const img = {
                 name: req.body.name,
                 desc: req.body.desc,
                 img: {
-                    data: fs.readFileSync(uploads_dir),
-                    contentType: 'image/png'
+                    // data: fs.readFileSync(uploads_dir),
+                    // contentType: 'image/png'
+                    base64:req.body.image
                 },
                 creator: createUser,
                 dateOfCreation: dateString,

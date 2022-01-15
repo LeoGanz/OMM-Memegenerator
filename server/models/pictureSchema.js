@@ -7,8 +7,9 @@ const pictureSchema = new Schema(
         name: String,
         desc: String,
         img: {
-            data: Buffer,
-            contentType: String,
+            // data: Buffer,
+            // contentType: String,
+            base64: String
         },
         creator: {type: Schema.Types.ObjectId, ref: 'user'},
         dateOfCreation: String,

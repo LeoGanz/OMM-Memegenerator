@@ -10,6 +10,7 @@ let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
 let imgRouter = require('./routes/img');
+let editorRouter = require('./routes/editor');
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
@@ -44,6 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //constant checking if someone is logged in
 app.use(eternalRouter);
 app.use(indexRouter);
+app.use('/editor',editorRouter);
 
 
 

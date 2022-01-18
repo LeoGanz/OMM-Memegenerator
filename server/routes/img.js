@@ -5,8 +5,8 @@ const userSchema = require("../models/userSchema");
 const utils = require("../utils");
 const ut = new utils();
 const multer = require('multer');
-const path = require("path");
-const fs = require('fs');
+// const path = require("path");
+// const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -43,14 +43,14 @@ router.post('/', upload.single('image'), (req, res) => {
                 res.status(503).send("No user with this token found");
             }
             const createUser = lst[0];
-            let preDir = __dirname.split('\\')
-            preDir = preDir.reduce((s1, s2) => {
-                if (s2 !== "routes") {
-                    return s1 + "/" + s2;
-                } else {
-                    return s1 + "/";
-                }
-            })
+            // let preDir = __dirname.split('\\')
+            // preDir = preDir.reduce((s1, s2) => {
+            //     if (s2 !== "routes") {
+            //         return s1 + "/" + s2;
+            //     } else {
+            //         return s1 + "/";
+            //     }
+            // })
 
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();

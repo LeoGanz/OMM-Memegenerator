@@ -12,8 +12,8 @@ router.get('/', (req, res) => {
             res.status(503).send("Connection to db failed");
         } else {
             if (lst.length === 0) {
-                console.log("503: No picture with this metadata found");
-                res.status(503).send("No picture with this metadata found");
+                console.log("400: No picture with this metadata found");
+                res.status(400).send("No picture with this metadata found");
             }
             const pict = lst[0];
             res.status(200).send(pict.img.base64);
@@ -28,8 +28,8 @@ router.post('/', (req, res) => {
             res.status(503).send("Connection to db failed");
         } else {
             if (lst.length === 0) {
-                console.log("503: No user with this token found");
-                res.status(503).send("No user with this token found");
+                console.log("400: No user with this token found");
+                res.status(400).send("No user with this token found");
             }
             const createUser = lst[0];
 

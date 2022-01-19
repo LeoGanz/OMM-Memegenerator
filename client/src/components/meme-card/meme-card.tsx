@@ -1,47 +1,38 @@
 import React from 'react';
 import styled from "styled-components";
 import {colors} from "../layout/colors";
-import {MetaData} from "../layout/typography";
+import {up} from "../../util/breakpoint";
+import {MemeInfos} from "../meme-infos/meme-infos";
 
 const StyledMemeCard = styled.div`
   background-color: ${colors.background.memeCard.default};
+  border: 1px solid ${colors.background.memeCard.default};
+  border-radius: 4px;
   padding: 10px;
-  grid-column-start: span 3;
+  grid-column-start: span 12;
   cursor: pointer;
   transition: background-color .2s;
-  
-  &:hover{
+
+  ${up('sm')} {
+    grid-column-start: span 6;
+  }
+
+  ${up('md')} {
+    grid-column-start: span 4;
+  }
+
+  ${up('lg')} {
+    grid-column-start: span 3;
+  }
+
+  &:hover {
     background-color: ${colors.background.memeCard.hover};
   }
 `
 
-const MemePreview = styled.img` 
+const MemePreview = styled.img`
   width: 100%;
 `
-
-const MetaDataContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 4px;
-  border-bottom: 1px solid ${colors.font.secondary};
-`
-
-const StyledMetaData = styled(MetaData)` 
-    color: ${colors.font.secondary};
-`
-
-const VoteContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  vertical-align: center;
-  margin-top: 8px;
-
-`
-
-const Votes = styled.p<{isUpVote?: boolean}>` 
-  color: ${(props) => props.isUpVote ? colors.font.votes.up : colors.font.votes.down};
-`
-
 
 
 export interface MemeCardType {
@@ -51,22 +42,15 @@ export interface MemeCardType {
     amountOfComments: number;
     upVotes: number;
     downVotes: number;
+    onClick: () => any;
 }
 
 
-export const MemeCard = ({memePath, amountOfComments, formattedDate, author, upVotes, downVotes}: MemeCardType) => {
+export const MemeCard = ({memePath, onClick, ...props}: MemeCardType) => {
     return (
-        <StyledMemeCard>
+        <StyledMemeCard onClick={() => onClick()}>
             <MemePreview src={memePath}/>
-            <MetaDataContainer>
-                <StyledMetaData>{formattedDate}</StyledMetaData>
-                <StyledMetaData>by {author}</StyledMetaData>
-            </MetaDataContainer>
-            <VoteContainer>
-                <Votes isUpVote>▲ {upVotes}</Votes>
-                <StyledMetaData>{amountOfComments} comments</StyledMetaData>
-                <Votes>{downVotes} ▼</Votes>
-            </VoteContainer>
+            <MemeInfos {...props}/>
         </StyledMemeCard>
 
     );

@@ -77,6 +77,7 @@ router.post('/', (req, res) => {
                     res.status(200).send("Saving complete");
                 }
             });
+            createUser.lastEdited.push(picture);
         }
     });
 });

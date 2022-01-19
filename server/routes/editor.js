@@ -14,10 +14,11 @@ router.get('/', (req, res) => {
             if (lst.length === 0) {
                 console.log("400: No picture with this metadata found");
                 res.status(400).send("No picture with this metadata found");
-                return;
+
+            } else {
+                const pict = lst[0];
+                res.status(200).send(pict.img.base64); //TODO: add sending of templates
             }
-            const pict = lst[0];
-            res.status(200).send(pict.img.base64); //TODO: add sending of templates
         }
     });
 });

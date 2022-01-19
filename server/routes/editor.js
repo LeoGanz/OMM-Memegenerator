@@ -65,7 +65,12 @@ router.post('/', (req, res) => {
                     console.log(err);
                 } else {
                     console.log("img saved");
-                    res.redirect('/');
+                    if (template === 2) {
+                        res.redirect('/');
+                    } else {
+                        console.log("200: Saving complete");
+                        res.status(200).send("Saving complete");
+                    }
                 }
             });
         }

@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             let status = req.body.status;
-            const img = new pictureSchema({
+            const picture = new pictureSchema({
                 name: req.body.name,
                 desc: req.body.desc,
                 img: {
@@ -58,7 +58,7 @@ router.post('/', (req, res) => {
                 status: status // 0 for a template, 1 for saved but not published, 2 for published
             });
 
-            pictureSchema.create(img).then(() => {
+            pictureSchema.create(picture).then(_ => {
                 console.log("img saved, status: " + String(status));
                 if (status === 2) {
                     res.redirect('/');

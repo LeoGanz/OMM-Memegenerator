@@ -31,8 +31,9 @@ module.exports = function () {
      * @returns {string} the empty token if it is undefined or the actual token
      */
     this.adjustToken = function (request) {
-        let token = request.query.token
+        let token = request.query.token;
         if(token === undefined){
+            console.log("token undefined");
             token = ""
         }
         return token;

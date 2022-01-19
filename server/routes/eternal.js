@@ -27,8 +27,8 @@ router.use((req, res, next) => {
                     }
                 });
             } else {
-                console.log("No authorization to do this");
-                res.redirect('/login');
+                console.log("401: No authorization to do this");
+                res.status(401).send("No authorization to do this");
             }
         })
     } else {

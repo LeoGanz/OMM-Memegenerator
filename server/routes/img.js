@@ -165,9 +165,10 @@ router.get("/", (req, res) => {
     pictureSchema.find({}, (err, items) => {
         if (err) {
             console.log(err);
-            res.status(500).send('Image not findable' + err);
+            res.status(500).send('No images findable' + err);
         } else {
-            res.render('imagesPage', {items: items});
+            res.status(200);
+            res.send(items);
         }
     });
 })

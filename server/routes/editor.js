@@ -38,12 +38,10 @@ router.post('/', (req, res) => {
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             let status = req.body.status;
-            const img = {
+            const img = new pictureSchema({
                 name: req.body.name,
                 desc: req.body.desc,
                 img: {
-                    // data: fs.readFileSync(uploads_dir),
-                    // contentType: 'image/png'
                     base64: req.body.image
                 },
                 creator: createUser,
@@ -58,21 +56,19 @@ router.post('/', (req, res) => {
                     pixels: parseFloat(req.body.pixels)
                 },
                 status: status // 0 for a template, 1 for saved but not published, 2 for published
-            };
+            });
 
-            pictureSchema.create(img, (err) => {
-                if (err) {
-                    console.log(err);
+            pictureSchema.create(img).then(() => {
+                console.log("img saved, status: " + String(status));
+                if (status === 2) {
+                    res.redirect('/');
                 } else {
-                    console.log("img saved");
-                    console.log(status);
-                    if (status === 2) {
-                        res.redirect('/');
-                    } else {
-                        console.log("200: Saving complete");
-                        res.status(200).send("Saving complete");
-                    }
+                    console.log("200: Saving complete");
+                    res.status(200).send("Saving complete");
                 }
+            }).catch(() => {
+                console.log("503: Connection to db failed");
+                res.status(503).send("Connection to db failed");
             });
         }
     });

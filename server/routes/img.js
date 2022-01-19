@@ -20,6 +20,12 @@ const ut = new utils();
 
 // const upload = multer({storage: storage});
 
+/**
+ * Handles an up vote
+ * @param metadata The metadata of the picture being voted up
+ * @param user The user voting it up
+ * @param res The result to be sent
+ */
 function handleUp(metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
@@ -45,6 +51,12 @@ function handleUp(metadata, user, res) {
     });
 }
 
+/**
+ * Handles a down vote
+ * @param metadata The metadata of the picture being voted down
+ * @param user The user voting it down
+ * @param res The result to be sent
+ */
 function handleDown(metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
@@ -70,6 +82,13 @@ function handleDown(metadata, user, res) {
     });
 }
 
+/**
+ * Handles posting a comment
+ * @param comment The comment to be posted
+ * @param metadata The metadata of the picture
+ * @param user The user posting the comment
+ * @param res The result to give back
+ */
 function handleComment(comment, metadata, user, res) {
     const currentDate = ut.giveBackDateString();
     const comm = {

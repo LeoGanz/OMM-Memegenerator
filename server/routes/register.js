@@ -5,6 +5,57 @@ let utils = require("../utils");
 let ut = new utils();
 let userSchema = require("../models/userSchema.js");
 
+/**
+ * Creates a user if the user is not in the database
+ * @param email The email of the user
+ * @param password The password of the user
+ * @param username The username of the user
+ * @param fullName The full name of the user
+ * @param res the result to be given back
+ */
+function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
+    userSchema.find({email: email}, (err, lst) => {
+        if (err) {
+            console.log("503: Connection to db failed; error: " + err);
+            res.status(503).send("Connection to db failed");
+        } else {
+            if (lst.length === 0) {
+
+                // console.log(req.body)
+                // console.log(username, fullName, password, email);
+
+
+                //Main code
+                let creationDate = ut.giveBackDateString();
+                let hashedPw = password;
+                let tokenString = ut.createToken(email);
+
+
+                // console.log("everything defined");
+                // const users = mongoose.model('users', userSchema);
+                const user = new userSchema({
+                    username: username,
+                    fullName: fullName,
+                    password: hashedPw,
+                    currentToken: tokenString,
+                    email: email,
+                    dateOfCreation: creationDate,
+                    lastEdited: [],
+                    lastComments: [],
+                });
+                // console.log(creationDate);
+                userSchema.create(user).then(_ => {
+                    console.log("registration succeeded");
+                    res.status(200).send(tokenString);
+                });
+            } else {
+                console.log("502: this email already has an account");
+                res.status(502).send("This email already has an account");
+            }
+        }
+    });
+}
+
 router.post("/", (req, res) => {
     // console.log("route reached");
     let token = ut.adjustToken(req);
@@ -31,46 +82,7 @@ router.post("/", (req, res) => {
                                         res.status(503).send("Connection to db failed");
                                     } else {
                                         if (lst.length === 0) {
-                                            userSchema.find({email: email}, (err, lst) => {
-                                                if (err) {
-                                                    console.log("503: Connection to db failed; error: " + err);
-                                                    res.status(503).send("Connection to db failed");
-                                                } else {
-                                                    if (lst.length === 0) {
-
-                                                        // console.log(req.body)
-                                                        // console.log(username, fullName, password, email);
-
-
-                                                        //Main code
-                                                        let creationDate = ut.giveBackDateString();
-                                                        let hashedPw = password;
-                                                        let tokenString = ut.createToken(email);
-
-
-                                                        // console.log("everything defined");
-                                                        // const users = mongoose.model('users', userSchema);
-                                                        const user = new userSchema({
-                                                            username: username,
-                                                            fullName: fullName,
-                                                            password: hashedPw,
-                                                            currentToken: tokenString,
-                                                            email: email,
-                                                            dateOfCreation: creationDate,
-                                                            lastEdited: [],
-                                                            lastComments: [],
-                                                        });
-                                                        // console.log(creationDate);
-                                                        userSchema.create(user).then(_ => {
-                                                            console.log("registration succeeded");
-                                                            res.status(200).send(tokenString);
-                                                        });
-                                                    } else {
-                                                        console.log("502: this email already has an account");
-                                                        res.status(502).send("This email already has an account");
-                                                    }
-                                                }
-                                            });
+                                            addUserIfEmailDoesNotExist(email, password, username, fullName, res);
                                         } else {
                                             console.log("502: you already have an account");
                                             res.status(502).send("You already have an account");

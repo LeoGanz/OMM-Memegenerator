@@ -19,7 +19,11 @@ const HeadlineSection = styled.div`
   align-items: center;
 `
 
-export const Overview = () => {
+interface OverviewProps {
+    clickPicture: () => any
+}
+
+export const Overview = ({clickPicture}: OverviewProps) => {
     const [memeCardData, setMemeCardData] = useState<MemeCardType[]>([])
 
     useEffect(() => {
@@ -31,7 +35,8 @@ export const Overview = () => {
                 formattedDate: "26.11.21",
                 upVotes: Math.floor(Math.random() * 1000),
                 downVotes: Math.floor(Math.random() * 1000),
-                amountOfComments: Math.floor(Math.random() * 1000)
+                amountOfComments: Math.floor(Math.random() * 1000),
+                onClick: clickPicture
             })
         )
         setMemeCardData(mockData)
@@ -46,12 +51,7 @@ export const Overview = () => {
 
             <OverviewGrid>
                 {memeCardData.map((memeCardEntry) =>
-                    <MemeCard memePath={memeCardEntry.memePath}
-                              author={memeCardEntry.author}
-                              formattedDate={memeCardEntry.formattedDate}
-                              amountOfComments={memeCardEntry.amountOfComments}
-                              upVotes={memeCardEntry.upVotes}
-                              downVotes={memeCardEntry.downVotes}/>
+                    <MemeCard {...memeCardEntry}/>
                 )}
             </OverviewGrid>
 

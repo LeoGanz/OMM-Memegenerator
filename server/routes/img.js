@@ -111,10 +111,10 @@ function handleComment(comment, metadata, user, res) {
                 res.status(503).send("Connection to db comment failed");
 
                 commentSchema.find({comment: comment, creator: user}, (err, lst) => {
-                    if(err){
+                    if (err) {
                         console.log("503: Connection to db comment failed");
                         res.status(503).send("Connection to db comment failed");
-                    }else{
+                    } else {
                         if (lst.length === 0) {
                             console.log("400: No comment with this user and string found");
                             res.status(400).send("No comment with this user and string found");
@@ -161,16 +161,77 @@ router.post("/", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-
+    const sortBy = req.body.sortBy;
+    const filterBy = req.body.filterBy;
+    const start = req.body.start;
+    const end = req.body.end;
     pictureSchema.find({}, (err, items) => {
         if (err) {
             console.log(err);
             res.status(500).send('No images findable' + err);
         } else {
-            res.status(200);
-            res.send(items);
+            if (filterBy) {
+                items = items.filter(item => {
+                    return item.creator.username === filterBy;
+                });
+            }
+            if (sortBy === "up desc") {
+                items = items.sort((a, b) => {
+                    if (a.upVoters.length > b.upVoters.length) {
+                        return -1;
+                    }
+                    if (a.upVoters.length < b.upVoters.length) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
+            if (sortBy === "up asc") {
+                items = items.sort((a, b) => {
+                    if (a.upVoters.length > b.upVoters.length) {
+                        return 1;
+                    }
+                    if (a.upVoters.length < b.upVoters.length) {
+                        return -1;
+                    }
+                    return 0;
+                });
+            }
+            if (sortBy === "down desc") {
+                items = items.sort((a, b) => {
+                    if (a.downVoters.length > b.downVoters.length) {
+                        return -1;
+                    }
+                    if (a.downVoters.length < b.downVoters.length) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
+            if (sortBy === "down asc") {
+                items = items.sort((a, b) => {
+                    if (a.downVoters.length > b.downVoters.length) {
+                        return 1;
+                    }
+                    if (a.downVoters.length < b.downVoters.length) {
+                        return -1;
+                    }
+                    return 0;
+                });
+            }
+            if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
+                items = items.slice(start, end);
+                res.status(200);
+                res.send(items);
+            } else {
+                console.log("400: You have to give a number as start and a number as end," +
+                    " which part of the items you want");
+                res.status(400).send("You have to give a number as start and a number as end," +
+                    " which part of the items you want");
+            }
         }
     });
+
 })
 
 module.exports = router;

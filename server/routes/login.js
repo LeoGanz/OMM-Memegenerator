@@ -9,7 +9,6 @@ router.get('/', (req, res) => {
     let token = ut.adjustToken(req);
     jwt.verify(token, "top-secret", (err) => {
         if (err) {
-
             let email;
             let pw;
             let inputCredentials = req.headers.authorization;

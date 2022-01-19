@@ -16,8 +16,8 @@ const pictureSchema = new Schema(
         upVoters: [{type: Schema.Types.ObjectId, ref: 'user'}],
         downVoters: [{type: Schema.Types.ObjectId, ref: 'user'}],
         comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
-        metadata: String,
-        format: {width: Number, height: Number, pixels: Number}
+        metadata: String, status: Number,
+        format: {width: Number, height: Number, pixels: Number},
     }
 );
 

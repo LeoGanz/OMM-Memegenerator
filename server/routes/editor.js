@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
                 res.status(400).send("No picture with this metadata found");
             }
             const pict = lst[0];
-            res.status(200).send(pict.img.base64);
+            res.status(200).send(pict.img.base64); //TODO: add sending of templates
         }
     });
 });
@@ -35,6 +35,7 @@ router.post('/', (req, res) => {
 
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
+            let template = req.body.template;
             const img = {
                 name: req.body.name,
                 desc: req.body.desc,
@@ -53,7 +54,8 @@ router.post('/', (req, res) => {
                     width: parseFloat(req.body.width),
                     height: parseFloat(req.body.height),
                     pixels: parseFloat(req.body.pixels)
-                }
+                },
+                status: template // 0 for a template, 1 for saved but not published, 2 for published
             };
 
             pictureSchema.create(img, (err) => {

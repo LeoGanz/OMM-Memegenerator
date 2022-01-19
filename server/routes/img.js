@@ -106,7 +106,7 @@ function handleComment(comment, metadata, user, res) {
                 res.status(400).send("No picture with this metadata found");
             }
             let pict = lst[0];
-            commentSchema.create(comm, err => {
+            commentSchema.create(comm, _ => {
                 console.log("503: Connection to db comment failed");
                 res.status(503).send("Connection to db comment failed");
 
@@ -133,7 +133,7 @@ function handleComment(comment, metadata, user, res) {
 
 router.post("/", (req, res) => {
     let metadata = req.body.metadata;
-    let userToken = req.body.token;
+    let userToken = req.query.token;
     let upVote = req.body.up;
     let downVote = req.body.down;
     let comment = req.body.comment;

@@ -2,10 +2,13 @@ const express = require('express');
 const jwt = require("njwt");
 const router = express.Router();
 const userSchema = require("../models/userSchema");
+const utils = require('../utils');
+const ut = new utils();
 
 router.use((req, res, next) => {
-    const token = req.query.token;
-    if (token instanceof String) {
+    const token = ut.adjustToken(req);
+    // console.log(typeof token === "string");
+    if (typeof token === "string") {
         const credentials = req.headers.authorization;
         jwt.verify(token, "top-secret", (err) => {
             if (!err) {

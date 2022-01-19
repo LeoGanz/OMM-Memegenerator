@@ -37,7 +37,7 @@ router.post('/', (req, res) => {
 
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
-            let template = req.body.template;
+            let status = req.body.status;
             const img = {
                 name: req.body.name,
                 desc: req.body.desc,
@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
                     height: parseFloat(req.body.height),
                     pixels: parseFloat(req.body.pixels)
                 },
-                status: template // 0 for a template, 1 for saved but not published, 2 for published
+                status: status // 0 for a template, 1 for saved but not published, 2 for published
             };
 
             pictureSchema.create(img, (err) => {
@@ -65,7 +65,8 @@ router.post('/', (req, res) => {
                     console.log(err);
                 } else {
                     console.log("img saved");
-                    if (template === 2) {
+                    console.log(status);
+                    if (status === 2) {
                         res.redirect('/');
                     } else {
                         console.log("200: Saving complete");

@@ -119,7 +119,9 @@ function handleComment(comment, metadata, user, res) {
                             console.log("400: No comment with this user and string found");
                             res.status(400).send("No comment with this user and string found");
                         }
-                        pict.comments.push(lst[0]);
+                        let toPush = lst[0]
+                        pict.comments.push(toPush);
+                        user.lastComments.push(toPush);
                         console.log("200: Picture comment add succeeded");
                         res.status(200).send("Picture comment add succeeded");
                     }

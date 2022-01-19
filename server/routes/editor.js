@@ -6,7 +6,7 @@ const utils = require("../utils");
 const ut = new utils();
 
 router.get('/', (req, res) => {
-    pictureSchema.find({metadata: req.query.metadata}, (err, lst) => {
+    pictureSchema.find({}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db failed");
             res.status(503).send("Connection to db failed");
@@ -16,8 +16,17 @@ router.get('/', (req, res) => {
                 res.status(400).send("No picture with this metadata found");
 
             } else {
-                const pict = lst[0];
-                res.status(200).send(pict.img.base64); //TODO: add sending of templates
+                let templates = lst.filter((pict) => {
+                    return pict.status === 0;
+                });
+                let wanted = lst.filter((pict) => {
+                    return pict.metadata = req.query.metadata;
+                });
+                let toSend = {
+                    wanted: wanted,
+                    templates: templates,
+                }
+                res.status(200).send(toSend);
             }
         }
     });

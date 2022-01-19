@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    userSchema.find({currentToken: req.body.token}, (err, lst) => {
+    userSchema.find({currentToken: req.query.token}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db failed");
             res.status(503).send("Connection to db failed");

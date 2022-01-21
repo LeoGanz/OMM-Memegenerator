@@ -15,7 +15,6 @@ router.get('/', (req, res) => {
             if (lst.length === 0) {
                 console.log("400: No picture with this metadata found");
                 res.status(400).send("No picture with this metadata found");
-
             } else {
                 let templates = lst.filter((pict) => {
                     return pict.status === 0;

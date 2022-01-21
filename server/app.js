@@ -10,7 +10,8 @@ let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
 let imgRouter = require('./routes/img');
-let editorRouter = require("./routes/editor");
+let editorRouter = require('./routes/editor');
+let singleRouter = require('./routes/single');
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
@@ -46,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(eternalRouter);
 app.use('/editor', editorRouter);
 app.use('/images', imgRouter); //showing images
+app.use('/image', singleRouter);
 
 app.use(indexRouter);
 

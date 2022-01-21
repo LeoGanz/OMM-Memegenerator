@@ -13,6 +13,8 @@ let imgRouter = require('./routes/img');
 let editorRouter = require('./routes/editor');
 let singleRouter = require('./routes/single');
 let profileRouter = require('./routes/profile');
+let createRouter = require('./routes/create');
+let retrieveRouter = require('./routes/retrieve');
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
@@ -46,10 +48,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //constant checking if someone is logged in
 app.use(eternalRouter);
-app.use('/editor', editorRouter);
-app.use('/profile',profileRouter);
+app.use('/editor', editorRouter); //Editor
+app.use('/profile',profileRouter); //Profile overview
 app.use('/images', imgRouter); //showing images
-app.use('/image', singleRouter);
+app.use('/image', singleRouter); // Single view of an Image
+app.use('/create', createRouter); //API create
+app.use('/retrieve', retrieveRouter); //API retrieve
 
 app.use(indexRouter);
 

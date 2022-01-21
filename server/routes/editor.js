@@ -46,6 +46,8 @@ router.post('/', (req, res) => {
             const texts = req.body.texts;
             const {xCoordinates} = req.body;
             const {yCoordinates} = req.body;
+            const {xSizes} = req.body;
+            const {ySizes} = req.body;
             let newTexts = [];
             if (texts.length !== xCoordinates.length || texts.length !== yCoordinates.length || yCoordinates.length !== xCoordinates.length) {
                 console.log("400: Please give lists with equal length for the texts");
@@ -55,11 +57,15 @@ router.post('/', (req, res) => {
                     const text = texts[i];
                     const xCoordinate = xCoordinates[i];
                     const yCoordinate = yCoordinates[i];
+                    const xSize = xSizes[i];
+                    const ySize = ySizes[i];
 
                     const textSch = new textSchema({
                         text: text,
                         xCoordinate: xCoordinate,
                         yCoordinate: yCoordinate,
+                        xSize: xSize,
+                        ySize: ySize
                     });
                     textSchema.create(textSch).then(_ => {
                     }).catch(_ => {

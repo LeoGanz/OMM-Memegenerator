@@ -61,12 +61,26 @@ router.post('/', (req, res) => {
                         xCoordinate: xCoordinate,
                         yCoordinate: yCoordinate,
                     });
-                    textSchema.create(textSch).then(_ => {}).catch(_ => {
+                    textSchema.create(textSch).then(_ => {
+                    }).catch(_ => {
                         console.log("Error occurred during initialization of texts");
                     });
                     newTexts.push(textSch);
                 }
             }
+
+            pictureSchema.find({metadata: req.body.metadata}, (err, lst) => {
+                if (err) {
+                    console.log("503: Connection to db failed; error: " + err);
+                    res.status(503).send("Connection to db failed");
+                } else {
+                    if (lst.length !== 0) {
+                        console.log("400: This meme does already exist");
+                        res.status(400).send("This meme does already exist");
+                    }
+                }
+            });
+
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             const status = req.body.status;

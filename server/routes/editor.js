@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pictureSchema = require("../models/pictureSchema");
 const userSchema = require("../models/userSchema");
+const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
 
@@ -43,7 +44,30 @@ router.post('/', (req, res) => {
                 res.status(400).send("No user with this token found");
             }
             const createUser = lst[0];
+            const texts = req.body.texts;
+            const {xCoordinates} = req.body;
+            const {yCoordinates} = req.body;
+            let newTexts = [];
+            if (texts.length !== xCoordinates.length || texts.length !== yCoordinates.length || yCoordinates.length !== xCoordinates.length) {
+                console.log("400: Please give lists with equal length for the texts");
+                res.status(400).send("Please give lists with equal length for the texts");
+            } else {
+                for (let i = 0; i < texts.length; i++) {
+                    const text = texts[i];
+                    const xCoordinate = xCoordinates[i];
+                    const yCoordinate = yCoordinates[i];
 
+                    const textSch = new textSchema({
+                        text: text,
+                        xCoordinate: xCoordinate,
+                        yCoordinate: yCoordinate,
+                    });
+                    textSchema.create(textSch).then(_ => {}).catch(_ => {
+                        console.log("Error occurred during initialization of texts");
+                    });
+                    newTexts.push(textSch);
+                }
+            }
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             const status = req.body.status;
@@ -65,7 +89,8 @@ router.post('/', (req, res) => {
                     width: parseFloat(req.body.width),
                     height: parseFloat(req.body.height),
                     pixels: parseFloat(req.body.pixels)
-                }
+                },
+                texts: newTexts,
             });
 
             pictureSchema.create(picture).then(_ => {

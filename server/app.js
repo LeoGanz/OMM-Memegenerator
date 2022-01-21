@@ -12,6 +12,7 @@ let eternalRouter = require('./routes/eternal');
 let imgRouter = require('./routes/img');
 let editorRouter = require('./routes/editor');
 let singleRouter = require('./routes/single');
+let profileRouter = require('./routes/profile');
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
@@ -46,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //constant checking if someone is logged in
 app.use(eternalRouter);
 app.use('/editor', editorRouter);
+app.use('/profile',profileRouter);
 app.use('/images', imgRouter); //showing images
 app.use('/image', singleRouter);
 

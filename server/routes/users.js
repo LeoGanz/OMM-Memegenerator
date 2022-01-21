@@ -6,7 +6,8 @@ const userSchema = require("../models/userSchema");
 router.get('/', function (req, res) {
     userSchema.find({}, (err, lst) => {
         if (err) {
-            res.status(500).send("Some problem with the database");
+            console.log("500: Some problem with the database occurred");
+            res.status(500).send("Some problem with the database occurred");
         } else {
             res.send(lst);
         }

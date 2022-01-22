@@ -14,6 +14,32 @@ module.exports = function () {
     }
 
     /**
+     * This function adds on usage to a template
+     */
+    this.addOneUsage = function (schema, base, res) {
+        schema.find({status: 0}, (err, lst) => {
+            if (err) {
+                console.log("503: Connection to db pictures failed; error: " + err);
+                res.status(503).send("Connection to db pictures failed");
+            } else {
+                if (lst.length === 0) {
+                    console.log("400: No template does exist");
+                    res.status(400).send("No template does exist");
+                }
+                const foundTemplates = lst.filter((elem) => {
+                    return elem.img.base64 === base;
+                });
+                if (foundTemplates.length === 0) {
+                    console.log("400: This template does not exist");
+                    res.status(400).send("This template does not exist");
+                }
+                let template = foundTemplates[0];
+                template.usage = template.usage + 1;
+            }
+        });
+    }
+
+    /**
      * This method checks if the given meme-array from the API is well-formed
      * @param memeOfCreateAPI the meme-array
      * @returns {boolean} true if well-formed and false if not
@@ -23,17 +49,17 @@ module.exports = function () {
         const name = memeOfCreateAPI[0];
         const desc = memeOfCreateAPI[1];
         const data = memeOfCreateAPI.slice(2);
-        if(typeof name !== "string" || typeof desc !== "string"|| !this.checkForEqualLength(data)){
+        if (typeof name !== "string" || typeof desc !== "string" || !this.checkForEqualLength(data)) {
             result = false;
         }
-        for (let text in data[0]){
-            if (typeof text !== "string"){
+        for (let text in data[0]) {
+            if (typeof text !== "string") {
                 result = false;
             }
         }
-        for (let elem in data.slice(1)){
-            for (let subelement in elem){
-                if (typeof  subelement !== "number"){
+        for (let elem in data.slice(1)) {
+            for (let subelement in elem) {
+                if (typeof subelement !== "number") {
                     result = false;
                 }
             }

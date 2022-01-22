@@ -53,25 +53,27 @@ router.post('/', (req, res) => {
                 console.log("400: Please give lists with equal length for the texts");
                 res.status(400).send("Please give lists with equal length for the texts");
             } else {
-                for (let i = 0; i < texts.length; i++) {
-                    const text = texts[i];
-                    const xCoordinate = xCoordinates[i];
-                    const yCoordinate = yCoordinates[i];
-                    const xSize = xSizes[i];
-                    const ySize = ySizes[i];
+                if (req.body.status !== 0) {
+                    for (let i = 0; i < texts.length; i++) {
+                        const text = texts[i];
+                        const xCoordinate = xCoordinates[i];
+                        const yCoordinate = yCoordinates[i];
+                        const xSize = xSizes[i];
+                        const ySize = ySizes[i];
 
-                    const textSch = new textSchema({
-                        text: text,
-                        xCoordinate: xCoordinate,
-                        yCoordinate: yCoordinate,
-                        xSize: xSize,
-                        ySize: ySize
-                    });
-                    textSchema.create(textSch).then(_ => {
-                    }).catch(_ => {
-                        console.log("Error occurred during initialization of texts");
-                    });
-                    newTexts.push(textSch);
+                        const textSch = new textSchema({
+                            text: text,
+                            xCoordinate: xCoordinate,
+                            yCoordinate: yCoordinate,
+                            xSize: xSize,
+                            ySize: ySize
+                        });
+                        textSchema.create(textSch).then(_ => {
+                        }).catch(_ => {
+                            console.log("Error occurred during initialization of texts");
+                        });
+                        newTexts.push(textSch);
+                    }
                 }
             }
 
@@ -82,7 +84,7 @@ router.post('/', (req, res) => {
             const status = req.body.status;
             let name = "";
             let desc = "";
-            if (status !== 0){
+            if (status !== 0) {
                 name = req.body.name;
                 desc = req.body.desc;
             }
@@ -107,11 +109,13 @@ router.post('/', (req, res) => {
                     pixels: parseFloat(req.body.pixels)
                 },
                 texts: newTexts,
+                usage: 0,
             });
 
             pictureSchema.create(picture).then(_ => {
                 console.log("img saved, status: " + String(status));
                 if (status === 2) {
+                    ut.addOneUsage(pictureSchema, req.body.image, res);
                     res.redirect('/images');
                 } else {
                     console.log("200: Saving complete");

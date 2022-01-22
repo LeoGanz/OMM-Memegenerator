@@ -19,7 +19,7 @@ const pictureSchema = new Schema(
         comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
         metadata: String, status: Number,
         format: {width: Number, height: Number, pixels: Number},
-
+        usage: Number,
     }
 );
 

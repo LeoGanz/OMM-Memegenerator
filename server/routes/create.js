@@ -81,6 +81,8 @@ router.post('/', (req, res) => {
                                         console.log("400: This template does not exist");
                                         res.status(400).send("This template does not exist");
                                     }
+                                    const usage = lst[0].usage;
+                                    pictureSchema.findOneAndUpdate({metadata: metadataTemplate}, {usage: usage + 1});
                                     const template = lst[0].img.base64;
 
                                     const picture = new pictureSchema({
@@ -103,6 +105,7 @@ router.post('/', (req, res) => {
                                             pixels: 200
                                         },
                                         texts: newTexts,
+                                        usage: 0,
                                     });
 
                                     pictureSchema.create(picture).then(_ => {

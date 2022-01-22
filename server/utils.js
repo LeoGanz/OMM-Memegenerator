@@ -12,6 +12,39 @@ module.exports = function () {
             + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     }
 
+    /**
+     * This method checks if every array in an array of arrays has the same length
+     * @param arrayOfArrays the given array of arrays
+     * @returns {boolean} true if it is the case and false if not
+     */
+    this.checkForEqualLength = function (arrayOfArrays) {
+        if (arrayOfArrays.length !== 0) {
+            let length = arrayOfArrays[0].length;
+            let result = true;
+            for (let elem in arrayOfArrays) {
+                if (elem.length !== length) {
+                    result = false;
+                }
+            }
+            return result;
+        } else {
+            return true;
+        }
+    }
+
+    this.checkForMemeInPictures = function (schema, metadata, res){
+        schema.find({metadata: metadata}, (err, lst) => {
+            if (err) {
+                console.log("503: Connection to db failed; error: " + err);
+                res.status(503).send("Connection to db failed");
+            } else {
+                if (lst.length !== 0) {
+                    console.log("400: This meme does already exist");
+                    res.status(400).send("This meme does already exist");
+                }
+            }
+        });
+    }
 
     /**
      * Creates a new token from given claims
@@ -32,7 +65,7 @@ module.exports = function () {
      */
     this.adjustToken = function (request) {
         let token = request.query.token;
-        if(token === undefined){
+        if (token === undefined) {
             console.log("token undefined");
             token = ""
         }

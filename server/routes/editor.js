@@ -75,17 +75,7 @@ router.post('/', (req, res) => {
                 }
             }
 
-            pictureSchema.find({metadata: req.body.metadata}, (err, lst) => {
-                if (err) {
-                    console.log("503: Connection to db failed; error: " + err);
-                    res.status(503).send("Connection to db failed");
-                } else {
-                    if (lst.length !== 0) {
-                        console.log("400: This meme does already exist");
-                        res.status(400).send("This meme does already exist");
-                    }
-                }
-            });
+            ut.checkForMemeInPictures(pictureSchema, req.body.metadata, res);
 
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();

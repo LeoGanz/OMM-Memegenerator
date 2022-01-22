@@ -40,7 +40,8 @@ app.use(cookieParser());
 
 //Image Storage
 
-
+app.use('/create', createRouter); //API create
+app.use('/retrieve', retrieveRouter); //API retrieve
 app.use('/users', usersRouter); //displaying all users
 app.use('/register', registerRouter); //register-activity
 app.use('/login', loginRouter); //login activity
@@ -52,8 +53,7 @@ app.use('/editor', editorRouter); //Editor
 app.use('/profile',profileRouter); //Profile overview
 app.use('/images', imgRouter); //showing images
 app.use('/image', singleRouter); // Single view of an Image
-app.use('/create', createRouter); //API create
-app.use('/retrieve', retrieveRouter); //API retrieve
+
 
 app.use(indexRouter);
 

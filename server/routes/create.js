@@ -13,7 +13,7 @@ router.post('/', (req, res) => {
             console.log("503: Connection to db pictures failed");
             res.status(503).send("Connection to db pictures failed");
         } else {
-            if(lst.length === 0){
+            if (lst.length === 0) {
                 console.log("400: There is no template with this metadata");
                 res.status(400).send("There is no template with this metadata");
             }
@@ -52,7 +52,13 @@ router.post('/', (req, res) => {
                     //TODO Metadata-Creation?
                     let metadata = metadataTemplate + "****"
 
-                    ut.checkForMemeInPictures(pictureSchema,metadata,res);
+                    ut.checkForMemeInPictures(pictureSchema, metadata, res);
+                    const dateString = ut.giveBackDateString();
+                    const status = 2;
+
+                    //TODO consider which user created the meme instead of API
+                    const userAPI = ut.userAPI;
+
 
                 } else {
                     console.log("400: You need to give as many coordinates and sizes as texts");

@@ -1,6 +1,7 @@
 const jwt = require("njwt");
-module.exports = function () {
+const userSchema = require("./models/userSchema");
 
+module.exports = function () {
 
     /**
      * Gives back a date string that gives date and time back
@@ -32,7 +33,7 @@ module.exports = function () {
         }
     }
 
-    this.checkForMemeInPictures = function (schema, metadata, res){
+    this.checkForMemeInPictures = function (schema, metadata, res) {
         schema.find({metadata: metadata}, (err, lst) => {
             if (err) {
                 console.log("503: Connection to db failed; error: " + err);
@@ -45,6 +46,17 @@ module.exports = function () {
             }
         });
     }
+
+    this.userAPI = new userSchema({
+        username:"API",
+        fullName:"The API taking in requests from the outside",
+        password:"22012022",
+        currentToken:"",
+        email:"",
+        dateOfCreation:"2022-01-22--14:01:10",
+        lastEdited:[],
+        lastComments:[],
+    })
 
     /**
      * Creates a new token from given claims

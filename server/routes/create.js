@@ -9,7 +9,7 @@ const ut = new utils();
 
 router.post('/', (req, res) => {
     let result = "Your created memes you can find under the URLs:\n";
-    const metadataTemplate = req.query.metadata;
+    const metadataTemplate = req.body.metadata;
     pictureSchema.find({metadata: metadataTemplate, status: 0}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db pictures failed");

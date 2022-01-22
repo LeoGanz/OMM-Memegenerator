@@ -14,6 +14,34 @@ module.exports = function () {
     }
 
     /**
+     * This method checks if the given meme-array from the API is well-formed
+     * @param memeOfCreateAPI the meme-array
+     * @returns {boolean} true if well-formed and false if not
+     */
+    this.checkForAppropriateForm = function (memeOfCreateAPI) {
+        let result = true;
+        const name = memeOfCreateAPI[0];
+        const desc = memeOfCreateAPI[1];
+        const data = memeOfCreateAPI.slice(2);
+        if(typeof name !== "string" || typeof desc !== "string"|| !this.checkForEqualLength(data)){
+            result = false;
+        }
+        for (let text in data[0]){
+            if (typeof text !== "string"){
+                result = false;
+            }
+        }
+        for (let elem in data.slice(1)){
+            for (let subelement in elem){
+                if (typeof  subelement !== "number"){
+                    result = false;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * This method checks if every array in an array of arrays has the same length
      * @param arrayOfArrays the given array of arrays
      * @returns {boolean} true if it is the case and false if not
@@ -63,7 +91,7 @@ module.exports = function () {
         });
         userSchema.create(API).then(_ => {
             console.log("Creation of API succeeded");
-        }).catch(_=> {
+        }).catch(_ => {
             console.log("Creation of API failed");
         });
     }

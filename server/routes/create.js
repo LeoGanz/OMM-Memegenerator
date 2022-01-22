@@ -20,13 +20,15 @@ router.post('/', (req, res) => {
                 res.status(400).send("There is no template with this metadata");
             }
             const texts = req.body.texts;
-            for (let meme1 in texts) {
-                if (ut.checkForEqualLength(meme1)) {
-                    const lines = meme1[0];
-                    const xCoordinates = meme1[1];
-                    const yCoordinates = meme1[2];
-                    const xSizes = meme1[3];
-                    const ySizes = meme1[4];
+            for (let meme in texts) {
+                if (ut.checkForAppropriateForm(meme)) {
+                    const name = meme[0];
+                    const desc = meme[1];
+                    const lines = meme[2];
+                    const xCoordinates = meme[3];
+                    const yCoordinates = meme[4];
+                    const xSizes = meme[5];
+                    const ySizes = meme[6];
 
                     let newTexts = [];
                     for (let i = 0; i < lines.length; i++) {
@@ -82,8 +84,8 @@ router.post('/', (req, res) => {
                                     const template = lst[0].img.base64;
 
                                     const picture = new pictureSchema({
-                                        name: "",
-                                        desc: "",
+                                        name: name,
+                                        desc: desc,
                                         img: {
                                             base64: template
                                         },
@@ -112,8 +114,10 @@ router.post('/', (req, res) => {
                         }
                     });
                 } else {
-                    console.log("400: You need to give as many coordinates and sizes as texts");
-                    res.status(400).send("You need to give as many coordinates and sizes as texts");
+                    console.log("400: You need to give as many coordinates and sizes as texts as" +
+                        " parameters 3-7 and two strings for name and description for 1 and 2");
+                    res.status(400).send("400: You need to give as many coordinates and sizes as texts as" +
+                        " parameters 3-7 and two strings for name and description for 1 and 2");
                 }
             }
             console.log("200: Memes successfully created");

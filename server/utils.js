@@ -47,6 +47,9 @@ module.exports = function () {
         });
     }
 
+    /**
+     * This method creates the userSchema for the API
+     */
     this.userAPI = function () {
         const API = new userSchema({
             username: "API",

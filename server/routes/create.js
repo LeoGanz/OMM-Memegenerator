@@ -8,6 +8,7 @@ const ut = new utils();
 
 
 router.post('/', (req, res) => {
+    let result = "Your created memes you can find under the URLs:\n";
     const metadataTemplate = req.query.metadata;
     pictureSchema.find({metadata: metadataTemplate, status: 0}, (err, lst) => {
         if (err) {
@@ -69,38 +70,45 @@ router.post('/', (req, res) => {
                             }
                             const userAPI = lst[0];
 
-                            const picture = new pictureSchema({
-                                name: req.body.name,
-                                desc: req.body.desc,
-                                img: {
-                                    base64: req.body.image
-                                },
-                                creator: userAPI,
-                                dateOfCreation: dateString,
-                                upVoters: [],
-                                downVoters: [],
-                                comments: [],
-                                metadata: metadata,
-                                status: status, // 0 for a template, 1 for saved but
-                                // not published, 2 for published
-                                format: {
-                                    width: 200,
-                                    height: 200,
-                                    pixels: 200
-                                },
-                                texts: newTexts,
-                            });
-
-                            pictureSchema.create(picture).then(_ => {
-                                console.log("img saved, status: " + String(status));
-                                if (status === 2) {
-                                    res.redirect('/images');
+                            pictureSchema.find({metadata: metadataTemplate}, (err, lst) => {
+                                if (err) {
+                                    console.log("503: Connection to db pictures failed; error: " + err);
+                                    res.status(503).send("Connection to db pictures failed");
                                 } else {
-                                    console.log("200: Saving complete");
-                                    res.status(200).send("Saving complete");
+                                    if (lst.length === 0) {
+                                        console.log("400: This template does not exist");
+                                        res.status(400).send("This template does not exist");
+                                    }
+                                    const template = lst[0].img.base64;
+
+                                    const picture = new pictureSchema({
+                                        name: "",
+                                        desc: "",
+                                        img: {
+                                            base64: template
+                                        },
+                                        creator: userAPI,
+                                        dateOfCreation: dateString,
+                                        upVoters: [],
+                                        downVoters: [],
+                                        comments: [],
+                                        metadata: metadata,
+                                        status: status, // 0 for a template, 1 for saved but
+                                        // not published, 2 for published
+                                        format: {
+                                            width: 200,
+                                            height: 200,
+                                            pixels: 200
+                                        },
+                                        texts: newTexts,
+                                    });
+
+                                    pictureSchema.create(picture).then(_ => {
+
+                                    });
+                                    userAPI.lastEdited.push(picture);
                                 }
                             });
-                            userAPI.lastEdited.push(picture);
                         }
                     });
                 } else {

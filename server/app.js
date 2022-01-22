@@ -15,6 +15,9 @@ let singleRouter = require('./routes/single');
 let profileRouter = require('./routes/profile');
 let createRouter = require('./routes/create');
 let retrieveRouter = require('./routes/retrieve');
+const utils = require("./utils");
+const ut = new utils();
+
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
@@ -28,6 +31,7 @@ mongoose.connect(process.env.MONGO_URL,
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
         console.log('db connection initiated');
     });
+ut.userAPI();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

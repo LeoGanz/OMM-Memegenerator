@@ -47,16 +47,23 @@ module.exports = function () {
         });
     }
 
-    this.userAPI = new userSchema({
-        username:"API",
-        fullName:"The API taking in requests from the outside",
-        password:"22012022",
-        currentToken:"",
-        email:"",
-        dateOfCreation:"2022-01-22--14:01:10",
-        lastEdited:[],
-        lastComments:[],
-    })
+    this.userAPI = function () {
+        const API = new userSchema({
+            username: "API",
+            fullName: "The API taking in requests from the outside",
+            password: "22012022",
+            currentToken: "",
+            email: "",
+            dateOfCreation: "2022-01-22--14:01:10",
+            lastEdited: [],
+            lastComments: [],
+        });
+        userSchema.create(API).then(_ => {
+            console.log("Creation of API succeeded");
+        }).catch(_=> {
+            console.log("Creation of API failed");
+        });
+    }
 
     /**
      * Creates a new token from given claims

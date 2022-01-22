@@ -80,9 +80,16 @@ router.post('/', (req, res) => {
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             const status = req.body.status;
+            let name = "";
+            let desc = "";
+            if (status !== 0){
+                name = req.body.name;
+                desc = req.body.desc;
+            }
+
             const picture = new pictureSchema({
-                name: req.body.name,
-                desc: req.body.desc,
+                name: name,
+                desc: desc,
                 img: {
                     base64: req.body.image
                 },

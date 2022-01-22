@@ -104,7 +104,7 @@ router.post('/', (req, res) => {
                                     });
 
                                     pictureSchema.create(picture).then(_ => {
-
+                                        result = result + "localhost:3000/image?metadata=" + metadata + "\n";
                                     });
                                     userAPI.lastEdited.push(picture);
                                 }
@@ -116,6 +116,8 @@ router.post('/', (req, res) => {
                     res.status(400).send("You need to give as many coordinates and sizes as texts");
                 }
             }
+            console.log("200: Memes successfully created");
+            res.status(200).send(result);
         }
     });
 

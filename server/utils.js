@@ -1,5 +1,6 @@
 const jwt = require("njwt");
 const userSchema = require("./models/userSchema");
+const md5 = require('md5');
 
 module.exports = function () {
 
@@ -87,7 +88,7 @@ module.exports = function () {
         }
     }
 
-    this.checkForMemeInPictures = function (schema, metadata, res) {
+    this.canNewMemeBeStoredInDb = function (schema, metadata, res, onSuccess) {
         schema.find({metadata: metadata}, (err, lst) => {
             if (err) {
                 console.log("503: Connection to db failed; error: " + err);
@@ -96,9 +97,33 @@ module.exports = function () {
                 if (lst.length !== 0) {
                     console.log("400: This meme does already exist");
                     res.status(400).send("This meme does already exist");
+                } else {
+                    onSuccess();
                 }
             }
-        });
+        })
+    }
+
+    this.calcMetadataForMeme = function (pictureSchema) {
+        const keyData =
+            pictureSchema.name
+            + pictureSchema.desc
+            + pictureSchema.img.base64
+            + pictureSchema.creator._id
+            // For users the id can be used as a user with updated data (e.g. after marriage)
+            // shall still be seen as the same person.
+            // For texts the text data is used because an update to the text results in a different meme.
+            + pictureSchema.texts.map(text =>
+                text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize).join("")
+            + pictureSchema.upVoters.map(usr => usr._id).join("")
+            + pictureSchema.downVoters.map(usr => usr._id).join("")
+            + pictureSchema.comments.map(cmt => cmt._id).join("")
+            + pictureSchema.status
+            + pictureSchema.format.width
+            + pictureSchema.format.height
+            + pictureSchema.format.pixels
+            + pictureSchema.usage;
+        return md5(keyData);
     }
 
     /**

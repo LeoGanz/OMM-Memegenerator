@@ -53,41 +53,36 @@ router.post('/', (req, res) => {
                 console.log("400: Please give lists with equal length for the texts");
                 res.status(400).send("Please give lists with equal length for the texts");
             } else {
-                if (req.body.status !== 0) {
-                    for (let i = 0; i < texts.length; i++) {
-                        const text = texts[i];
-                        const xCoordinate = xCoordinates[i];
-                        const yCoordinate = yCoordinates[i];
-                        const xSize = xSizes[i];
-                        const ySize = ySizes[i];
+                for (let i = 0; i < texts.length; i++) {
+                    const text = texts[i];
+                    const xCoordinate = xCoordinates[i];
+                    const yCoordinate = yCoordinates[i];
+                    const xSize = xSizes[i];
+                    const ySize = ySizes[i];
 
-                        const textSch = new textSchema({
-                            text: text,
-                            xCoordinate: xCoordinate,
-                            yCoordinate: yCoordinate,
-                            xSize: xSize,
-                            ySize: ySize
-                        });
-                        textSchema.create(textSch).then(_ => {
-                        }).catch(_ => {
-                            console.log("Error occurred during initialization of texts");
-                        });
-                        newTexts.push(textSch);
-                    }
+                    const textSch = new textSchema({
+                        text: text,
+                        xCoordinate: xCoordinate,
+                        yCoordinate: yCoordinate,
+                        xSize: xSize,
+                        ySize: ySize
+                    });
+                    textSchema.create(textSch).then(_ => {
+                    }).catch(_ => {
+                        console.log("Error occurred during initialization of texts");
+                    });
+                    newTexts.push(textSch);
                 }
             }
 
-            ut.checkForMemeInPictures(pictureSchema, req.body.metadata, res);
 
             // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
             const dateString = ut.giveBackDateString();
             const status = req.body.status;
-            let name = "";
-            let desc = "";
-            if (status !== 0) {
-                name = req.body.name;
-                desc = req.body.desc;
-            }
+
+            let name = req.body.name;
+            let desc = req.body.desc;
+
 
             const picture = new pictureSchema({
                 name: name,
@@ -100,7 +95,7 @@ router.post('/', (req, res) => {
                 upVoters: [],
                 downVoters: [],
                 comments: [],
-                metadata: req.body.metadata,
+                // metadata will be added afterwards
                 status: status, // 0 for a template, 1 for saved but
                 // not published, 2 for published
                 format: {
@@ -112,17 +107,21 @@ router.post('/', (req, res) => {
                 usage: 0,
             });
 
-            pictureSchema.create(picture).then(_ => {
-                console.log("img saved, status: " + String(status));
-                if (status === 2) {
-                    ut.addOneUsage(pictureSchema, req.body.image, res);
-                    res.redirect('/images');
-                } else {
-                    console.log("200: Saving complete");
-                    res.status(200).send("Saving complete");
-                }
+            picture.metadata = ut.calcMetadataForMeme(picture)
+            ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, res, () => {
+                pictureSchema.create(picture).then(_ => {
+                    console.log("img saved, status: " + String(status));
+                    if (status === 2) {
+                        ut.addOneUsage(pictureSchema, req.body.image, res);
+                        res.redirect('/images');
+                    } else {
+                        console.log("200: Saving complete");
+                        res.status(200).send("Saving complete");
+                    }
+                });
+                createUser.lastEdited.push(picture);
             });
-            createUser.lastEdited.push(picture);
+
         }
     });
 });

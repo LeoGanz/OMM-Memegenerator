@@ -6,7 +6,9 @@ const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
 
-
+// When creating a meme from a template the background image and its format will be taken from the template.
+// All texts have to be provided by the user of this api.
+// (Texts in the template will only be a guide for the user but not be brought directly to the new meme)
 router.post('/', (req, res) => {
     let result = "Your created memes you can find under the URLs:\n";
     const metadataTemplate = req.body.metadata;
@@ -19,6 +21,8 @@ router.post('/', (req, res) => {
                 console.log("400: There is no template with this metadata");
                 res.status(400).send("There is no template with this metadata");
             }
+            const template = lst[0];
+
             const texts = req.body.texts;
             for (let meme in texts) {
                 if (ut.checkForAppropriateForm(meme)) {
@@ -53,12 +57,8 @@ router.post('/', (req, res) => {
                         newTexts.push(textSch);
                     }
 
-                    //TODO Metadata-Creation?
-                    let metadata = metadataTemplate + "****"
-
-                    ut.checkForMemeInPictures(pictureSchema, metadata, res);
                     const dateString = ut.giveBackDateString();
-                    const status = 2;
+                    const status = 2; //TODO why not let the user decide if 1 or 2?
 
                     //TODO consider which user created the meme instead of API
                     userSchema.find({username: "API"}, (err, lst) => {
@@ -72,47 +72,38 @@ router.post('/', (req, res) => {
                             }
                             const userAPI = lst[0];
 
-                            pictureSchema.find({metadata: metadataTemplate}, (err, lst) => {
-                                if (err) {
-                                    console.log("503: Connection to db pictures failed; error: " + err);
-                                    res.status(503).send("Connection to db pictures failed");
-                                } else {
-                                    if (lst.length === 0) {
-                                        console.log("400: This template does not exist");
-                                        res.status(400).send("This template does not exist");
-                                    }
-                                    const usage = lst[0].usage;
-                                    pictureSchema.findOneAndUpdate({metadata: metadataTemplate}, {usage: usage + 1});
-                                    const template = lst[0].img.base64;
+                            const usage = template.usage;
+                            pictureSchema.findOneAndUpdate({metadata: metadataTemplate}, {usage: usage + 1});
+                            const backgroundImg = template.img.base64;
 
-                                    const picture = new pictureSchema({
-                                        name: name,
-                                        desc: desc,
-                                        img: {
-                                            base64: template
-                                        },
-                                        creator: userAPI,
-                                        dateOfCreation: dateString,
-                                        upVoters: [],
-                                        downVoters: [],
-                                        comments: [],
-                                        metadata: metadata,
-                                        status: status, // 0 for a template, 1 for saved but
-                                        // not published, 2 for published
-                                        format: {
-                                            width: 200,
-                                            height: 200,
-                                            pixels: 200
-                                        },
-                                        texts: newTexts,
-                                        usage: 0,
-                                    });
+                            const picture = new pictureSchema({
+                                name: name,
+                                desc: desc,
+                                img: {
+                                    base64: backgroundImg
+                                },
+                                creator: userAPI,
+                                dateOfCreation: dateString,
+                                upVoters: [],
+                                downVoters: [],
+                                comments: [],
+                                // metadata will be added afterwards
+                                status: status, // 0 for a template, 1 for saved but
+                                // not published, 2 for published
+                                format: template.format,
+                                texts: newTexts,
+                                usage: 0,
+                            });
+                            picture.metadata = ut.calcMetadataForMeme(picture)
 
-                                    pictureSchema.create(picture).then(_ => {
-                                        result = result + "localhost:3000/image?metadata=" + metadata + "\n";
-                                    });
-                                    userAPI.lastEdited.push(picture);
-                                }
+                            // It is possible that the template has been used before and
+                            // the same modifications were made.
+                            // If that is the case nothing new will be stored.
+                            ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, res, () => {
+                                pictureSchema.create(picture).then(_ => {
+                                    result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
+                                });
+                                userAPI.lastEdited.push(picture);
                             });
                         }
                     });

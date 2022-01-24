@@ -12,6 +12,8 @@ JSON-Body:
   "texts":["Hello", "World"],
   "xCoordinates":[0, 50],
   "yCoordinates":[0, 10],
+  "xSizes":[30,35],
+  "ySizes":[10,10],
   "metadata": "someMeta",
   "status": 0,
   "width": 100,

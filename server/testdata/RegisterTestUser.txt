@@ -1,0 +1,9 @@
+POST http://localhost:3000/register
+
+Body (Json):
+{
+    "username":"Tester",
+    "fullName":"DerErste",
+    "password":"insecure",
+    "email":"mail@test.de"
+}

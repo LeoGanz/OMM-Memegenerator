@@ -1,0 +1,5 @@
+GET http://localhost:3000/login
+
+No body.
+Header (key - value als magic string):
+authorization - mail@test.de insecure

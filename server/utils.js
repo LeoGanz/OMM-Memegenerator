@@ -105,20 +105,26 @@ module.exports = function () {
      * This method creates the userSchema for the API
      */
     this.userAPI = function () {
-        const API = new userSchema({
-            username: "API",
-            fullName: "The API taking in requests from the outside",
-            password: "22012022",
-            currentToken: "",
-            email: "",
-            dateOfCreation: "2022-01-22--14:01:10",
-            lastEdited: [],
-            lastComments: [],
-        });
-        userSchema.create(API).then(_ => {
-            console.log("Creation of API succeeded");
-        }).catch(_ => {
-            console.log("Creation of API failed");
+        userSchema.find({username: "API"}, (err, lst) => {
+            if (err) {
+                console.log("500: Some problem with the database occurred");
+            } else if (lst.length === 0) {
+                const API = new userSchema({
+                    username: "API",
+                    fullName: "The API taking in requests from the outside",
+                    password: "22012022",
+                    currentToken: "",
+                    email: "",
+                    dateOfCreation: "2022-01-22--14:01:10",
+                    lastEdited: [],
+                    lastComments: [],
+                });
+                userSchema.create(API).then(_ => {
+                    console.log("Creation of API succeeded");
+                }).catch(_ => {
+                    console.log("Creation of API failed");
+                });
+            }
         });
     }
 

@@ -15,6 +15,7 @@ let singleRouter = require('./routes/single');
 let profileRouter = require('./routes/profile');
 let createRouter = require('./routes/create');
 let retrieveRouter = require('./routes/retrieve');
+let statisticRouter = require('./routes/statistics');
 const utils = require("./utils");
 const ut = new utils();
 
@@ -57,6 +58,7 @@ app.use('/editor', editorRouter); //Editor
 app.use('/profile',profileRouter); //Profile overview
 app.use('/images', imgRouter); //showing images
 app.use('/image', singleRouter); // Single view of an Image
+app.use('/statistics',statisticRouter); // Showing of graphs
 
 
 app.use(indexRouter);

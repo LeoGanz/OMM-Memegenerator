@@ -113,7 +113,7 @@ router.post('/', (req, res) => {
 
                 picture.metadata = ut.calcMetadataForMeme(picture)
                 ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, () => {
-                    console.log("503: Connection to db failed; error: ");
+                    console.log("503: Connection to db failed");
                     res.status(503).send("Connection to db failed");
                 }, () => {
                     console.log("400: This meme does already exist");

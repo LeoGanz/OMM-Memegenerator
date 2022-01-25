@@ -1,0 +1,8 @@
+GET http://localhost:3000/editor
+
+Login required
+
+JSON-Body:
+{}
+
+Gives back a class with an image as ".wanted" and all the templates as ".templates"

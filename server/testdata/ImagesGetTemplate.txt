@@ -17,3 +17,5 @@ JSON-Body:
     "start":0,
     "end":4
 }
+
+Gives back a list of images which were found for this body definition

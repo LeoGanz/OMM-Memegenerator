@@ -1,4 +1,4 @@
-let createError = require('http-errors');
+
 let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
@@ -64,9 +64,9 @@ app.use(indexRouter);
 
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req, res) {
     console.log("somehow landed here");
-    next(createError(404));
+    res.status(404).send("Page not found");
 });
 
 // error handler

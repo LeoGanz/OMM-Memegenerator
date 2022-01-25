@@ -1,0 +1,29 @@
+POST http://localhost:3000/create
+
+No login needed currently
+
+JSON-Body:
+{
+    "metadata":"MetadataOfATemplate",
+    "texts":
+    [
+        [
+        "nameOfMeme1",
+        "descriptionOfMeme1",
+        ["text1OfMeme1","text2OfMeme1"],
+        ["xCoordinateOfText1","xCoordinateOfText2"],
+        ["yCoordinateOfText1", "yCoordinateOfText2"],
+        ["xSizeOfText1", "xSizeOfText2"],
+        ["ySizeOfText1", "ySizeOfText2"]
+        ],
+        [
+        "nameOfMeme2",
+        "descriptionOfMeme2",
+        ["text1OfMeme2","text2OfMeme2"],
+        ["xCoordinateOfText1","xCoordinateOfText2"],
+        ["yCoordinateOfText1", "yCoordinateOfText2"],
+        ["xSizeOfText1", "xSizeOfText2"],
+        ["ySizeOfText1", "ySizeOfText2"]
+        ]
+    ]
+}

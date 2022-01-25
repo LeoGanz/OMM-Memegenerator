@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
         if (err) {
             let email;
             let pw;
+
             let inputCredentials = req.headers.authorization;
             if (inputCredentials !== undefined) {
                 let namePW = inputCredentials.split(" ");
@@ -26,20 +27,15 @@ router.get('/', (req, res) => {
                     console.log("503: Connection to db failed");
                     res.status(503).send("Connection to db failed");
                 } else {
+                    console.log(lst);
                     if (lst.length !== 0) {
                         let tokenString = ut.createToken(email);
                         userSchema.findOneAndUpdate({
-                            email: email,
-                            password: pw
-                        }, {currentToken: tokenString}, (err) => {
-                            if (err) {
-                                console.log("401: Wrong user-credentials given");
-                                res.status(401).send("Wrong user-credentials given");
-                            } else {
-                                res.status(200).send(tokenString);
-                            }
-                        })
-
+                                email: email,
+                                password: pw
+                            }, {currentToken: tokenString}
+                        );
+                        res.status(200).send(tokenString);
                     } else {
                         console.log("401: Wrong user-credentials given");
                         res.status(401).send("Wrong user-credentials given");

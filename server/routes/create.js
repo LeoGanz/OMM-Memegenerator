@@ -98,6 +98,7 @@ router.post('/', (req, res) => {
                             });
                             picture.metadata = ut.calcMetadataForMeme(picture)
 
+
                             // It is possible that the template has been used before and
                             // the same modifications were made.
                             // If that is the case nothing new will be stored.
@@ -111,6 +112,7 @@ router.post('/', (req, res) => {
                                 , () => {
                                     pictureSchema.create(picture).then(_ => {
                                         result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
+                                        console.log("added result");
                                         //TODO: Add one usage to template
                                         userAPI.lastEdited.push(picture);
                                     }).catch(err => {

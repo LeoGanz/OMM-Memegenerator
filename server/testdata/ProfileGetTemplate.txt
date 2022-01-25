@@ -1,0 +1,10 @@
+GET http://localhost:3000/profile?token=THE-TOKEN
+
+bzw. als Query Param angeben: token - THE-TOKEN
+
+Login required
+
+JSON-body:
+{}
+
+Gives back a whole userSchema for the user with the token in the db

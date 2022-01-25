@@ -1,4 +1,6 @@
-GET http://localhost:3000/editor
+GET http://localhost:3000/editor?token=THE-TOKEN
+
+bzw. als Query Param angeben: token - THE-TOKEN
 
 Login required
 

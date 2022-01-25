@@ -1,0 +1,21 @@
+POST http://localhost:3000/images?token=THE-TOKEN
+
+bzw. als Query Param angeben: token - THE-TOKEN
+
+Login required
+
+metadata (essential): the metadata of the picture you want to handle
+
+up, down (optional): Something put here changes the up or down votes of the image given in
+metadata
+-> Defining both makes no sense as the it will automatically be voted up
+
+comment (optional): A string you want to comment under
+
+=> Only one thing can be defined out of comment, up, down
+
+JSON-Body:
+{
+    "metadata": "someMeta",
+    "comment":"this picture is great!"
+}

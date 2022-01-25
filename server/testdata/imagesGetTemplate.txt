@@ -1,0 +1,19 @@
+GET http://localhost:3000/create
+
+Login required
+sortBy: For sorting the images,
+possibilities: "up asc", "up desc", "down asc" and "down desc"
+
+filterBy (optional): For usernames to filter after
+example (optional): "Tester" from RegisterTestUser.txt
+
+start (essential): Start point of the list you get with filter and sortBy
+end (essential): end point of the list you get with filter and sortBy
+
+JSON-Body:
+{
+    "sortBy":"up asc",
+    "filterBy":"Tester",
+    "start":0,
+    "end":4
+}

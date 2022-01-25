@@ -150,12 +150,13 @@ router.post("/", (req, res) => {
             let user = lst[0];
             if (upVote !== undefined) {
                 handleUp(metadata, user, res);
-            }
-            if (downVote !== undefined) {
+            } else if (downVote !== undefined) {
                 handleDown(metadata, user, res);
-            }
-            if (comment !== undefined) {
+            } else if (comment !== undefined) {
                 handleComment(comment, metadata, user, res);
+            } else {
+                console.log("200: Nothing done");
+                ut.sendIfNotAlready(res, 200, "Nothing done");
             }
         }
     });

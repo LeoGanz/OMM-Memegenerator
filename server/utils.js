@@ -63,15 +63,18 @@ module.exports = function () {
             console.log("name or description not a string or not equal length");
             result = false;
         }
-        for (let text in texts[0]) {
+        for (let text in texts) {
             if (typeof text !== "string") {
                 console.log("texts not a string");
                 result = false;
             }
         }
-        for (let elem in data) {
-            for (let subelement in elem) {
-                console.log(subelement)
+        for (let i = 0; i < data.length; i++) {
+            const elem = data[i];
+            // console.log(elem);
+            for (let j = 0; j < elem.length; j++) {
+                const subelement = elem[j];
+                // console.log(subelement)
                 if (typeof subelement !== "number") {
                     console.log("coordinates or sizes no number");
                     result = false;
@@ -89,11 +92,16 @@ module.exports = function () {
      * @returns {boolean} true if it is the case and false if not
      */
     this.checkForEqualLength = function (texts, arrayOfArrays) {
+        // console.log(texts, arrayOfArrays);
+        // console.log(texts.length);
         if (arrayOfArrays.length !== 0) {
             let length = texts.length;
             let result = true;
-            for (let elem in arrayOfArrays) {
+            for (let i = 0; i < arrayOfArrays.length; i++) {
+                const elem = arrayOfArrays[i];
+                // console.log(elem)
                 if (elem.length !== length) {
+                    // console.log(elem.length);
                     result = false;
                 }
             }

@@ -5,7 +5,7 @@ No login needed currently, metadata of test image in editor given
 JSON-Body:
 {
     "metadata":"898aa3ed8d18da3ee8e8ec380a8b1434",
-    "texts":
+    "memes":
     [
         {
         "name":"nameOfMeme1",

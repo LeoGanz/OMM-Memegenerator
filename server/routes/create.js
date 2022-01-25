@@ -23,9 +23,10 @@ router.post('/', (req, res) => {
             }
             const template = lst[0];
 
-            const texts = req.body.texts;
-            for (let i = 0; i < texts.length; i++) {
-                const meme = texts[i];
+            const {memes} = req.body;
+            let error = false;
+            for (let i = 0; i < memes.length; i++) {
+                const meme = memes[i];
                 if (ut.checkForAppropriateForm(meme)) {
                     const name = meme.name;
                     const desc = meme.desc;
@@ -103,20 +104,25 @@ router.post('/', (req, res) => {
                             ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, res, () => {
                                 pictureSchema.create(picture).then(_ => {
                                     result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
+                                    userAPI.lastEdited.push(picture);
+                                }).catch(err => {
+                                    console.log("503: Image creation went wrong: " + err);
+                                    error = true;
                                 });
-                                userAPI.lastEdited.push(picture);
-                                console.log("200: Memes successfully created");
-                                res.status(200).send(result);
                             });
                         }
                     });
-
                 } else {
                     console.log("400: You need to give as many coordinates and sizes as texts as" +
                         " parameters 3-7 and two strings for name and description for 1 and 2");
+                    error = true;
                     res.status(400).send("400: You need to give as many coordinates and sizes as texts as" +
                         " parameters 3-7 and two strings for name and description for 1 and 2");
                 }
+            }
+            if (!error) {
+                console.log("200: Memes successfully created");
+                res.status(200).send(result);
             }
         }
     });

@@ -5,12 +5,12 @@ const userSchema = require("../models/userSchema");
 const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
+let result = "Your created memes you can find under the URLs:\n";
 
 // When creating a meme from a template the background image and its format will be taken from the template.
 // All texts have to be provided by the user of this api.
 // (Texts in the template will only be a guide for the user but not be brought directly to the new meme)
 router.post('/', (req, res) => {
-    let result = "Your created memes you can find under the URLs:\n";
     const metadataTemplate = req.body.metadata;
     pictureSchema.find({metadata: metadataTemplate, status: 0}, (err, lst) => {
         if (err) {
@@ -25,6 +25,7 @@ router.post('/', (req, res) => {
 
             const {memes} = req.body;
             let error = false;
+
             for (let i = 0; i < memes.length; i++) {
                 const meme = memes[i];
                 if (ut.checkForAppropriateForm(meme)) {
@@ -110,15 +111,14 @@ router.post('/', (req, res) => {
                                     console.log("400: Meme does already exist");
                                 }
                                 , () => {
-                                    pictureSchema.create(picture).then(_ => {
-                                        result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
-                                        console.log("added result");
-                                        //TODO: Add one usage to template
-                                        userAPI.lastEdited.push(picture);
-                                    }).catch(err => {
+                                    pictureSchema.create(picture).catch(err => {
                                         console.log("503: Image creation went wrong: " + err);
                                         error = true;
                                     });
+                                    result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
+                                    console.log("added result" + result);
+                                    //TODO: Add one usage to template
+                                    userAPI.lastEdited.push(picture);
                                 });
                         }
                     });
@@ -129,7 +129,7 @@ router.post('/', (req, res) => {
                 }
             }
             if (!error) {
-                console.log("200: Memes successfully created");
+                console.log("200: Memes successfully created; result: " + result);
                 res.status(200).send(result);
             } else {
                 res.status(500).send("Something during creation went wrong");

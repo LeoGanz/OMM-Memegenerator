@@ -58,9 +58,9 @@ module.exports = function () {
         const {yCoordinates} = memeOfCreateAPI;
         const {ySizes} = memeOfCreateAPI;
         const data = [xCoordinates, yCoordinates, xSizes, ySizes]
-        console.log(data);
+        // console.log(data);
         const equalLength = this.checkForEqualLength(texts, data);
-        console.log(equalLength);
+        // console.log(equalLength);
         if (typeof name !== "string" || typeof desc !== "string" || !equalLength) {
             console.log("name or description not a string or not equal length");
             result = false;

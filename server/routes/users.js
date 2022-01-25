@@ -8,10 +8,9 @@ const ut = new utils();
 router.get('/', function (req, res) {
     userSchema.find({}, (err, lst) => {
         if (err) {
-            console.log("500: Some problem with the database occurred");
-            ut.sendIfNotAlready(res, 500, "Some problem with the database occurred");
+            ut.respond(res, 500, "Some problem with the database occurred", err);
         } else {
-            ut.sendIfNotAlready(res, 200, lst);
+            ut.respond(res, 200, lst);
         }
     });
 });

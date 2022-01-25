@@ -20,26 +20,21 @@ router.use((req, res, next) => {
                 let pw = namePW[1];
                 userSchema.find({username: name, password: pw}, (err, lst) => {
                     if (err) {
-                        console.log("401: Wrong user-credentials given");
-                        ut.sendIfNotAlready(res,401,"Wrong user-credentials given");
+                        ut.respond(res,401,"Wrong user-credentials given");
                     } else {
                         if (lst.length === 0) {
-                            console.log("401: No authorization to do this");
-                            ut.sendIfNotAlready(res,401,"No authorization to do this");
+                            ut.respond(res,401,"No authorization to do this");
                         } else {
-                            console.log("You are logged in");
                             next();
                         }
                     }
                 });
             } else {
-                console.log("401: No authorization to do this");
-                ut.sendIfNotAlready(res, 401, "No authorization to do this");
+                ut.respond(res, 401, "No authorization to do this");
             }
         })
     } else {
-        console.log("400: You need to give a string as a token");
-        ut.sendIfNotAlready(res, 400, "You need to give a string as a token");
+        ut.respond(res, 400, "You need to give a string as a token");
     }
 });
 

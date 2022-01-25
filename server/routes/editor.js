@@ -43,66 +43,24 @@ router.post('/', (req, res) => {
                 ut.sendIfNotAlready(res, 400, "No user with this token found");
             }
             const createUser = lst[0];
-            const texts = req.body.texts ?? [];
-            const xCoordinates = req.body.xCoordinates ?? [];
-            const yCoordinates = req.body.yCoordinates ?? [];
-            const xSizes = req.body.xSizes ?? [];
-            const ySizes = req.body.ySizes ?? [];
-            let newTexts = [];
-            if (texts.length !== xCoordinates.length ||
-                texts.length !== yCoordinates.length ||
-                texts.length !== xSizes.length ||
-                texts.length !== ySizes.length) {
-                console.log("400: Please provide lists of equal length " +
-                    "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
-                ut.sendIfNotAlready(res, 400, "Please provide lists of equal length " +
-                    "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
-            } else {
-                for (let i = 0; i < texts.length; i++) {
-                    const text = texts[i];
-                    const xCoordinate = xCoordinates[i];
-                    const yCoordinate = yCoordinates[i];
-                    const xSize = xSizes[i];
-                    const ySize = ySizes[i];
-
-                    const textSch = new textSchema({
-                        text: text,
-                        xCoordinate: xCoordinate,
-                        yCoordinate: yCoordinate,
-                        xSize: xSize,
-                        ySize: ySize
-                    });
-                    textSchema.create(textSch).then(_ => {
-                    }).catch(_ => {
-                        console.log("503: Error occurred during initialization of texts");
-                        ut.sendIfNotAlready(res, 503, "Error occurred during initialization of" +
-                            " texts");
-                    });
-                    newTexts.push(textSch);
-                }
-
+            ut.processTextsInBody(req.body, res, newTexts => {
 
                 // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
-                const dateString = ut.giveBackDateString();
-                const status = req.body.status;
 
-                let name = req.body.name;
-                let desc = req.body.desc;
-
-
+                const newStatus = req.body.status;
                 const picture = new pictureSchema({
-                    name: name,
-                    desc: desc,
+                    name: req.body.name,
+                    desc: req.body.desc,
                     img: {
                         base64: req.body.image
                     },
                     creator: createUser,
-                    dateOfCreation: dateString,
+                    dateOfCreation: ut.giveBackDateString(),
                     upVoters: [],
                     downVoters: [],
                     comments: [],
                     // metadata will be added afterwards
-                    status: status, // 0 for a template, 1 for saved but
+                    status: newStatus, // 0 for a template, 1 for saved but
                     // not published, 2 for published
                     format: {
                         width: parseFloat(req.body.width),
@@ -122,8 +80,8 @@ router.post('/', (req, res) => {
                     ut.sendIfNotAlready(res, 400, "This meme does already exist");
                 }, () => {
                     pictureSchema.create(picture).then(_ => {
-                        console.log("img saved, status: " + String(status));
-                        if (status === 2) {
+                        console.log("img saved, status: " + String(newStatus));
+                        if (newStatus === 2) {
                             ut.addOneUsage(pictureSchema, req.body.image, res, () => {
                                 res.redirect('/images');
                             });
@@ -135,7 +93,7 @@ router.post('/', (req, res) => {
                     createUser.lastEdited.push(picture);
                 });
 
-            }
+            });
         }
     });
 });

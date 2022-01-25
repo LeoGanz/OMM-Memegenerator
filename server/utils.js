@@ -1,6 +1,7 @@
 const jwt = require("njwt");
 const userSchema = require("./models/userSchema");
 const md5 = require('md5');
+const textSchema = require("./models/textSchema");
 
 module.exports = function () {
 
@@ -160,6 +161,52 @@ module.exports = function () {
             + pictureSchema.format.pixels
             + pictureSchema.usage;
         return md5(keyData);
+    }
+
+
+    this.processTextsInBody = function (memeJson, res, onSuccess) {
+        let newTexts = [];
+        const texts = memeJson.texts ?? [];
+        const xCoordinates = memeJson.xCoordinates ?? [];
+        const yCoordinates = memeJson.yCoordinates ?? [];
+        const xSizes = memeJson.xSizes ?? [];
+        const ySizes = memeJson.ySizes ?? [];
+        if (texts.length !== xCoordinates.length ||
+            texts.length !== yCoordinates.length ||
+            texts.length !== xSizes.length ||
+            texts.length !== ySizes.length) {
+            console.log("400: Please provide lists of equal length " +
+                "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
+            this.sendIfNotAlready(res, 400, "Please provide lists of equal length " +
+                "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
+        } else {
+            let failureOccurred = false;
+            for (let i = 0; i < texts.length && !failureOccurred; i++) {
+                const text = texts[i];
+                const xCoordinate = xCoordinates[i];
+                const yCoordinate = yCoordinates[i];
+                const xSize = xSizes[i];
+                const ySize = ySizes[i];
+
+                const textSch = new textSchema({
+                    text: text,
+                    xCoordinate: xCoordinate,
+                    yCoordinate: yCoordinate,
+                    xSize: xSize,
+                    ySize: ySize
+                });
+                textSchema.create(textSch).then(_ => {
+                    newTexts.push(textSch);
+                }).catch(_ => {
+                    failureOccurred = true;
+                    console.log("503: Error occurred during initialization of texts");
+                    this.sendIfNotAlready(res, 503, "Error occurred during initialization of texts");
+                });
+            }
+            if (!failureOccurred) {
+                onSuccess(newTexts);
+            }
+        }
     }
 
     /**

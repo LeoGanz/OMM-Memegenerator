@@ -16,8 +16,7 @@ let userSchema = require("../models/userSchema.js");
 function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
     userSchema.find({email: email}, (err, lst) => {
         if (err) {
-            console.log("503: Connection to db failed; error: " + err);
-            ut.sendIfNotAlready(res, 503, "Connection to db failed");
+            ut.respond(res, 503, "Connection to db failed", err);
         } else {
             if (lst.length === 0) {
 
@@ -26,7 +25,7 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
 
 
                 //Main code
-                let creationDate = ut.giveBackDateString();
+                let creationDate = ut.getCurrentDateString();
                 let hashedPw = password;
                 let tokenString = ut.createToken(email);
 
@@ -46,11 +45,10 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
                 // console.log(creationDate);
                 userSchema.create(user).then(_ => {
                     console.log("registration succeeded");
-                    ut.sendIfNotAlready(res, 200, tokenString);
+                    ut.respond(res, 200, tokenString);
                 });
             } else {
-                console.log("502: this email already has an account");
-                ut.sendIfNotAlready(res, 502, "This email already has an account");
+                ut.respond(res, 502, "This email already has an account");
             }
         }
     });
@@ -62,8 +60,7 @@ router.post("/", (req, res) => {
     jwt.verify(token, "top-secret", (err) => {
             if (err) {
                 if (req.headers.authorization !== undefined) {
-                    console.log("502: you already have an account");
-                    ut.sendIfNotAlready(res, 502, "You already have an account");
+                    ut.respond(res, 502, "You already have an account");
                 } else {
                     let username = req.body.username;
                     let fullName = req.body.fullName;
@@ -72,36 +69,28 @@ router.post("/", (req, res) => {
 
                     userSchema.find({username: username}, (err, lst) => {
                         if (err) {
-                            console.log("503: Connection to db failed; error: " + err);
-                            ut.sendIfNotAlready(res, 503, "Connection to db failed");
+                            ut.respond(res, 503, "Connection to db failed", err);
                         } else {
                             if (lst.length === 0) {
                                 userSchema.find({fullName: fullName}, (err, lst) => {
                                     if (err) {
-                                        console.log("503: Connection to db failed; error: " + err);
-                                        ut.sendIfNotAlready(res, 503, "Connection to db" +
-                                            " failed");
+                                        ut.respond(res, 503, "Connection to db failed", err);
                                     } else {
                                         if (lst.length === 0) {
                                             addUserIfEmailDoesNotExist(email, password, username, fullName, res);
                                         } else {
-                                            console.log("502: you already have an account");
-                                            ut.sendIfNotAlready(res, 502, "You already have" +
-                                                " an" +
-                                                " account");
+                                            ut.respond(res, 502, "You already have an account");
                                         }
                                     }
                                 });
                             } else {
-                                console.log("502: username already exists");
-                                ut.sendIfNotAlready(res, 502, "username already exists");
+                                ut.respond(res, 502, "username already exists");
                             }
                         }
                     });
                 }
             } else {
-                console.log("503: No logged-in user can register a user");
-                ut.sendIfNotAlready(res, 503, "No logged-in user can register a user");
+                ut.respond(res, 503, "No logged-in user can register a user");
             }
         }
     )

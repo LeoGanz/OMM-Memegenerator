@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const pictureSchema = require("../models/pictureSchema");
 const commentSchema = require("../models/commentSchema");
-const utils = require("../utils");
 const userSchema = require("../models/userSchema");
+const utils = require("../utils");
 const ut = new utils();
 // const multer = require('multer');
 // const path = require("path");
@@ -29,24 +29,20 @@ const ut = new utils();
 function handleUp(metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
-            console.log("503: Connection to db picture failed");
-            ut.sendIfNotAlready(res, 503, "Connection to db picture failed");
+            ut.respond(res, 503, "Connection to db picture failed");
         } else {
             if (lst.length === 0) {
-                console.log("400: No picture with this metadata found");
-                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
+                ut.respond(res, 400, "No picture with this metadata found");
             }
             let pict = lst[0];
             let upVoters = pict.upVoters;
             if (user in upVoters) {
-                console.log("400: You have already up voted this");
-                ut.sendIfNotAlready(res, 400, "You have already up voted this");
+                ut.respond(res, 400, "You have already up voted this");
             }
             pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
             pict.upVoters.push(user);
 
-            console.log("200: Picture update succeeded");
-            ut.sendIfNotAlready(res, 200, "Picture update succeeded");
+            ut.respond(res, 200, "Picture update succeeded");
         }
     });
 }
@@ -60,24 +56,20 @@ function handleUp(metadata, user, res) {
 function handleDown(metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
-            console.log("503: Connection to db picture failed");
-            ut.sendIfNotAlready(res, 503, "Connection to db picture failed");
+            ut.respond(res, 503, "Connection to db picture failed");
         } else {
             if (lst.length === 0) {
-                console.log("400: No picture with this metadata found");
-                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
+                ut.respond(res, 400, "No picture with this metadata found");
             }
             let pict = lst[0];
             let downVoters = pict.downVoters;
             if (user in downVoters) {
-                console.log("400: You have already down voted this");
-                ut.sendIfNotAlready(res, 400, "You have already down voted this");
+                ut.respond(res, 400, "You have already down voted this");
             }
             pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
             pict.downVoters.push(user);
 
-            console.log("200: Picture downdate succeeded");
-            ut.sendIfNotAlready(res, 200, "Picture downdate succeeded");
+            ut.respond(res, 200, "Picture downdate succeeded");
         }
     });
 }
@@ -90,7 +82,7 @@ function handleDown(metadata, user, res) {
  * @param res The result to give back
  */
 function handleComment(comment, metadata, user, res) {
-    const currentDate = ut.giveBackDateString();
+    const currentDate = ut.getCurrentDateString();
     const comm = {
         dateOfCreation: currentDate,
         creator: user,
@@ -98,33 +90,27 @@ function handleComment(comment, metadata, user, res) {
     };
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
-            console.log("503: Connection to db picture failed");
-            ut.sendIfNotAlready(res, 503, "Connection to db picture failed");
+            ut.respond(res, 503, "Connection to db picture failed");
         } else {
             if (lst.length === 0) {
-                console.log("400: No picture with this metadata found");
-                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
+                ut.respond(res, 400, "No picture with this metadata found");
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
-                console.log("503: Connection to db comment failed");
-                ut.sendIfNotAlready(res, 503, "Connection to db comment failed");
+                ut.respond(res, 503, "Connection to db comment failed");
 
                 commentSchema.find({comment: comment, creator: user}, (err, lst) => {
                     if (err) {
-                        console.log("503: Connection to db comment failed");
-                        ut.sendIfNotAlready(res, 503, "Connection to db comment failed");
+                        ut.respond(res, 503, "Connection to db comment failed");
                     } else {
                         if (lst.length === 0) {
-                            console.log("400: No comment with this user and string found");
-                            ut.sendIfNotAlready(res, 400, "No comment with this user and string" +
+                            ut.respond(res, 400, "No comment with this user and string" +
                                 " found");
                         }
                         let toPush = lst[0]
                         pict.comments.push(toPush);
                         user.lastComments.push(toPush);
-                        console.log("200: Picture comment add succeeded");
-                        ut.sendIfNotAlready(res, 200, "Picture comment add succeeded");
+                        ut.respond(res, 200, "Picture comment add succeeded");
                     }
                 });
             });
@@ -140,12 +126,10 @@ router.post("/", (req, res) => {
     let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
-            console.log("503: Connection to db user failed");
-            ut.sendIfNotAlready(res, 503, "Connection to db user failed");
+            ut.respond(res, 503, "Connection to db user failed");
         } else {
             if (lst.length === 0) {
-                console.log("400: No user with this token found");
-                ut.sendIfNotAlready(res, 400, "No user with this token found");
+                ut.respond(res, 400, "No user with this token found");
             }
             let user = lst[0];
             if (upVote !== undefined) {
@@ -169,7 +153,7 @@ router.get("/", (req, res) => {
     pictureSchema.find({}, (err, items) => {
         if (err) {
             console.log(err);
-            ut.sendIfNotAlready(res, 500, 'No images findable' + err);
+            ut.respond(res, 500, 'No images findable' + err);
         } else {
             if (filterBy) {
                 items = items.filter(item => {
@@ -222,13 +206,10 @@ router.get("/", (req, res) => {
             }
             if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
                 items = items.slice(start, end);
-                ut.sendIfNotAlready(res, 200, null);
+                ut.respond(res, 200, null);
                 res.send(items);
             } else {
-                console.log("400: You have to give a number as start and a number as end," +
-                    " which part of the items you want");
-                ut.sendIfNotAlready(res, 400, "You have to give a number as start and a number as" +
-                    " end," +
+                ut.respond(res, 400, "You have to give a number as start and a number as end," +
                     " which part of the items you want");
             }
         }

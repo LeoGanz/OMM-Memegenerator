@@ -15,13 +15,11 @@ router.get('/', (req, res) => {
 
     textSchema.find({}, (err, lst) => {
         if (err) {
-            console.log("503: Connection to db texts failed");
-            ut.sendIfNotAlready(res, 503, "Connection to db texts failed");
+            ut.respond(res, 503, "Connection to db texts failed", err);
         } else {
             let possibleTexts = [];
             if (lst.length === 0 && text !== undefined) {
-                console.log("200: No meme-texts found");
-                ut.sendIfNotAlready(res, 200, "No meme-texts found");
+                ut.respond(res, 200, "No meme-texts found");
             } else {
                 if (lst.length !== 0) {
                     possibleTexts = lst.filter((elem) => {
@@ -33,19 +31,16 @@ router.get('/', (req, res) => {
             }
             userSchema.find({}, (err, lst) => {
                 if (err) {
-                    console.log("503: Connection to db users failed");
-                    ut.sendIfNotAlready(res, 503, "Connection to db users failed");
+                    ut.respond(res, 503, "Connection to db users failed", err);
                 } else {
                     if (lst.length === 0) {
-                        console.log("200: No users found");
-                        ut.sendIfNotAlready(res, 200, "No users found");
+                        ut.respond(res, 200, "No users found");
                     } else {
                         let possibleUsers = lst.filter((elem) => {
                             return elem.username === creatorName;
                         });
                         if (possibleUsers.length === 0 && creatorName !== undefined) {
-                            console.log("400: No user with this name found");
-                            ut.sendIfNotAlready(res, 400, "No user with this name found");
+                            ut.respond(res, 400, "No user with this name found");
                         }
                         let creator = "";
                         if (possibleUsers.length !== 0) {
@@ -53,13 +48,10 @@ router.get('/', (req, res) => {
                         }
                         pictureSchema.find({}, (err, lst) => {
                             if (err) {
-                                console.log("503: Connection to db pictures failed");
-                                ut.sendIfNotAlready(res, 503, "Connection to db pictures" +
-                                    " failed");
+                                ut.respond(res, 503, "Connection to db pictures failed", err);
                             } else {
                                 if (lst.length === 0) {
-                                    console.log("200: No pictures in the db");
-                                    ut.sendIfNotAlready(res, 200, "No pictures in the db");
+                                    ut.respond(res, 200, "No pictures in the db");
                                 } else {
                                     let possiblePictures = lst.filter((elem) => {
                                         if (creationDate === undefined) {
@@ -76,10 +68,7 @@ router.get('/', (req, res) => {
                                             && [...new Set([...possibleTexts, ...elem.texts])] === possibleTexts);
                                     });
                                     if (possiblePictures.length === 0) {
-                                        console.log("200: No memes with these parameters found");
-                                        ut.sendIfNotAlready(res, 200, "No memes with these" +
-                                            " parameters" +
-                                            " found");
+                                        ut.respond(res, 200, "No memes with these parameters found");
                                     } else {
                                         let slicedList;
                                         if (numberOfMemes !== undefined) {
@@ -90,8 +79,8 @@ router.get('/', (req, res) => {
                                         for (let meme in slicedList) {
                                             result = result + "localhost:3000/image?metadata=" + meme.metadata + "\n";
                                         }
-                                        console.log("200: Certain memes for retrieval found");
-                                        ut.sendIfNotAlready(res, 200, result);
+                                        console.log("Certain memes for retrieval found:");
+                                        ut.respond(res, 200, result);
                                     }
                                 }
                             }

@@ -1,144 +1,74 @@
 const jwt = require("njwt");
-const userSchema = require("./models/userSchema");
 const md5 = require('md5');
-const textSchema = require("./models/textSchema");
+const userSchema = require("./models/userSchema");
 
 module.exports = function () {
+
+    this.getDomain = function () {
+        return "localhost:3000"
+    };
 
     /**
      * Gives back a date string that gives date and time back
      * @returns {string} date concatenated with times
      */
-    this.giveBackDateString = function () {
+    this.getCurrentDateString = function () {
         const today = new Date();
         return today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
             + '--' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     }
 
     /**
-     * This function adds on usage to a template
+     * This method sends a response to the client containing the specified http code and message if the response is
+     * still open. Responses are logged to console.
+     *
+     * @param res the http response object
+     * @param code the http status code
+     * @param message the message to send
+     * @param additionalInfo optional additional info for errors. This will only be logged to console but not sent to
+     * the client
      */
-    this.addOneUsage = function (schema, base, res, onSuccess) {
-        schema.find({status: 0}, (err, lst) => {
-            if (err) {
-                console.log("503: Connection to db pictures failed; error: " + err);
-                this.sendIfNotAlready(res, 503, "Connection to db pictures failed");
-            } else {
-                if (lst.length === 0) {
-                    console.log("400: No template does exist");
-                    this.sendIfNotAlready(res, 400, "No template does exist");
-                }
-                const foundTemplates = lst.filter((elem) => {
-                    return elem.img.base64 === base;
-                });
-                if (foundTemplates.length === 0) {
-                    console.log("400: This template does not exist");
-                    this.sendIfNotAlready(res, 400, "This template does not exist");
-                } else {
-                    let template = foundTemplates[0];
-                    template.usage = template.usage + 1;
-                    onSuccess();
-                }
-            }
-        });
+    this.respond = function (res, code, message, additionalInfo) {
+        let logEntry = code + ": " + message;
+        if (additionalInfo !== undefined) {
+            logEntry += "; Additional info: " + additionalInfo;
+        }
+        if (!res.headersSent) {
+            console.log(logEntry);
+            res.status(code).send(message);
+        } else {
+            console.log("Tried to respond, but response was already sent. Message was:\n" + logEntry)
+        }
     }
 
     /**
-     * Diese Methode schickt ein result mit einem code und einer Message, wenn noch nichts im
-     * selben Zug gesendet wurde
-     * @param res das result
-     * @param code der statuscode
-     * @param message die zu schickende Nachricht
+     * Same functionality as respond but without logging.
      */
-    this.sendIfNotAlready = function (res, code, message) {
+    this.respondSilently = function (res, code, message) {
         if (!res.headersSent) {
             res.status(code).send(message);
         }
     }
 
     /**
-     * This method checks if the given meme-array from the API is well-formed
-     * @param memeOfCreateAPI the meme-array
-     * @returns {boolean} true if well-formed and false if not
+     * This method checks if every array in an array of arrays has the same length
+     * @param arrayOfArrays the array of arrays to check
+     * @returns {boolean} true if all elements are arrays and have the same length, false otherwise
      */
-    this.checkForAppropriateForm = function (memeOfCreateAPI) {
-        let result = true;
-        // console.log(memeOfCreateAPI);
-        const name = memeOfCreateAPI.name;
-        const desc = memeOfCreateAPI.desc;
-        const texts = memeOfCreateAPI.texts;
-        const {xCoordinates} = memeOfCreateAPI;
-        const {xSizes} = memeOfCreateAPI;
-        const {yCoordinates} = memeOfCreateAPI;
-        const {ySizes} = memeOfCreateAPI;
-        const data = [xCoordinates, yCoordinates, xSizes, ySizes]
-        // console.log(data);
-        const equalLength = this.checkForEqualLength(texts, data);
-        // console.log(equalLength);
-        if (typeof name !== "string" || typeof desc !== "string" || !equalLength) {
-            console.log("name or description not a string or not equal length");
-            result = false;
+    this.checkForEqualLength = function (arrayOfArrays) {
+        if (!Array.isArray(arrayOfArrays)) {
+            return false;
         }
-        for (let text in texts) {
-            if (typeof text !== "string") {
-                console.log("texts not a string");
-                result = false;
-            }
-        }
-        for (let i = 0; i < data.length; i++) {
-            const elem = data[i];
-            // console.log(elem);
-            for (let j = 0; j < elem.length; j++) {
-                const subelement = elem[j];
-                // console.log(subelement)
-                if (typeof subelement !== "number") {
-                    console.log("coordinates or sizes no number");
-                    result = false;
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * This method checks if every array in an array of arrays has the same length as the one of
-     * the text array
-     * @param texts a text array which should also have equal length
-     * @param arrayOfArrays the given array of arrays
-     * @returns {boolean} true if it is the case and false if not
-     */
-    this.checkForEqualLength = function (texts, arrayOfArrays) {
-        // console.log(texts, arrayOfArrays);
-        // console.log(texts.length);
-        if (arrayOfArrays.length !== 0) {
-            let length = texts.length;
-            let result = true;
-            for (let i = 0; i < arrayOfArrays.length; i++) {
-                const elem = arrayOfArrays[i];
-                // console.log(elem)
-                if (elem.length !== length) {
-                    // console.log(elem.length);
-                    result = false;
-                }
-            }
-            return result;
-        } else {
+        if (arrayOfArrays.length === 0) {
             return true;
         }
-    }
-
-    this.canNewMemeBeStoredInDb = function (schema, metadata, onConnectionFailure, onFoundFailure, onSuccess) {
-        schema.find({metadata: metadata}, (err, lst) => {
-            if (err) {
-                onConnectionFailure();
-            } else {
-                if (lst.length !== 0) {
-                    onFoundFailure();
-                } else {
-                    onSuccess();
-                }
+        let length = arrayOfArrays[0].length;
+        for (const subarray of arrayOfArrays) {
+            if (!Array.isArray(subarray) || subarray.length !== length) {
+                return false;
             }
-        })
+        }
+        return true;
     }
 
     this.calcMetadataForMeme = function (pictureSchema) {
@@ -163,51 +93,6 @@ module.exports = function () {
         return md5(keyData);
     }
 
-
-    this.processTextsInBody = function (memeJson, res, onSuccess) {
-        let newTexts = [];
-        const texts = memeJson.texts ?? [];
-        const xCoordinates = memeJson.xCoordinates ?? [];
-        const yCoordinates = memeJson.yCoordinates ?? [];
-        const xSizes = memeJson.xSizes ?? [];
-        const ySizes = memeJson.ySizes ?? [];
-        if (texts.length !== xCoordinates.length ||
-            texts.length !== yCoordinates.length ||
-            texts.length !== xSizes.length ||
-            texts.length !== ySizes.length) {
-            console.log("400: Please provide lists of equal length " +
-                "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
-            this.sendIfNotAlready(res, 400, "Please provide lists of equal length " +
-                "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
-        } else {
-            let failureOccurred = false;
-            for (let i = 0; i < texts.length && !failureOccurred; i++) {
-                const text = texts[i];
-                const xCoordinate = xCoordinates[i];
-                const yCoordinate = yCoordinates[i];
-                const xSize = xSizes[i];
-                const ySize = ySizes[i];
-
-                const textSch = new textSchema({
-                    text: text,
-                    xCoordinate: xCoordinate,
-                    yCoordinate: yCoordinate,
-                    xSize: xSize,
-                    ySize: ySize
-                });
-                textSchema.create(textSch).then(_ => {
-                    newTexts.push(textSch);
-                }).catch(_ => {
-                    failureOccurred = true;
-                    console.log("503: Error occurred during initialization of texts");
-                    this.sendIfNotAlready(res, 503, "Error occurred during initialization of texts");
-                });
-            }
-            if (!failureOccurred) {
-                onSuccess(newTexts);
-            }
-        }
-    }
 
     /**
      * This method creates the userSchema for the API

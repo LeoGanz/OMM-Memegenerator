@@ -24,15 +24,16 @@ router.post('/', (req, res) => {
             const template = lst[0];
 
             const texts = req.body.texts;
-            for (let meme in texts) {
+            for (let i = 0; i < texts.length; i++) {
+                const meme = texts[i];
                 if (ut.checkForAppropriateForm(meme)) {
-                    const name = meme[0];
-                    const desc = meme[1];
-                    const lines = meme[2];
-                    const xCoordinates = meme[3];
-                    const yCoordinates = meme[4];
-                    const xSizes = meme[5];
-                    const ySizes = meme[6];
+                    const name = meme.name;
+                    const desc = meme.desc;
+                    const lines = meme.texts;
+                    const {xCoordinates} = meme;
+                    const {yCoordinates} = meme;
+                    const {xSizes} = meme;
+                    const {ySizes} = meme;
 
                     let newTexts = [];
                     for (let i = 0; i < lines.length; i++) {
@@ -104,9 +105,12 @@ router.post('/', (req, res) => {
                                     result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
                                 });
                                 userAPI.lastEdited.push(picture);
+                                console.log("200: Memes successfully created");
+                                res.status(200).send(result);
                             });
                         }
                     });
+
                 } else {
                     console.log("400: You need to give as many coordinates and sizes as texts as" +
                         " parameters 3-7 and two strings for name and description for 1 and 2");
@@ -114,8 +118,6 @@ router.post('/', (req, res) => {
                         " parameters 3-7 and two strings for name and description for 1 and 2");
                 }
             }
-            console.log("200: Memes successfully created");
-            res.status(200).send(result);
         }
     });
 

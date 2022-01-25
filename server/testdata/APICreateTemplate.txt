@@ -1,29 +1,29 @@
 POST http://localhost:3000/create
 
-No login needed currently
+No login needed currently, metadata of test image in editor given
 
 JSON-Body:
 {
-    "metadata":"MetadataOfATemplate",
+    "metadata":"898aa3ed8d18da3ee8e8ec380a8b1434",
     "texts":
     [
-        [
-        "nameOfMeme1",
-        "descriptionOfMeme1",
-        ["text1OfMeme1","text2OfMeme1"],
-        ["xCoordinateOfText1","xCoordinateOfText2"],
-        ["yCoordinateOfText1", "yCoordinateOfText2"],
-        ["xSizeOfText1", "xSizeOfText2"],
-        ["ySizeOfText1", "ySizeOfText2"]
-        ],
-        [
-        "nameOfMeme2",
-        "descriptionOfMeme2",
-        ["text1OfMeme2","text2OfMeme2"],
-        ["xCoordinateOfText1","xCoordinateOfText2"],
-        ["yCoordinateOfText1", "yCoordinateOfText2"],
-        ["xSizeOfText1", "xSizeOfText2"],
-        ["ySizeOfText1", "ySizeOfText2"]
-        ]
+        {
+        "name":"nameOfMeme1",
+        "desc":"descriptionOfMeme1",
+        "texts":["text1OfMeme1","text2OfMeme1"],
+        "xCoordinates":[111, 222],
+        "yCoordinates":[111, 222],
+        "xSizes":[1, 2],
+        "ySizes":[1, 2]
+        },
+        {
+        "name":"nameOfMeme2",
+        "desc":"descriptionOfMeme2",
+        "texts":["text1OfMeme2","text2OfMeme2"],
+        "xCoordinates":[333, 444],
+        "yCoordinates":[333, 444],
+        "xSizes":[3, 4],
+        "ySizes":[3, 4]
+        }
     ]
 }

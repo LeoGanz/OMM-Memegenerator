@@ -47,20 +47,33 @@ module.exports = function () {
      */
     this.checkForAppropriateForm = function (memeOfCreateAPI) {
         let result = true;
-        const name = memeOfCreateAPI[0];
-        const desc = memeOfCreateAPI[1];
-        const data = memeOfCreateAPI.slice(2);
-        if (typeof name !== "string" || typeof desc !== "string" || !this.checkForEqualLength(data)) {
+        // console.log(memeOfCreateAPI);
+        const name = memeOfCreateAPI.name;
+        const desc = memeOfCreateAPI.desc;
+        const texts = memeOfCreateAPI.texts;
+        const {xCoordinates} = memeOfCreateAPI;
+        const {xSizes} = memeOfCreateAPI;
+        const {yCoordinates} = memeOfCreateAPI;
+        const {ySizes} = memeOfCreateAPI;
+        const data = [xCoordinates, yCoordinates, xSizes, ySizes]
+        console.log(data);
+        const equalLength = this.checkForEqualLength(texts, data);
+        console.log(equalLength);
+        if (typeof name !== "string" || typeof desc !== "string" || !equalLength) {
+            console.log("name or description not a string or not equal length");
             result = false;
         }
-        for (let text in data[0]) {
+        for (let text in texts[0]) {
             if (typeof text !== "string") {
+                console.log("texts not a string");
                 result = false;
             }
         }
-        for (let elem in data.slice(1)) {
+        for (let elem in data) {
             for (let subelement in elem) {
+                console.log(subelement)
                 if (typeof subelement !== "number") {
+                    console.log("coordinates or sizes no number");
                     result = false;
                 }
             }
@@ -69,13 +82,15 @@ module.exports = function () {
     }
 
     /**
-     * This method checks if every array in an array of arrays has the same length
+     * This method checks if every array in an array of arrays has the same length as the one of
+     * the text array
+     * @param texts a text array which should also have equal length
      * @param arrayOfArrays the given array of arrays
      * @returns {boolean} true if it is the case and false if not
      */
-    this.checkForEqualLength = function (arrayOfArrays) {
+    this.checkForEqualLength = function (texts, arrayOfArrays) {
         if (arrayOfArrays.length !== 0) {
-            let length = arrayOfArrays[0].length;
+            let length = texts.length;
             let result = true;
             for (let elem in arrayOfArrays) {
                 if (elem.length !== length) {

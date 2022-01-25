@@ -43,15 +43,20 @@ router.post('/', (req, res) => {
                 res.status(400).send("No user with this token found");
             }
             const createUser = lst[0];
-            const texts = req.body.texts;
-            const {xCoordinates} = req.body;
-            const {yCoordinates} = req.body;
-            const {xSizes} = req.body;
-            const {ySizes} = req.body;
+            const texts = req.body.texts ?? [];
+            const xCoordinates = req.body.xCoordinates ?? [];
+            const yCoordinates = req.body.yCoordinates ?? [];
+            const xSizes = req.body.xSizes ?? [];
+            const ySizes = req.body.ySizes ?? [];
             let newTexts = [];
-            if (texts.length !== xCoordinates.length || texts.length !== yCoordinates.length || yCoordinates.length !== xCoordinates.length) {
-                console.log("400: Please give lists with equal length for the texts");
-                res.status(400).send("Please give lists with equal length for the texts");
+            if (texts.length !== xCoordinates.length ||
+                texts.length !== yCoordinates.length ||
+                texts.length !== xSizes.length ||
+                texts.length !== ySizes.length) {
+                console.log("400: Please provide lists of equal length " +
+                    "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
+                res.status(400).send("Please provide lists of equal length " +
+                    "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
             } else {
                 for (let i = 0; i < texts.length; i++) {
                     const text = texts[i];
@@ -73,39 +78,38 @@ router.post('/', (req, res) => {
                     });
                     newTexts.push(textSch);
                 }
-            }
 
 
-            // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
-            const dateString = ut.giveBackDateString();
-            const status = req.body.status;
+                // const uploads_dir = path.join(preDir + '/uploads/' + req.file.fileName);
+                const dateString = ut.giveBackDateString();
+                const status = req.body.status;
 
-            let name = req.body.name;
-            let desc = req.body.desc;
+                let name = req.body.name;
+                let desc = req.body.desc;
 
 
-            const picture = new pictureSchema({
-                name: name,
-                desc: desc,
-                img: {
-                    base64: req.body.image
-                },
-                creator: createUser,
-                dateOfCreation: dateString,
-                upVoters: [],
-                downVoters: [],
-                comments: [],
-                // metadata will be added afterwards
-                status: status, // 0 for a template, 1 for saved but
-                // not published, 2 for published
-                format: {
-                    width: parseFloat(req.body.width),
-                    height: parseFloat(req.body.height),
-                    pixels: parseFloat(req.body.pixels)
-                },
-                texts: newTexts,
-                usage: 0,
-            });
+                const picture = new pictureSchema({
+                    name: name,
+                    desc: desc,
+                    img: {
+                        base64: req.body.image
+                    },
+                    creator: createUser,
+                    dateOfCreation: dateString,
+                    upVoters: [],
+                    downVoters: [],
+                    comments: [],
+                    // metadata will be added afterwards
+                    status: status, // 0 for a template, 1 for saved but
+                    // not published, 2 for published
+                    format: {
+                        width: parseFloat(req.body.width),
+                        height: parseFloat(req.body.height),
+                        pixels: parseFloat(req.body.pixels)
+                    },
+                    texts: newTexts,
+                    usage: 0,
+                });
 
             picture.metadata = ut.calcMetadataForMeme(picture)
             ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, () => {
@@ -129,7 +133,7 @@ router.post('/', (req, res) => {
                 createUser.lastEdited.push(picture);
             });
 
-        }
+        }}
     });
 });
 

@@ -1,0 +1,12 @@
+GET http://localhost:3000/image?token=THE-TOKEN&metadata=someMeta
+
+bzw. als Query Param angeben: token - THE-TOKEN
+bzw. als Query Param angeben: metadata des Bildes, was man in der Single View sehen will
+-> hier das Beispiel aus EditorCreateTemplate genommen
+
+Login required
+
+JSON-Body:
+{}
+
+Gives back a whole pictureSchema of the image with the metadata given in the query

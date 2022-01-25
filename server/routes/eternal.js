@@ -10,6 +10,7 @@ router.use((req, res, next) => {
     // console.log(typeof token === "string");
     if (typeof token === "string") {
         const credentials = req.headers.authorization;
+
         jwt.verify(token, "top-secret", (err) => {
             if (!err) {
                 next();

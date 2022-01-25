@@ -1,0 +1,15 @@
+GET http://localhost:3000/single?token=THE-TOKEN
+
+bzw. als Query Param angeben: token - THE-TOKEN
+
+Login required
+
+JSON-body:
+{}
+
+Gives back a class with ".pictures" as an array of string-metadatas from single memes
+".upVotes" as an array of number of upvotes
+".downVotes" as an array of number of downvotes
+
+The data is structered like in matplotlib so every element belongs to the element with the same
+index in the other arrays

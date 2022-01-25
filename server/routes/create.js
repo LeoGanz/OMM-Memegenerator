@@ -54,7 +54,7 @@ router.post('/', (req, res) => {
                         textSchema.create(textSch).then(_ => {
                         }).catch(_ => {
                             console.log("503: Error occurred during initialization of texts");
-                            res.status(503).send("Error occurred during initialization of texts");
+                            error = true;
                         });
                         newTexts.push(textSch);
                     }
@@ -66,11 +66,11 @@ router.post('/', (req, res) => {
                     userSchema.find({username: "API"}, (err, lst) => {
                         if (err) {
                             console.log("503: Connection to db users failed");
-                            res.status(503).send("Connection to db users failed");
+                            error = true;
                         } else {
                             if (lst.length === 0) {
                                 console.log("400: No API user found");
-                                res.status(400).send("No API user found");
+                                error = true;
                             }
                             const userAPI = lst[0];
 
@@ -101,28 +101,36 @@ router.post('/', (req, res) => {
                             // It is possible that the template has been used before and
                             // the same modifications were made.
                             // If that is the case nothing new will be stored.
-                            ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, res, () => {
-                                pictureSchema.create(picture).then(_ => {
-                                    result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
-                                    userAPI.lastEdited.push(picture);
-                                }).catch(err => {
-                                    console.log("503: Image creation went wrong: " + err);
+                            ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, () => {
                                     error = true;
+                                    console.log("503: Connection to db pictures failed");
+                                }, () => {
+                                    error = true;
+                                    console.log("400: Meme does already exist");
+                                }
+                                , () => {
+                                    pictureSchema.create(picture).then(_ => {
+                                        result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
+                                        //TODO: Add one usage to template
+                                        userAPI.lastEdited.push(picture);
+                                    }).catch(err => {
+                                        console.log("503: Image creation went wrong: " + err);
+                                        error = true;
+                                    });
                                 });
-                            });
                         }
                     });
                 } else {
                     console.log("400: You need to give as many coordinates and sizes as texts as" +
                         " parameters 3-7 and two strings for name and description for 1 and 2");
                     error = true;
-                    res.status(400).send("400: You need to give as many coordinates and sizes as texts as" +
-                        " parameters 3-7 and two strings for name and description for 1 and 2");
                 }
             }
             if (!error) {
                 console.log("200: Memes successfully created");
                 res.status(200).send(result);
+            } else {
+                res.status(500).send("Something during creation went wrong");
             }
         }
     });

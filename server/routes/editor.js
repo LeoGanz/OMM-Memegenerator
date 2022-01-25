@@ -108,12 +108,19 @@ router.post('/', (req, res) => {
             });
 
             picture.metadata = ut.calcMetadataForMeme(picture)
-            ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, res, () => {
+            ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, () => {
+                console.log("503: Connection to db failed; error: " + err);
+                res.status(503).send("Connection to db failed");
+            }, () => {
+                console.log("400: This meme does already exist");
+                res.status(400).send("This meme does already exist");
+            }, () => {
                 pictureSchema.create(picture).then(_ => {
                     console.log("img saved, status: " + String(status));
                     if (status === 2) {
-                        ut.addOneUsage(pictureSchema, req.body.image, res);
-                        res.redirect('/images');
+                        ut.addOneUsage(pictureSchema, req.body.image, res, ()=>{
+                            res.redirect('/images');
+                        });
                     } else {
                         console.log("200: Saving complete");
                         res.status(200).send("Saving complete");

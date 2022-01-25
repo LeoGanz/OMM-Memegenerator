@@ -6,12 +6,6 @@ const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
 
-function sendIfNotAlready(res, code, message) {
-    if (!res.headersSent) {
-        res.status(code).send(message);
-    }
-}
-
 // When creating a meme from a template the background image and its format will be taken from the template.
 // All texts have to be provided by the user of this api.
 // (Texts in the template will only be a guide for the user but not be brought directly to the new meme)
@@ -20,11 +14,11 @@ router.post('/', (req, res) => {
     pictureSchema.find({metadata: metadataTemplate, status: 0}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db pictures failed");
-            sendIfNotAlready(res, 503, "Connection to db pictures failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db pictures failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: There is no template with this metadata");
-                sendIfNotAlready(res, 400, "There is no template with this metadata")
+                ut.sendIfNotAlready(res, 400, "There is no template with this metadata")
             }
             const template = lst[0];
             const {memes} = req.body;
@@ -58,7 +52,8 @@ router.post('/', (req, res) => {
                         textSchema.create(textSch).then(_ => {
                         }).catch(_ => {
                             console.log("503: Error occurred during initialization of texts");
-                            sendIfNotAlready(res, 503, "Error occurred during initialization of" +
+                            ut.sendIfNotAlready(res, 503, "Error occurred during initialization" +
+                                " of" +
                                 " texts");
                         });
                         newTexts.push(textSch);
@@ -71,11 +66,11 @@ router.post('/', (req, res) => {
                     userSchema.find({username: "API"}, (err, lst) => {
                         if (err) {
                             console.log("503: Connection to db users failed");
-                            sendIfNotAlready(res, 503, "Connection to db users failed");
+                            ut.sendIfNotAlready(res, 503, "Connection to db users failed");
                         } else {
                             if (lst.length === 0) {
                                 console.log("400: No API user found");
-                                sendIfNotAlready(res, 400, "No API user found");
+                                ut.sendIfNotAlready(res, 400, "No API user found");
                             }
                             const userAPI = lst[0];
 
@@ -108,25 +103,27 @@ router.post('/', (req, res) => {
                             // the same modifications were made.
                             // If that is the case nothing new will be stored.
                             ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, () => {
-                                    sendIfNotAlready(res, 503, "Connection to db pictures failed");
+                                    ut.sendIfNotAlready(res, 503, "Connection to db pictures" +
+                                        " failed");
                                     console.log("503: Connection to db pictures failed");
                                 }, () => {
-                                    sendIfNotAlready(res, 400, "Meme does already exist");
+                                    ut.sendIfNotAlready(res, 400, "Meme does already exist");
                                     console.log("400: Meme does already exist");
                                 }
                                 , () => {
                                     pictureSchema.create(picture).catch(err => {
                                         console.log("503: Image creation went wrong: " + err);
-                                        sendIfNotAlready(res, 503, "Image creation went wrong:  +" +
+                                        ut.sendIfNotAlready(res, 503, "Image creation went wrong:" +
+                                            "  +" +
                                             err);
                                     });
                                     result = result + "localhost:3000/image?metadata=" + picture.metadata + "\n";
                                     console.log("added result" + result);
                                     if (i === memes.length - 1) {
                                         console.log("200: Memes successfully created; result: " + result);
-                                        res.status(200).send(result);
+                                        ut.sendIfNotAlready(res, 200, result);
                                     }
-                                    //TODO: Add one usage to template
+                                    ut.addOneUsage(pictureSchema, backgroundImg, res, null);
                                     userAPI.lastEdited.push(picture);
                                 });
                         }
@@ -134,7 +131,8 @@ router.post('/', (req, res) => {
                 } else {
                     console.log("400: You need to give as many coordinates and sizes as texts as" +
                         " parameters 3-7 and two strings for name and description for 1 and 2");
-                    sendIfNotAlready(res, 400, "You need to give as many coordinates and sizes as texts as" +
+                    ut.sendIfNotAlready(res, 400, "You need to give as many coordinates and sizes" +
+                        " as texts as" +
                         " parameters 3-7 and two strings for name and description for 1 and 2");
                 }
             }

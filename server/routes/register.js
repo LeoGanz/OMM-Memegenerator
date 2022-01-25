@@ -17,7 +17,7 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
     userSchema.find({email: email}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db failed; error: " + err);
-            res.status(503).send("Connection to db failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db failed");
         } else {
             if (lst.length === 0) {
 
@@ -46,11 +46,11 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
                 // console.log(creationDate);
                 userSchema.create(user).then(_ => {
                     console.log("registration succeeded");
-                    res.status(200).send(tokenString);
+                    ut.sendIfNotAlready(res, 200, tokenString);
                 });
             } else {
                 console.log("502: this email already has an account");
-                res.status(502).send("This email already has an account");
+                ut.sendIfNotAlready(res, 502, "This email already has an account");
             }
         }
     });
@@ -63,7 +63,7 @@ router.post("/", (req, res) => {
             if (err) {
                 if (req.headers.authorization !== undefined) {
                     console.log("502: you already have an account");
-                    res.status(502).send("You already have an account");
+                    ut.sendIfNotAlready(res, 502, "You already have an account");
                 } else {
                     let username = req.body.username;
                     let fullName = req.body.fullName;
@@ -73,32 +73,35 @@ router.post("/", (req, res) => {
                     userSchema.find({username: username}, (err, lst) => {
                         if (err) {
                             console.log("503: Connection to db failed; error: " + err);
-                            res.status(503).send("Connection to db failed");
+                            ut.sendIfNotAlready(res, 503, "Connection to db failed");
                         } else {
                             if (lst.length === 0) {
                                 userSchema.find({fullName: fullName}, (err, lst) => {
                                     if (err) {
                                         console.log("503: Connection to db failed; error: " + err);
-                                        res.status(503).send("Connection to db failed");
+                                        ut.sendIfNotAlready(res, 503, "Connection to db" +
+                                            " failed");
                                     } else {
                                         if (lst.length === 0) {
                                             addUserIfEmailDoesNotExist(email, password, username, fullName, res);
                                         } else {
                                             console.log("502: you already have an account");
-                                            res.status(502).send("You already have an account");
+                                            ut.sendIfNotAlready(res, 502, "You already have" +
+                                                " an" +
+                                                " account");
                                         }
                                     }
                                 });
                             } else {
                                 console.log("502: username already exists");
-                                res.status(502).send("username already exists");
+                                ut.sendIfNotAlready(res, 502, "username already exists");
                             }
                         }
                     });
                 }
             } else {
                 console.log("503: No logged-in user can register a user");
-                res.status(503).send("No logged-in user can register a user");
+                ut.sendIfNotAlready(res, 503, "No logged-in user can register a user");
             }
         }
     )

@@ -21,18 +21,18 @@ module.exports = function () {
         schema.find({status: 0}, (err, lst) => {
             if (err) {
                 console.log("503: Connection to db pictures failed; error: " + err);
-                res.status(503).send("Connection to db pictures failed");
+                this.sendIfNotAlready(res, 503, "Connection to db pictures failed");
             } else {
                 if (lst.length === 0) {
                     console.log("400: No template does exist");
-                    res.status(400).send("No template does exist");
+                    this.sendIfNotAlready(res, 400, "No template does exist");
                 }
                 const foundTemplates = lst.filter((elem) => {
                     return elem.img.base64 === base;
                 });
                 if (foundTemplates.length === 0) {
                     console.log("400: This template does not exist");
-                    res.status(400).send("This template does not exist");
+                    this.sendIfNotAlready(res, 400, "This template does not exist");
                 } else {
                     let template = foundTemplates[0];
                     template.usage = template.usage + 1;
@@ -40,6 +40,19 @@ module.exports = function () {
                 }
             }
         });
+    }
+
+    /**
+     * Diese Methode schickt ein result mit einem code und einer Message, wenn noch nichts im
+     * selben Zug gesendet wurde
+     * @param res das result
+     * @param code der statuscode
+     * @param message die zu schickende Nachricht
+     */
+    this.sendIfNotAlready = function (res, code, message) {
+        if (!res.headersSent) {
+            res.status(code).send(message);
+        }
     }
 
     /**

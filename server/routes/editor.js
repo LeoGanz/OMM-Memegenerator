@@ -10,11 +10,11 @@ router.get('/', (req, res) => {
     pictureSchema.find({}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db failed");
-            res.status(503).send("Connection to db failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: No picture with this metadata found");
-                res.status(400).send("No picture with this metadata found");
+                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
             } else {
                 let templates = lst.filter((pict) => {
                     return pict.status === 0;
@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
                     wanted: wanted,
                     templates: templates,
                 }
-                res.status(200).send(toSend);
+                ut.sendIfNotAlready(res, 200, toSend);
             }
         }
     });
@@ -36,11 +36,11 @@ router.post('/', (req, res) => {
     userSchema.find({currentToken: req.query.token}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db failed");
-            res.status(503).send("Connection to db failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: No user with this token found");
-                res.status(400).send("No user with this token found");
+                ut.sendIfNotAlready(res, 400, "No user with this token found");
             }
             const createUser = lst[0];
             const texts = req.body.texts ?? [];
@@ -55,7 +55,7 @@ router.post('/', (req, res) => {
                 texts.length !== ySizes.length) {
                 console.log("400: Please provide lists of equal length " +
                     "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
-                res.status(400).send("Please provide lists of equal length " +
+                ut.sendIfNotAlready(res, 400, "Please provide lists of equal length " +
                     "for texts, xCoordinates, yCoordinates, xSizes and ySizes");
             } else {
                 for (let i = 0; i < texts.length; i++) {
@@ -74,7 +74,9 @@ router.post('/', (req, res) => {
                     });
                     textSchema.create(textSch).then(_ => {
                     }).catch(_ => {
-                        console.log("Error occurred during initialization of texts");
+                        console.log("503: Error occurred during initialization of texts");
+                        ut.sendIfNotAlready(res, 503, "Error occurred during initialization of" +
+                            " texts");
                     });
                     newTexts.push(textSch);
                 }
@@ -114,10 +116,10 @@ router.post('/', (req, res) => {
                 picture.metadata = ut.calcMetadataForMeme(picture)
                 ut.canNewMemeBeStoredInDb(pictureSchema, picture.metadata, () => {
                     console.log("503: Connection to db failed");
-                    res.status(503).send("Connection to db failed");
+                    ut.sendIfNotAlready(res, 503, "Connection to db failed");
                 }, () => {
                     console.log("400: This meme does already exist");
-                    res.status(400).send("This meme does already exist");
+                    ut.sendIfNotAlready(res, 400, "This meme does already exist");
                 }, () => {
                     pictureSchema.create(picture).then(_ => {
                         console.log("img saved, status: " + String(status));
@@ -127,7 +129,7 @@ router.post('/', (req, res) => {
                             });
                         } else {
                             console.log("200: Saving complete");
-                            res.status(200).send("Saving complete");
+                            ut.sendIfNotAlready(res, 200, "Saving complete");
                         }
                     });
                     createUser.lastEdited.push(picture);

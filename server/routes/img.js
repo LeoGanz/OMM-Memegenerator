@@ -30,23 +30,23 @@ function handleUp(metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db picture failed");
-            res.status(503).send("Connection to db picture failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db picture failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: No picture with this metadata found");
-                res.status(400).send("No picture with this metadata found");
+                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
             }
             let pict = lst[0];
             let upVoters = pict.upVoters;
             if (user in upVoters) {
                 console.log("400: You have already up voted this");
-                res.status(400).send("You have already up voted this");
+                ut.sendIfNotAlready(res, 400, "You have already up voted this");
             }
             pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
             pict.upVoters.push(user);
 
             console.log("200: Picture update succeeded");
-            res.status(200).send("Picture update succeeded");
+            ut.sendIfNotAlready(res, 200, "Picture update succeeded");
         }
     });
 }
@@ -61,23 +61,23 @@ function handleDown(metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db picture failed");
-            res.status(503).send("Connection to db picture failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db picture failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: No picture with this metadata found");
-                res.status(400).send("No picture with this metadata found");
+                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
             }
             let pict = lst[0];
             let downVoters = pict.downVoters;
             if (user in downVoters) {
                 console.log("400: You have already down voted this");
-                res.status(400).send("You have already down voted this");
+                ut.sendIfNotAlready(res, 400, "You have already down voted this");
             }
             pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
             pict.downVoters.push(user);
 
             console.log("200: Picture downdate succeeded");
-            res.status(200).send("Picture downdate succeeded");
+            ut.sendIfNotAlready(res, 200, "Picture downdate succeeded");
         }
     });
 }
@@ -99,31 +99,32 @@ function handleComment(comment, metadata, user, res) {
     pictureSchema.find({metadata: metadata}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db picture failed");
-            res.status(503).send("Connection to db picture failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db picture failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: No picture with this metadata found");
-                res.status(400).send("No picture with this metadata found");
+                ut.sendIfNotAlready(res, 400, "No picture with this metadata found");
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
                 console.log("503: Connection to db comment failed");
-                res.status(503).send("Connection to db comment failed");
+                ut.sendIfNotAlready(res, 503, "Connection to db comment failed");
 
                 commentSchema.find({comment: comment, creator: user}, (err, lst) => {
                     if (err) {
                         console.log("503: Connection to db comment failed");
-                        res.status(503).send("Connection to db comment failed");
+                        ut.sendIfNotAlready(res, 503, "Connection to db comment failed");
                     } else {
                         if (lst.length === 0) {
                             console.log("400: No comment with this user and string found");
-                            res.status(400).send("No comment with this user and string found");
+                            ut.sendIfNotAlready(res, 400, "No comment with this user and string" +
+                                " found");
                         }
                         let toPush = lst[0]
                         pict.comments.push(toPush);
                         user.lastComments.push(toPush);
                         console.log("200: Picture comment add succeeded");
-                        res.status(200).send("Picture comment add succeeded");
+                        ut.sendIfNotAlready(res, 200, "Picture comment add succeeded");
                     }
                 });
             });
@@ -140,11 +141,11 @@ router.post("/", (req, res) => {
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
             console.log("503: Connection to db user failed");
-            res.status(503).send("Connection to db user failed");
+            ut.sendIfNotAlready(res, 503, "Connection to db user failed");
         } else {
             if (lst.length === 0) {
                 console.log("400: No user with this token found");
-                res.status(400).send("No user with this token found");
+                ut.sendIfNotAlready(res, 400, "No user with this token found");
             }
             let user = lst[0];
             if (upVote !== undefined) {
@@ -168,7 +169,7 @@ router.get("/", (req, res) => {
     pictureSchema.find({}, (err, items) => {
         if (err) {
             console.log(err);
-            res.status(500).send('No images findable' + err);
+            ut.sendIfNotAlready(res, 500, 'No images findable' + err);
         } else {
             if (filterBy) {
                 items = items.filter(item => {
@@ -221,12 +222,13 @@ router.get("/", (req, res) => {
             }
             if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
                 items = items.slice(start, end);
-                res.status(200);
+                ut.sendIfNotAlready(res, 200, null);
                 res.send(items);
             } else {
                 console.log("400: You have to give a number as start and a number as end," +
                     " which part of the items you want");
-                res.status(400).send("You have to give a number as start and a number as end," +
+                ut.sendIfNotAlready(res, 400, "You have to give a number as start and a number as" +
+                    " end," +
                     " which part of the items you want");
             }
         }

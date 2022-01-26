@@ -6,6 +6,7 @@ const ut = new utils();
 const jwt = require("njwt");
 
 router.get('/', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     let token = ut.adjustToken(req);
     jwt.verify(token, "top-secret", (err) => {
         if (err) {

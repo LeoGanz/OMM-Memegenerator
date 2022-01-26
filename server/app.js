@@ -1,6 +1,7 @@
 
 let express = require('express');
 let path = require('path');
+let cors = require('cors');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
@@ -23,6 +24,12 @@ const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
 let app = express();
+
+const corsOptions = {origin: true, credentials: true}
+app.options('*', cors(corsOptions));
+app.listen(80, function(){
+    console.log('CORS-enabled web server listening on port 80');
+});
 
 mongoose.connect(process.env.MONGO_URL,
     {useNewUrlParser: true, useUnifiedTopology: true}, err => {

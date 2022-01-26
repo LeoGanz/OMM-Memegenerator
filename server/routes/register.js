@@ -56,6 +56,7 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
 
 router.post("/", (req, res) => {
     // console.log("route reached");
+    res.set('Access-Control-Allow-Origin', '*');
     let token = ut.adjustToken(req);
     jwt.verify(token, "top-secret", (err) => {
             if (err) {

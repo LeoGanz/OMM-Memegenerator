@@ -1,9 +1,10 @@
 import {Title} from "../components/layout/typography";
 import {useForm} from "react-hook-form";
 import {StyledErrorMessage, TextInput} from "../components/text-input/input-field";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {EMAIL_ERROR, EMAIL_PATTERN, REQUIRED_FIELD_ERROR} from "../constants";
+import LoginContext from "../login-context";
 
 interface LoginData {
     mail: string;
@@ -13,6 +14,7 @@ interface LoginData {
 
 export const Login = () => {
     const [apiError, setApiError] = useState<string>('')
+    const {setIsLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
     const {
         handleSubmit,
@@ -40,6 +42,7 @@ export const Login = () => {
             })
             .then((token) => {
                 localStorage.setItem('meme-token', token)
+                setIsLoggedIn(true)
                 navigate('/')
             })
             .catch(err => {

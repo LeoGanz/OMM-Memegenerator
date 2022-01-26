@@ -5,32 +5,33 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {EMAIL_ERROR, EMAIL_PATTERN, REQUIRED_FIELD_ERROR} from "../constants";
 
-interface LoginData {
-    mail: string;
+interface SignUpData {
+    fullName: string;
+    email: string;
+    username: string;
     password: string;
 }
 
-
-export const Login = () => {
+export const SignUp = () => {
     const [apiError, setApiError] = useState<string>('')
     let navigate = useNavigate()
     const {
         handleSubmit,
         control
-    } = useForm<LoginData>({
+    } = useForm<SignUpData>({
         mode: 'onSubmit',
     });
 
-    const onSubmit = async ({mail, password}: LoginData) => {
-        fetch('http://localhost:3000/login', {
-            method: 'GET',
-            headers: {
-                'authorization': mail + ' ' + password,
+    const onSubmit = async ({fullName, email, username, password}: SignUpData) => {
 
-            }
+        fetch('http://localhost:3000/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({fullName, email, username, password})
         })
             .then(response => {
-                console.log(response)
                 if (response.ok) {
                     setApiError("")
                     return response.text()
@@ -39,19 +40,24 @@ export const Login = () => {
                 return response.text().then(response => {throw new Error(response)})
             })
             .then((token) => {
+
                 localStorage.setItem('meme-token', token)
                 navigate('/')
             })
             .catch(err => {
-               setApiError(err.message)
+                setApiError(err.message)
             })
     }
 
     return (
         <>
-            <Title>Log In</Title>
-            <form name="login" onSubmit={handleSubmit(onSubmit)}>
-                <TextInput name={'mail'} type={'text'} control={control} label={"E-Mail"} rules={{
+            <Title>Sign Up</Title>
+            <form name="sign-up" onSubmit={handleSubmit(onSubmit)}>
+                <TextInput name={'fullName'} type={'text'} control={control} label={"Full Name"}
+                           rules={{required: REQUIRED_FIELD_ERROR}}/>
+                <TextInput name={'username'} type={'text'} control={control} label={"User Name"}
+                           rules={{required: REQUIRED_FIELD_ERROR}}/>
+                <TextInput name={'email'} type={'text'} control={control} label={"E-Mail"} rules={{
                     required: REQUIRED_FIELD_ERROR,
                     pattern: {value: EMAIL_PATTERN, message: EMAIL_ERROR}
                 }}/>
@@ -63,3 +69,4 @@ export const Login = () => {
         </>
     )
 }
+

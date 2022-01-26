@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {up} from "../../util/breakpoint";
 import {LoginSection} from "./login-section";
+import {Link} from "react-router-dom";
 
 const HEADER_HEIGHT = '50px';
 
@@ -25,15 +26,17 @@ const StyledHeader = styled.header`
   }
 `
 
-const StyledHeaderTitle = styled.p`
+const StyledHeaderTitle = styled(Link)`
   color: ${colors.font.white};
+  cursor: pointer;
+  text-decoration: none;
 `
 
 
 export const Header = () => {
     return (
         <StyledHeader>
-            <StyledHeaderTitle>Meme Generator - Group 7</StyledHeaderTitle>
+            <StyledHeaderTitle to="/">Meme Generator - Group 7</StyledHeaderTitle>
             <LoginSection />
         </StyledHeader>
     );

@@ -10,7 +10,7 @@ export const colors = {
     },
     background: {
         header: "#00ac00",
-        button: "#00c400",
+        button: "#007900",
         memeCard: {
             default: "#efefef",
             hover: "#dcdcdc"

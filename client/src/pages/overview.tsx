@@ -19,11 +19,8 @@ const HeadlineSection = styled.div`
   align-items: center;
 `
 
-interface OverviewProps {
-    clickPicture: () => any
-}
 
-export const Overview = ({clickPicture}: OverviewProps) => {
+export const Overview = () => {
     const [memeCardData, setMemeCardData] = useState<MemeCardType[]>([])
 
     useEffect(() => {
@@ -36,7 +33,6 @@ export const Overview = ({clickPicture}: OverviewProps) => {
                 upVotes: Math.floor(Math.random() * 1000),
                 downVotes: Math.floor(Math.random() * 1000),
                 amountOfComments: Math.floor(Math.random() * 1000),
-                onClick: clickPicture
             })
         )
         setMemeCardData(mockData)

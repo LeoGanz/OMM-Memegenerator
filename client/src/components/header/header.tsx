@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from "styled-components";
 import {colors} from "../layout/colors";
-import {HeaderTitle} from "../layout/typography";
-import GitHubIcon from "../../assets/icons/GitHub-Mark-Light-64px.png"
 import {up} from "../../util/breakpoint";
+import {LoginSection} from "./login-section";
+import {Link} from "react-router-dom";
 
 const HEADER_HEIGHT = '50px';
 
@@ -26,31 +26,18 @@ const StyledHeader = styled.header`
   }
 `
 
-const StyledHeaderTitle = styled.p`
+const StyledHeaderTitle = styled(Link)`
   color: ${colors.font.white};
-`
-
-const GitHubLink = styled.a`
-  display: flex;
   cursor: pointer;
-  transition: opacity .2s;
-
-  &:hover {
-    opacity: 70%;
-  }
+  text-decoration: none;
 `
 
-const GitHubImg = styled.img`
-  width: 32px;
-`
 
 export const Header = () => {
     return (
         <StyledHeader>
-            <StyledHeaderTitle>Meme Generator - Group 7</StyledHeaderTitle>
-            <GitHubLink target="_blank" rel="noopener noreferrer"
-                        href="https://github.com/Adam-Phil/OMM_Project"><GitHubImg src={GitHubIcon}
-                                                                                   alt=""/></GitHubLink>
+            <StyledHeaderTitle to="/">Meme Generator - Group 7</StyledHeaderTitle>
+            <LoginSection />
         </StyledHeader>
     );
 }

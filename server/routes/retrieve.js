@@ -6,19 +6,20 @@ const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
 
-function respondDepCreator(possiblePictures, creator, counter, numberOfMemes, result, res) {
+function respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res) {
     if (possiblePictures.length !== 0 && numberOfMemes !== undefined && counter < numberOfMemes) {
         const elem = possiblePictures.shift();
         elem.populate('creator', function (err, meme) {
             if (err) {
                 ut.respond(res, 500, "creator could not be retrieved", "");
             } else {
-                if (creator !== undefined && meme.creator.username === creator.username) {
+                // console.log(meme.creator.username, creatorName);
+                if (creatorName === undefined || meme.creator.username === creatorName) {
                     result = result + "localhost:3000/image?metadata=" + meme.metadata + "\n";
                     counter += 1;
-                    respondDepCreator(possiblePictures, creator, counter, numberOfMemes, result, res);
+                    respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res);
                 } else {
-                    respondDepCreator(possiblePictures, creator, counter, numberOfMemes, result, res);
+                    respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res);
                 }
             }
         });
@@ -50,7 +51,7 @@ router.get('/', (req, res) => {
                     });
                 }
             }
-            console.log(possibleTexts);
+            // console.log(possibleTexts);
             userSchema.find({}, (err, lst) => {
                 if (err) {
                     ut.respond(res, 503, "Connection to db users failed", err);
@@ -65,36 +66,36 @@ router.get('/', (req, res) => {
                                 return true;
                             }
                         });
-                        let creator = "";
-                        if (possibleUsers.length !== 0) {
-                            creator = possibleUsers[0];
-                        }
-                        pictureSchema.find({}, (err, lst) => {
-                            if (err) {
-                                ut.respond(res, 503, "Connection to db pictures failed", err);
-                            } else {
-                                if (lst.length === 0) {
-                                    ut.respond(res, 200, "No pictures in the db");
+                        if (possibleUsers.length === 0) {
+                            ut.respond(res, 400, "No user with this username exists", "");
+                        } else {
+                            pictureSchema.find({}, (err, lst) => {
+                                if (err) {
+                                    ut.respond(res, 503, "Connection to db pictures failed", err);
                                 } else {
-                                    let possiblePictures = lst.filter((elem) => {
-                                        let fitting = true;
-                                        if (creationDate !== undefined) {
-                                            fitting = fitting && elem.dateOfCreation.includes(creationDate);
-                                        }
-                                        if (possibleTexts !== []) {
-                                            fitting = fitting && [...new Set([...possibleTexts, ...elem.texts])].length !== 0;
-                                        }
-                                        return fitting;
-                                    });
-                                    console.log(possibleTexts, creator, creationDate);
-                                    if (possiblePictures.length === 0) {
-                                        ut.respond(res, 200, "No memes with these parameters found");
+                                    if (lst.length === 0) {
+                                        ut.respond(res, 200, "No pictures in the db");
                                     } else {
-                                        respondDepCreator(possiblePictures, creator, 0, numberOfMemes, result, res);
+                                        let possiblePictures = lst.filter((elem) => {
+                                            let fitting = true;
+                                            if (creationDate !== undefined) {
+                                                fitting = fitting && elem.dateOfCreation.includes(creationDate);
+                                            }
+                                            if (possibleTexts !== []) {
+                                                fitting = fitting && [...new Set([...possibleTexts, ...elem.texts])].length !== 0;
+                                            }
+                                            return fitting;
+                                        });
+                                        // console.log(possibleTexts, creatorName, creationDate);
+                                        if (possiblePictures.length === 0) {
+                                            ut.respond(res, 200, "No memes with these parameters found");
+                                        } else {
+                                            respondDepCreator(possiblePictures, creatorName, 0, numberOfMemes, result, res);
+                                        }
                                     }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             });

@@ -32,7 +32,6 @@ export const Login = () => {
             }
         })
             .then(response => {
-                console.log(response)
                 if (response.ok) {
                     setApiError("")
                     return response.text()

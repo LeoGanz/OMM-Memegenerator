@@ -11,9 +11,7 @@ ReactDOM.render(
     <BrowserRouter>
         <App>
         <Routes>
-            <Route path="/" element={<Overview clickPicture={() => {
-                console.log("Hallo")
-            }}/>}/>
+            <Route path="/" element={<Overview />}/>
             <Route path="details" element={<MemeDetails/> }/>
             <Route path="login" element={<Login/> }/>
             <Route path="sign-up" element={<SignUp />}/>

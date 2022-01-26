@@ -3,8 +3,9 @@ import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {up} from "../../util/breakpoint";
 import {MemeInfos} from "../meme-infos/meme-infos";
+import {Link} from "react-router-dom";
 
-const StyledMemeCard = styled.div`
+const StyledMemeCard = styled(Link)`
   background-color: ${colors.background.memeCard.default};
   border: 1px solid ${colors.background.memeCard.default};
   border-radius: 4px;
@@ -12,6 +13,7 @@ const StyledMemeCard = styled.div`
   grid-column-start: span 12;
   cursor: pointer;
   transition: background-color .2s;
+  text-decoration: none;
 
   ${up('sm')} {
     grid-column-start: span 6;
@@ -42,13 +44,12 @@ export interface MemeCardType {
     amountOfComments: number;
     upVotes: number;
     downVotes: number;
-    onClick: () => any;
 }
 
 
-export const MemeCard = ({memePath, onClick, ...props}: MemeCardType) => {
+export const MemeCard = ({memePath, ...props}: MemeCardType) => {
     return (
-        <StyledMemeCard onClick={() => onClick()}>
+        <StyledMemeCard to="/details">
             <MemePreview src={memePath}/>
             <MemeInfos {...props}/>
         </StyledMemeCard>

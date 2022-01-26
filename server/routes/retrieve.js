@@ -6,6 +6,29 @@ const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
 
+function respondDepCreator(possiblePictures, creator, counter, numberOfMemes, result, res) {
+    if (possiblePictures.length !== 0 && numberOfMemes !== undefined && counter < numberOfMemes) {
+        const elem = possiblePictures.shift();
+        elem.populate('creator', function (err, meme) {
+            if (err) {
+                ut.respond(res, 500, "creator could not be retrieved", "");
+            } else {
+                if (creator !== undefined && meme.creator.username === creator.username) {
+                    result = result + "localhost:3000/image?metadata=" + meme.metadata + "\n";
+                    counter += 1;
+                    respondDepCreator(possiblePictures, creator, counter, numberOfMemes, result, res);
+                } else {
+                    respondDepCreator(possiblePictures, creator, counter, numberOfMemes, result, res);
+                }
+            }
+        });
+    } else {
+        console.log("Certain memes for retrieval found:");
+        ut.respond(res, 200, result);
+    }
+}
+
+
 router.get('/', (req, res) => {
     let result = "List of URLs leading to a by you specified meme: \n"
     const {numberOfMemes} = req.query;
@@ -23,12 +46,11 @@ router.get('/', (req, res) => {
             } else {
                 if (lst.length !== 0) {
                     possibleTexts = lst.filter((elem) => {
-                        return elem.text.contains(text);
+                        return elem.text.includes(text);
                     });
-                } else {
-                    possibleTexts = "";
                 }
             }
+            console.log(possibleTexts);
             userSchema.find({}, (err, lst) => {
                 if (err) {
                     ut.respond(res, 503, "Connection to db users failed", err);
@@ -37,11 +59,12 @@ router.get('/', (req, res) => {
                         ut.respond(res, 200, "No users found");
                     } else {
                         let possibleUsers = lst.filter((elem) => {
-                            return elem.username === creatorName;
+                            if (creatorName !== undefined) {
+                                return elem.username === creatorName;
+                            } else {
+                                return true;
+                            }
                         });
-                        if (possibleUsers.length === 0 && creatorName !== undefined) {
-                            ut.respond(res, 400, "No user with this name found");
-                        }
                         let creator = "";
                         if (possibleUsers.length !== 0) {
                             creator = possibleUsers[0];
@@ -54,33 +77,20 @@ router.get('/', (req, res) => {
                                     ut.respond(res, 200, "No pictures in the db");
                                 } else {
                                     let possiblePictures = lst.filter((elem) => {
-                                        if (creationDate === undefined) {
-                                            creationDate = elem.dateOfCreation;
+                                        let fitting = true;
+                                        if (creationDate !== undefined) {
+                                            fitting = fitting && elem.dateOfCreation.includes(creationDate);
                                         }
-                                        if (creator === "") {
-                                            creator = elem.creator;
+                                        if (possibleTexts !== []) {
+                                            fitting = fitting && [...new Set([...possibleTexts, ...elem.texts])].length !== 0;
                                         }
-                                        if (possibleTexts === "") {
-                                            possibleTexts = elem.texts;
-                                        }
-                                        return (elem.dateOfCreation.contains(creationDate)
-                                            && elem.creator === creator
-                                            && [...new Set([...possibleTexts, ...elem.texts])] === possibleTexts);
+                                        return fitting;
                                     });
+                                    console.log(possibleTexts, creator, creationDate);
                                     if (possiblePictures.length === 0) {
                                         ut.respond(res, 200, "No memes with these parameters found");
                                     } else {
-                                        let slicedList;
-                                        if (numberOfMemes !== undefined) {
-                                            slicedList = possiblePictures.slice(0, numberOfMemes);
-                                        } else {
-                                            slicedList = possiblePictures;
-                                        }
-                                        for (let meme in slicedList) {
-                                            result = result + "localhost:3000/image?metadata=" + meme.metadata + "\n";
-                                        }
-                                        console.log("Certain memes for retrieval found:");
-                                        ut.respond(res, 200, result);
+                                        respondDepCreator(possiblePictures, creator, 0, numberOfMemes, result, res);
                                     }
                                 }
                             }

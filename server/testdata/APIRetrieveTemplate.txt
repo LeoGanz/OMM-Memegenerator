@@ -1,0 +1,13 @@
+GET localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=someDate
+
+No Login required.
+
+bzw. als Query Param angeben (optional):
+bzw. als Query Param angeben (optional):
+bzw. als Query Param angeben (optional):
+bzw. als Query Param angeben (optional):
+
+JSON-body:
+{}
+
+Gives back a string with URLs to memes fitting the query

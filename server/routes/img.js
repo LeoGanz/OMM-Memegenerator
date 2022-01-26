@@ -151,7 +151,7 @@ router.get("/", (req, res) => {
     const filterBy = req.body.filterBy;
     const start = req.body.start;
     const end = req.body.end;
-    pictureSchema.find({}, (err, items) => {
+    pictureSchema.find({status:2}, (err, items) => {
         if (err) {
             console.log(err);
             ut.respond(res, 500, 'No images findable' + err);

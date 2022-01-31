@@ -1,6 +1,7 @@
 const textSchema = require("./models/textSchema");
 const pictureSchema = require("./models/pictureSchema");
 const utils = require("./utils");
+const {renderAndStoreMeme} = require("./renderManager");
 const ut = new utils();
 
 /**
@@ -15,16 +16,14 @@ function checkForAppropriateForm(memeJson, res) {
     const texts = memeJson.texts ?? [];
     const xCoordinates = memeJson.xCoordinates ?? [];
     const yCoordinates = memeJson.yCoordinates ?? [];
-    const xSizes = memeJson.xSizes ?? [];
-    const ySizes = memeJson.ySizes ?? [];
-    const numericData = [xCoordinates, yCoordinates, xSizes, ySizes]
+    const numericData = [xCoordinates, yCoordinates]
     if (typeof name !== "string" || typeof desc !== "string") {
         ut.respond(res, 400, "Name or Description is no string");
         return false;
     }
     if (!ut.checkForEqualLength([texts, ...numericData])) {
         ut.respond(res, 400, "Please provide lists of equal length " +
-            "for texts, xCoordinates, yCoordinates, xSizes and ySizes")
+            "for texts, xCoordinates and yCoordinates")
     }
     for (let text in texts) {
         if (typeof text !== "string") {
@@ -64,22 +63,16 @@ function processTextsInBody(memeJson, res, onSuccess) {
     const texts = memeJson.texts ?? [];
     const xCoordinates = memeJson.xCoordinates ?? [];
     const yCoordinates = memeJson.yCoordinates ?? [];
-    const xSizes = memeJson.xSizes ?? [];
-    const ySizes = memeJson.ySizes ?? [];
     let failureOccurred = false;
     for (let i = 0; i < texts.length && !failureOccurred; i++) {
         const text = texts[i];
         const xCoordinate = xCoordinates[i];
         const yCoordinate = yCoordinates[i];
-        const xSize = xSizes[i];
-        const ySize = ySizes[i];
 
         const textSch = new textSchema({
             text: text,
             xCoordinate: xCoordinate,
             yCoordinate: yCoordinate,
-            xSize: xSize,
-            ySize: ySize
         });
         textSchema.create(textSch).then(_ => {
             newTexts.push(textSch);
@@ -152,6 +145,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
             }, () => {
                 ut.respond(res, 400, "This meme does already exist");
             }, () => {
+                renderAndStoreMeme(picture); // TODO run async
                 pictureSchema.create(picture).then(_ => {
                     console.log("img saved, status: " + String(newStatus));
                     // Not using utils#addOneUsage with the background image,
@@ -168,7 +162,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                         if (newStatus === 2) {
                             res.redirect(memeRelativeUrl);
                         } else {
-                            ut.respond(res, 200, "Saving complete");
+                            ut.respond(res, 200, "Saving complete for meme " + picture.metadata);
                         }
                     } else {
                         // Process Memes as list
@@ -177,13 +171,11 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                     }
                     creator.lastEdited.push(picture);
                 }).catch(err => {
-                    ut.respond(res, 503, "Image creation went wrong", err);
+                    ut.respond(res, 503, "Meme creation went wrong", err);
                 });
             });
-
         });
     }
-
 }
 
 module.exports = {processSingleMemeCreation, processMultipleMemeCreations}

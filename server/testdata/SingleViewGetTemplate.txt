@@ -9,4 +9,9 @@ Login required
 JSON-Body:
 {}
 
-Gives back a whole pictureSchema of the image with the metadata given in the query
+Returns a data url with a base64 encoded rendered meme.
+For test purposes the result can be looked at with tools like https://base64.guru/converter/decode/image
+
+Example for metadata from EditorCreateTemplate sample meme:
+http://localhost:3000/image?metadata=662ab088c3741d428edf4fe878fcafaa&token=THE-TOKEN
+

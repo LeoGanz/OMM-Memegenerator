@@ -9,15 +9,17 @@ const pictureSchema = new Schema(
         img: {
             // data: Buffer,
             // contentType: String,
-            base64: String
+            base64: String,
+            // mimeType: String // image/jpeg or image/png
         },
         creator: {type: Schema.Types.ObjectId, ref: 'user'},
-            texts:[{type: Schema.Types.ObjectId, ref: 'text'}],
+        texts:[{type: Schema.Types.ObjectId, ref: 'text'}],
         dateOfCreation: String,
         upVoters: [{type: Schema.Types.ObjectId, ref: 'user'}],
         downVoters: [{type: Schema.Types.ObjectId, ref: 'user'}],
         comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
-        metadata: String, status: Number,
+        metadata: String,
+        status: Number,
         format: {width: Number, height: Number, pixels: Number},
         usage: Number,
     }

@@ -139,8 +139,7 @@ router.post("/", (req, res) => {
             } else if (comment !== undefined) {
                 handleComment(comment, metadata, user, res);
             } else {
-                console.log("200: Nothing done");
-                ut.sendIfNotAlready(res, 200, "Nothing done");
+                ut.respond(res, 200, "Nothing done");
             }
         }
     });
@@ -153,8 +152,7 @@ router.get("/", (req, res) => {
     const end = req.body.end;
     pictureSchema.find({status:2}, (err, items) => {
         if (err) {
-            console.log(err);
-            ut.respond(res, 500, 'No images findable' + err);
+            ut.respond(res, 500, 'No images found', err);
         } else {
             if (filterBy) {
                 items = items.filter(item => {
@@ -208,6 +206,7 @@ router.get("/", (req, res) => {
             if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
                 items = items.slice(start, end);
                 ut.respond(res, 200, null);
+                // TODO adapt to looking up rendered images via metadata
                 res.send(items);
             } else {
                 ut.respond(res, 400, "You have to give a number as start and a number as end," +

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pictureSchema = require("../models/pictureSchema");
 const userSchema = require("../models/userSchema");
-const {processSingleMemeCreation} = require("../memeCreator");
+const {processSingleMemeCreation} = require("../memeUploadHandler");
 const utils = require("../utils");
 const ut = new utils();
 

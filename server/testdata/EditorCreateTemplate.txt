@@ -4,17 +4,19 @@ bzw. als Query Param angeben: token - THE-TOKEN
 
 JSON-Body:
 {
-  "name": "TestImg",
-  "desc": "Just a Test",
-  "imgage": "iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABa0lEQVR4nO3aPZLCMAyGYTFbUHKEPUqOFo7GUThCSooM2sj/JsmsYUigeL/OsZ50GjkGEULItum1yjXvdNPiVO+OEAjkaXLJVX1dZYsx7x4hEMheJFR5Ylt3EXWvMnKIHgKBvIGc9GZVcVZCIJD3ktCVEAjkkyQlNrLYrFRtP8FCIJBVUmU2K6tAIJAdyELCR6K6wdkWCASyQoquzItwHFUd5McWNlB//QyFQCAvkTTTwuBTVxVydjuPx1EIBLIZGaaV5tvRlKukdNOybGQIBNJGLKnqnBvRf/HJNCuLjBAIZC/ietQ/HsqPRHvZXRYCgUDaycy7q05xLTqWZ9OVq04IBLJKeq2Sfk2Ii9EXrVzdQCCQLchFUnp3Aj16YFVD+V4IBPIaefhXp0YiZVeWL4ZAIB8gueJg9zOd/t/IEAikiYQtqxpkIRAI5DlSLHxXzv/cou6gCoFAdiFVUiPHB61XNxAIZJEQQr4qf2MdUu3BEq/zAAAAAElFTkSuQmCC",
+  "name": "Just a test image",
+  "desc": "The server accepts requests upto 50 mb, which also enables larger images to be sent",
+  "image": "iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABa0lEQVR4nO3aPZLCMAyGYTFbUHKEPUqOFo7GUThCSooM2sj/JsmsYUigeL/OsZ50GjkGEULItum1yjXvdNPiVO+OEAjkaXLJVX1dZYsx7x4hEMheJFR5Ylt3EXWvMnKIHgKBvIGc9GZVcVZCIJD3ktCVEAjkkyQlNrLYrFRtP8FCIJBVUmU2K6tAIJAdyELCR6K6wdkWCASyQoquzItwHFUd5McWNlB//QyFQCAvkTTTwuBTVxVydjuPx1EIBLIZGaaV5tvRlKukdNOybGQIBNJGLKnqnBvRf/HJNCuLjBAIZC/ietQ/HsqPRHvZXRYCgUDaycy7q05xLTqWZ9OVq04IBLJKeq2Sfk2Ii9EXrVzdQCCQLchFUnp3Aj16YFVD+V4IBPIaefhXp0YiZVeWL4ZAIB8gueJg9zOd/t/IEAikiYQtqxpkIRAI5DlSLHxXzv/cou6gCoFAdiFVUiPHB61XNxAIZJEQQr4qf2MdUu3BEq/zAAAAAElFTkSuQmCC",
   "texts":["Hello", "World"],
-  "xCoordinates":[0, 50],
-  "yCoordinates":[0, 10],
-  "xSizes":[30,35],
-  "ySizes":[10,10],
-  "metadata": "someMeta",
+  "xCoordinates":[150, 150],
+  "yCoordinates":[100, 650],
   "status": 0,
-  "width": 100,
-  "height": 100,
-  "pixels": 10000
+  "width": 400,
+  "height": 700,
+  "pixels": 2073600
 }
+
+Should result in metadata b64b1847cbfaa8be78ca8f00ec2790c6
+
+xSizes and ySizes are no longer in use as they can result in distorted text.
+At a later stage fontSize and other properties will be supported.

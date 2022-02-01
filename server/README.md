@@ -12,6 +12,10 @@ To run the server:
 
 The sites are accessible under `http://localhost:3000`. 
 
+For all necessary routes to the server there are templates for usage in the folder 
+`server\templates`. In this document we collect them in one documentation. The word in capital 
+letters before a URL is the type of request the server awaits for this form, e.g. "GET" for a 
+get request.
 
 ###API-creation
 
@@ -22,7 +26,7 @@ The sites are accessible under `http://localhost:3000`.
 
 
 ###Editor-get
-Under the route http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta the clients gets 
+Under the route GET http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta the clients gets 
 back a class.
 In 
 the class under `.wanted` there is one image which then can be edited and under `.templates` all 
@@ -33,7 +37,7 @@ For this route the client has to be logged-in so he/she needs to pass an access 
 which was given after the log-in page.
 
 
-###Images-get
+### Images-get
 Under the route GET http://localhost:3000/images?token=THE-TOKEN the client gets back a list of 
 images which were found for the parameters given in the JSON-Body. The body has to look like this:
 ```
@@ -52,3 +56,5 @@ There are 4 possible parameters in the body:
 2. `filterBy` (optional parameter): For usernames to filter after
 3. `start` (essential parameter): An integer indexing the first image the clients wants to see
 4. `end` (essential parameter): An integer indexing the last image the clients wants to see
+
+##

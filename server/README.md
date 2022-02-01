@@ -76,3 +76,15 @@ JSON-body would look like this:
 
 Then the client has to be logged-in again.
 
+### Login-get
+
+Under the route GET http://localhost:3000/login the client can give his authorization 
+information and receive an access token for the session he is in.
+
+The information is given in the header as a String with email and password separated by a 
+whitespace. For example:
+```
+nice.email@gmx.de 1328
+```
+No log-in or JSON-body is required previously.
+

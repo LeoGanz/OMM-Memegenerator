@@ -6,7 +6,9 @@ bzw. als Query Param angeben: memeId des Bildes, was man in der Single View sehe
 
 Login required
 
-JSON-Body:
+No body.
+
+Result in JSON-Format:
 {
     "metadata": {
         "name": "Just a test image2",

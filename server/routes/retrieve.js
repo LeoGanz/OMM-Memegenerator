@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const pictureSchema = require("../models/pictureSchema");
+const memeSchema = require("../models/memeSchema");
 const userSchema = require("../models/userSchema");
 const textSchema = require("../models/textSchema");
 const utils = require("../utils");
 const ut = new utils();
 
-function respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res) {
-    if (possiblePictures.length !== 0 && numberOfMemes !== undefined && counter < numberOfMemes) {
-        const elem = possiblePictures.shift();
+function respondDepCreator(possibleMemes, creatorName, counter, numberOfMemes, result, res) {
+    if (possibleMemes.length !== 0 && numberOfMemes !== undefined && counter < numberOfMemes) {
+        const elem = possibleMemes.shift();
         elem.populate('creator', function (err, meme) {
             if (err) {
                 ut.respond(res, 500, "creator could not be retrieved", "");
             } else {
                 // console.log(meme.creator.username, creatorName);
                 if (creatorName === undefined || meme.creator.username === creatorName) {
-                    result = result + ut.getDomain() + "/image?metadata=" + meme.metadata + "\n";
+                    result = result + ut.getDomain() + "/image?memeId=" + meme.memeId + "\n";
                     counter += 1;
                 }
-                respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res);
+                respondDepCreator(possibleMemes, creatorName, counter, numberOfMemes, result, res);
             }
         });
     } else {
@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 
     textSchema.find({}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db texts failed", err);
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             let possibleTexts = [];
             if (lst.length === 0 && text !== undefined) {
@@ -52,7 +52,7 @@ router.get('/', (req, res) => {
             // console.log(possibleTexts);
             userSchema.find({}, (err, lst) => {
                 if (err) {
-                    ut.respond(res, 503, "Connection to db users failed", err);
+                    ut.dbConnectionFailureHandler(res, err)
                 } else {
                     if (lst.length === 0) {
                         ut.respond(res, 200, "No users found");
@@ -67,14 +67,14 @@ router.get('/', (req, res) => {
                         if (possibleUsers.length === 0) {
                             ut.respond(res, 400, "No user with this username exists", "");
                         } else {
-                            pictureSchema.find({}, (err, lst) => {
+                            memeSchema.find({}, (err, lst) => {
                                 if (err) {
-                                    ut.respond(res, 503, "Connection to db pictures failed", err);
+                                    ut.dbConnectionFailureHandler(res, err)
                                 } else {
                                     if (lst.length === 0) {
-                                        ut.respond(res, 200, "No pictures in the db");
+                                        ut.respond(res, 200, "No memes in the db");
                                     } else {
-                                        let possiblePictures = lst.filter((elem) => {
+                                        let possibleMemes = lst.filter((elem) => {
                                             let fitting = true;
                                             if (creationDate !== undefined) {
                                                 fitting = fitting && elem.dateOfCreation.includes(creationDate);
@@ -85,10 +85,10 @@ router.get('/', (req, res) => {
                                             return fitting;
                                         });
                                         // console.log(possibleTexts, creatorName, creationDate);
-                                        if (possiblePictures.length === 0) {
+                                        if (possibleMemes.length === 0) {
                                             ut.respond(res, 200, "No memes with these parameters found");
                                         } else {
-                                            respondDepCreator(possiblePictures, creatorName, 0, numberOfMemes, result, res);
+                                            respondDepCreator(possibleMemes, creatorName, 0, numberOfMemes, result, res);
                                         }
                                     }
                                 }

@@ -5,11 +5,14 @@ const {getOrRenderMeme} = require("../renderManager");
 const ut = new utils();
 
 router.get("/", (req, res) => {
-    const metadata = req.query.metadata;
-    getOrRenderMeme(metadata,
-        dataUrl => ut.respondSilently(res, 200, dataUrl),
-        () => ut.respond(res, 400, "No picture with this metadata found"),
-        err => ut.respond(res, 503, "Connection to db failed", err)
+    const memeId = req.query.memeId;
+    getOrRenderMeme(memeId,
+        dataUrl => ut.collectMetadata(memeId, metadata => ut.respondSilently(res, 200, {
+            metadata: metadata,
+            dataUrl: dataUrl,
+        }), err => ut.dbConnectionFailureHandler(res, err), () => ut.noMemeFoundHandler(res)),
+        () => ut.noMemeFoundHandler(res),
+        err => ut.dbConnectionFailureHandler(res, err)
     );
 });
 

@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
             }
             userSchema.find({email: email, password: pw}, (err, lst) => {
                 if (err) {
-                    ut.respond(res, 503, "Connection to db failed", err);
+                    ut.dbConnectionFailureHandler(res, err)
                 } else {
                     if (lst.length !== 0) {
                         let tokenString = ut.createToken(email);

@@ -10,7 +10,7 @@ const userSchema = new Schema({
     email: String,
     //accounts: ...
     dateOfCreation: String,
-    lastEdited: [{type: Schema.Types.ObjectId, ref: 'picture'}],
+    lastEdited: [{type: Schema.Types.ObjectId, ref: 'meme'}],
     lastComments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
 });
 

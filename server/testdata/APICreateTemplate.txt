@@ -1,10 +1,11 @@
 POST http://localhost:3000/create
 
-No login needed currently, metadata of test image in editor given
+No login needed currently.
+memeId is the identifier of the template that shall be used. It is returned when creating a template through editor create
 
 JSON-Body:
 {
-    "metadata":"898aa3ed8d18da3ee8e8ec380a8b1434",
+    "memeId":"b717756bf5921681aa91b08feb1af324",
     "memes":
     [
         {

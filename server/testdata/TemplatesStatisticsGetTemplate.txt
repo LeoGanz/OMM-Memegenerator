@@ -7,7 +7,7 @@ Login required
 JSON-body:
 {}
 
-Gives back a class with ".pictures" as an array of string-metadatas from single templates
+Gives back a class with ".pictures" as an array of string-memeIds from single templates
 ".usages" as an array of number of usages of the template
 
 The data is structered like in matplotlib so every element belongs to the element with the same

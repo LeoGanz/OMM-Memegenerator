@@ -116,7 +116,7 @@ For example:
 There is no previous log-in required.
 
 
-### Statistics-template
+### Statistics-single
 
 Under the route GET http://localhost:3000/single?token=THE-TOKEN a client gets a class back with 
 `.pictures` as an array of metadata for pictures, `.up` as an array of numbers of up voters and 

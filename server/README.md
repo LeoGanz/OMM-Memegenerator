@@ -26,18 +26,20 @@ get request.
 
 
 ### Editor-get
+
 Under the route GET http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta the clients gets 
 back a class.
 In 
 the class under `.wanted` there is one image which then can be edited and under `.templates` all 
 possible templates are given back. The parameter `metadata` in the query specifies which 
-template is wanted.
+template is wanted. **Metadata serves in every part of the server as identifier of memes**.
 
 For this route the client has to be logged-in so he/she needs to pass an access token in the query, 
 which was given after the log-in page.
 
 
 ### Images-get
+
 Under the route GET http://localhost:3000/images?token=THE-TOKEN the client gets back a list of 
 images which were found for the parameters given in the JSON-Body. The body has to look like this:
 ```
@@ -112,5 +114,16 @@ For example:
 ```
 
 There is no previous log-in required.
+
+
+### Statistics-template
+
+Under the route GET http://localhost:3000/single?token=THE-TOKEN a client gets a class back with 
+`.pictures` as an array of metadata for pictures, `.up` as an array of numbers of up voters and 
+`.down` as an array of down voters. The data is mapped index-wise, so the image at position one 
+in the pictures has up the up voters of position one from up and down voters from position one 
+of down.
+
+There is no JSON-Body for this request needed but it is only accessible for a logged-in client.
 
 

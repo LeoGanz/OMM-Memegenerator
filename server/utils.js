@@ -113,7 +113,7 @@ module.exports = function () {
                         creator: meme.creator.username,
                         dateOfCreation: meme.dateOfCreation,
                         format: meme.format,
-                        texts: meme.texts.map(({text, xCoordinate, yCoordinate}) => ({text, xCoordinate, yCoordinate})),
+                        texts: meme.texts.map(this.cleanTextComponent),
                         status: meme.status,
                         usages: meme.usages,
                         upVotes: meme.upVoters.length,
@@ -123,7 +123,46 @@ module.exports = function () {
                     onSuccess(metadata);
                 }
             });
+    };
 
+    this.cleanTextComponent = ({text, xCoordinate, yCoordinate}) => ({text, xCoordinate, yCoordinate});
+    this.cleanMeme = function (meme) {
+        const {
+            name,
+            desc,
+            img,
+            creator = {username:"N/A"},
+            texts = [],
+            dateOfCreation,
+            upVoters = [],
+            downVoters = [],
+            comments = [],
+            memeId,
+            status,
+            format,
+            usages
+        } = meme;
+
+        return {
+            name,
+            desc,
+            img,
+            creator: creator.username,
+            // TODO: find out why this.cleanTextComponent results in undefined
+            texts: texts.map(({text, xCoordinate, yCoordinate}) => ({text, xCoordinate, yCoordinate})),
+            dateOfCreation,
+            upVoters: upVoters.map(usr => usr.username),
+            downVoters: downVoters.map(usr => usr.username),
+            comments: comments.map(({dateOfCreation, text, creator = {username:"N/A"}}) => ({
+                dateOfCreation,
+                text,
+                creator: creator.username
+            })),
+            memeId,
+            status,
+            format,
+            usages
+        }
     };
 
 

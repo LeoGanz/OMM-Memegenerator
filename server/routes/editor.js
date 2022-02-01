@@ -12,6 +12,9 @@ router.get('/', (req, res) => {
         .populate('texts')
         // do not populate whole creator as this would leak private data
         .populate('creator', 'username')
+        .populate('upVoters.username')
+        .populate('downVoters.username')
+        .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
         .exec((err, memes) => {
             if (err) {
                 ut.dbConnectionFailureHandler(res, err)
@@ -26,8 +29,8 @@ router.get('/', (req, res) => {
                         return meme.memeId = req.query.memeId;
                     });
                     let toSend = {
-                        wanted: wanted,
-                        templates: templates,
+                        wanted: wanted.map(ut.cleanMeme),
+                        templates: templates.map(ut.cleanMeme),
                     }
                     ut.respondSilently(res, 200, toSend);
                 }

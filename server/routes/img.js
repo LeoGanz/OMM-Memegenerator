@@ -25,11 +25,12 @@ function handleUp(memeId, user, res) {
             let upVoters = pict.upVoters;
             if (user in upVoters) {
                 ut.respond(res, 400, "You have already up voted this");
-            }
-            pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
-            pict.upVoters.push(user);
+            } else {
+                pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
+                pict.upVoters.push(user);
 
-            ut.respond(res, 200, "Meme update succeeded");
+                ut.respond(res, 200, "Meme update succeeded");
+            }
         }
     });
 }
@@ -52,11 +53,12 @@ function handleDown(memeId, user, res) {
             let downVoters = pict.downVoters;
             if (user in downVoters) {
                 ut.respond(res, 400, "You have already down voted this");
-            }
-            pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
-            pict.downVoters.push(user);
+            } else {
+                pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
+                pict.downVoters.push(user);
 
-            ut.respond(res, 200, "Meme downdate succeeded");
+                ut.respond(res, 200, "Meme downvote succeeded");
+            }
         }
     });
 }
@@ -84,19 +86,18 @@ function handleComment(comment, memeId, user, res) {
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
-                ut.dbConnectionFailureHandler(res, err)
-
                 commentSchema.find({comment: comment, creator: user}, (err, lst) => {
                     if (err) {
                         ut.dbConnectionFailureHandler(res, err)
                     } else {
                         if (lst.length === 0) {
                             ut.respond(res, 400, "No comment with this user and string found");
+                        } else {
+                            let toPush = lst[0]
+                            pict.comments.push(toPush);
+                            user.lastComments.push(toPush);
+                            ut.respond(res, 200, "Meme comment add succeeded");
                         }
-                        let toPush = lst[0]
-                        pict.comments.push(toPush);
-                        user.lastComments.push(toPush);
-                        ut.respond(res, 200, "Meme comment add succeeded");
                     }
                 });
             });

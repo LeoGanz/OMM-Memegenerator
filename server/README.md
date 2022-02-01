@@ -59,6 +59,7 @@ There are 4 possible parameters in the body:
 
 There is again a login required like under "Editor-get"
 
+
 ### Images-post
 
 Under the route POST http://localhost:3000/images?token=THE-TOKEN the client can up- or 
@@ -76,6 +77,7 @@ JSON-body would look like this:
 
 Then the client has to be logged-in again.
 
+
 ### Login-get
 
 Under the route GET http://localhost:3000/login the client can give his authorization 
@@ -87,4 +89,28 @@ whitespace. For example:
 nice.email@gmx.de 1328
 ```
 No log-in or JSON-body is required previously.
+
+
+### Profile-get
+
+Under the route GET http://localhost:3000/profile?token=THE-TOKEN a client gets his/her profile 
+page. A log-in is again required with the access token but no JSON-Body.
+
+
+### Register-Post
+
+Under the route POST http://localhost:3000/register clients can be registered.
+In the JSON-Body there has to be a `username`, a `fullName`, a `password` and an `email`.
+For example: 
+```
+{
+    "username":"Tester",
+    "fullName":"DerErste",
+    "password":"insecure",
+    "email":"mail@test.de"
+}
+```
+
+There is no previous log-in required.
+
 

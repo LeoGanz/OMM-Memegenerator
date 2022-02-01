@@ -1,26 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const pictureSchema = require("../models/pictureSchema");
+const memeSchema = require("../models/memeSchema");
 const utils = require("../utils");
 const ut = new utils();
 
 router.get('/single', (req, res) => {
-    let pictures = [];
+    let memes = [];
     let upVotes = [];
     let downVotes = [];
-    pictureSchema.find({status: 2}, (err, lst) => {
+    memeSchema.find({status: 2}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db pictures failed", err);
+            ut.respond(res, 503, "Connection to db memes failed", err);
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 500, "No meme found in the database");
             }
             for (let elem in lst) {
-                pictures.push(elem.metadata);
+                memes.push(elem.memeId);
                 upVotes.push(elem.upVoters.length);
                 downVotes.push(elem.downVoters.length);
             }
-            const answer = {pictures: pictures, upVotes: upVotes, downVotes: downVotes};
+            const answer = {memes: memes, upVotes: upVotes, downVotes: downVotes};
             console.log("Single statistics successful");
             ut.respondSilently(res, 200, answer);
         }
@@ -30,16 +30,16 @@ router.get('/single', (req, res) => {
 router.get('/template', (req, res) => {
     let templates = [];
     let usages = [];
-    pictureSchema.find({status: 0}, (err, lst) => {
+    memeSchema.find({status: 0}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db pictures failed");
+            ut.respond(res, 503, "Connection to db memes failed");
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 500, "No template found in the database");
             }
             for (let elem in lst) {
-                templates.push(elem.metadata);
-                usages.push(elem.usage);
+                templates.push(elem.memeId);
+                usages.push(elem.usages);
             }
             const answer = {templates: templates, usages: usages};
             console.log("Template statistics successful");

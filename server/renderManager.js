@@ -1,24 +1,24 @@
 const {Canvas, Image} = require("canvas");
 const renderSchema = require("./models/renderSchema");
-const pictureSchema = require("./models/pictureSchema");
+const memeSchema = require("./models/memeSchema");
 
-function renderMeme(picture) {
+function renderMeme(meme) {
     const image = new Image();
-    const canvas = new Canvas(picture.format.width, picture.format.height)
+    const canvas = new Canvas(meme.format.width, meme.format.height)
     const ctx = canvas.getContext('2d');
     image.onload = () => {
 
         // Black background
         ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, picture.format.width, picture.format.height);
+        ctx.fillRect(0, 0, meme.format.width, meme.format.height);
 
         // draw image in the middle of the specified area
         ctx.drawImage(image,
-            (picture.format.width - image.width) / 2,
-            (picture.format.height - image.height) / 2);
+            (meme.format.width - image.width) / 2,
+            (meme.format.height - image.height) / 2);
 
         // Draw text components
-        for (const textComponent of picture.texts) {
+        for (const textComponent of meme.texts) {
             console.log("drawing txt " + textComponent.text)
             // specifications like in HTML 5 Canvas API
             ctx.font = (textComponent.fontSize ?? 30) + 'px Impact';
@@ -27,25 +27,25 @@ function renderMeme(picture) {
             ctx.fillText(textComponent.text, textComponent.xCoordinate, textComponent.yCoordinate);
         }
     };
-    image.src = "data:;base64," + picture.img.base64; // mime type omitted
+    image.src = "data:;base64," + meme.img.base64; // mime type omitted
 
 
     return canvas.toDataURL('image/jpeg', 0.8); // data url with base64 encoding
 }
 
-function renderAndStoreMeme(picture) {
+function renderAndStoreMeme(meme) {
     renderSchema.create(new renderSchema({
-        metadata: picture.metadata,
-        dataUrl: renderMeme(picture)
+        memeId: meme.memeId,
+        dataUrl: renderMeme(meme)
     })).then(_ => {
-        console.log("Rendered Meme " + picture.metadata);
-    }).catch(err => console.log("Could not render Meme " + picture.metadata + " Reason: " + err));
+        console.log("Rendered Meme " + meme.memeId);
+    }).catch(err => console.log("Could not render Meme " + meme.memeId + " Reason: " + err));
 }
 
-function getOrRenderMeme(metadata, onSuccess, onNoMemeFound, onError, retry = true) {
-    renderSchema.find({metadata: metadata}, (err, lst) => {
+function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError, retry = true) {
+    renderSchema.find({memeId: memeId}, (err, lst) => {
         if ((err || lst.length === 0) && retry) {
-            pictureSchema.find({metadata: metadata}, (err, lst) => {
+            memeSchema.find({memeId: memeId}, (err, lst) => {
                 if (err) {
                     onError(err);
                 } else {
@@ -53,7 +53,7 @@ function getOrRenderMeme(metadata, onSuccess, onNoMemeFound, onError, retry = tr
                         onNoMemeFound();
                     } else {
                         renderAndStoreMeme(lst[0]);
-                        return getOrRenderMeme(metadata, onSuccess, onError, onNoMemeFound, false);
+                        return getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound, false);
                     }
                 }
             });

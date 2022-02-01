@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const renderSchema = new Schema({
-    metadata: String,
+    memeId: String,
     dataUrl: String
 });
 

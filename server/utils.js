@@ -71,25 +71,25 @@ module.exports = function () {
         return true;
     }
 
-    this.calcMetadataForMeme = function (pictureSchema) {
+    this.calcMemeIdForMeme = function (memeSchema) {
         const keyData =
-            pictureSchema.name
-            + pictureSchema.desc
-            + pictureSchema.img.base64
-            + pictureSchema.creator._id
+            memeSchema.name
+            + memeSchema.desc
+            + memeSchema.img.base64
+            + memeSchema.creator._id
             // For users the id can be used as a user with updated data (e.g. after marriage)
             // shall still be seen as the same person.
             // For texts the text data is used because an update to the text results in a different meme.
-            + pictureSchema.texts.map(text =>
+            + memeSchema.texts.map(text =>
                 text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize).join("")
-            + pictureSchema.upVoters.map(usr => usr._id).join("")
-            + pictureSchema.downVoters.map(usr => usr._id).join("")
-            + pictureSchema.comments.map(cmt => cmt._id).join("")
-            + pictureSchema.status
-            + pictureSchema.format.width
-            + pictureSchema.format.height
-            + pictureSchema.format.pixels
-            + pictureSchema.usage;
+            + memeSchema.upVoters.map(usr => usr._id).join("")
+            + memeSchema.downVoters.map(usr => usr._id).join("")
+            + memeSchema.comments.map(cmt => cmt._id).join("")
+            + memeSchema.status
+            + memeSchema.format.width
+            + memeSchema.format.height
+            + memeSchema.format.pixels
+            + memeSchema.usages;
         return md5(keyData);
     }
 

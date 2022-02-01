@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const pictureSchema = require("../models/pictureSchema");
+const memeSchema = require("../models/memeSchema");
 const userSchema = require("../models/userSchema");
 const {processSingleMemeCreation} = require("../memeUploadHandler");
 const utils = require("../utils");
 const ut = new utils();
 
 router.get('/', (req, res) => {
-    pictureSchema.find({}, (err, lst) => {
+    memeSchema.find({}, (err, lst) => {
         if (err) {
             ut.respond(res, 503, "Connection to db failed");
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "No picture with this metadata found");
+                ut.respond(res, 400, "No meme with this memeId found");
             } else {
                 let templates = lst.filter((pict) => {
                     return pict.status === 0;
                 });
                 let wanted = lst.filter((pict) => {
-                    return pict.metadata = req.query.metadata;
+                    return pict.memeId = req.query.memeId;
                 });
                 let toSend = {
                     wanted: wanted,

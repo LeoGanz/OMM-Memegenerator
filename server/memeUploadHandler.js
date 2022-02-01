@@ -1,5 +1,5 @@
 const textSchema = require("./models/textSchema");
-const pictureSchema = require("./models/pictureSchema");
+const memeSchema = require("./models/memeSchema");
 const utils = require("./utils");
 const {renderAndStoreMeme} = require("./renderManager");
 const ut = new utils();
@@ -43,8 +43,8 @@ function checkForAppropriateForm(memeJson, res) {
     return true;
 }
 
-function canNewMemeBeStoredInDb(metadata, onConnectionFailure, onAlreadyExists, onNotInDb) {
-    pictureSchema.find({metadata: metadata}, (err, lst) => {
+function canNewMemeBeStoredInDb(memeId, onConnectionFailure, onAlreadyExists, onNotInDb) {
+    memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
             onConnectionFailure();
         } else {
@@ -120,7 +120,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                     pixels: parseFloat(memeJson.pixels)
                 };
             let newBackgroundImg = useTemplate ? optionalTemplate.img.base64 : memeJson.image;
-            const picture = new pictureSchema({
+            const meme = new memeSchema({
                 name: memeJson.name,
                 desc: memeJson.desc,
                 img: {
@@ -131,45 +131,45 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                 upVoters: [],
                 downVoters: [],
                 comments: [],
-                // metadata will be added afterwards
+                // memeId will be added afterwards
                 status: newStatus, // 0 for a template, 1 for saved but
                 // not published, 2 for published
                 format: newFormat,
                 texts: newTexts,
-                usage: 0,
+                usages: 0,
             });
-            picture.metadata = ut.calcMetadataForMeme(picture)
+            meme.memeId = ut.calcMemeIdForMeme(meme)
 
-            canNewMemeBeStoredInDb(picture.metadata, () => {
+            canNewMemeBeStoredInDb(meme.memeId, () => {
                 ut.respond(res, 503, "Connection to db failed");
             }, () => {
                 ut.respond(res, 400, "This meme does already exist");
             }, () => {
-                renderAndStoreMeme(picture); // TODO run async
-                pictureSchema.create(picture).then(_ => {
+                renderAndStoreMeme(meme); // TODO run async
+                memeSchema.create(meme).then(_ => {
                     console.log("img saved, status: " + String(newStatus));
                     // Not using utils#addOneUsage with the background image,
                     // because using the same image does not count as using a template
                     // if the image is provided through the request instead of actually using the template.
                     // Old method did not handle multiple entries with the same backgroundImg anyway.
                     if (useTemplate) {
-                        pictureSchema.findOneAndUpdate({metadata: optionalTemplate.metadata},
-                            {usage: optionalTemplate.usage + 1});
+                        memeSchema.findOneAndUpdate({memeId: optionalTemplate.memeId},
+                            {usages: optionalTemplate.usages + 1});
                     }
-                    let memeRelativeUrl = "/image?metadata=" + picture.metadata
+                    let memeRelativeUrl = "/image?memeId=" + meme.memeId
                     if (optionalResults === undefined) {
                         // Process single meme directly
                         if (newStatus === 2) {
                             res.redirect(memeRelativeUrl);
                         } else {
-                            ut.respond(res, 200, "Saving complete for meme " + picture.metadata);
+                            ut.respond(res, 200, "Saving complete for meme " + meme.memeId);
                         }
                     } else {
                         // Process Memes as list
                         optionalResults += ut.getDomain() + memeRelativeUrl + "\n";
                         processMemeCreation(memeJsonArray, creator, res, optionalTemplate, optionalResults);
                     }
-                    creator.lastEdited.push(picture);
+                    creator.lastEdited.push(meme);
                 }).catch(err => {
                     ut.respond(res, 503, "Meme creation went wrong", err);
                 });

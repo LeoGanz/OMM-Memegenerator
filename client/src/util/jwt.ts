@@ -1,0 +1,1 @@
+export const getJwt = (jwt: string): string => "?token=" + jwt

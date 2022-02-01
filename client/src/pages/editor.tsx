@@ -1,13 +1,18 @@
 import {Title} from "../components/layout/typography";
 import 'tui-image-editor/dist/tui-image-editor.css';
-import './editor.css'
-import BaseImageEditor from '@toast-ui/react-image-editor';
 import styled from "styled-components";
-import  {createRef, useRef, useState} from "react";
+import {createRef, useContext, useEffect, useRef, useState} from "react";
 import {colors} from "../components/layout/colors";
 import {TextInput} from "../components/text-input/input-field";
 import {useForm} from "react-hook-form";
 import {REQUIRED_FIELD_ERROR, URL_ERROR, URL_PATTERN} from "../constants";
+import {ImageEditor} from "../components/image-editor/image-editor";
+import LoginContext from "../login-context";
+import {useNavigate} from "react-router-dom";
+import {getJwt} from "../util/jwt";
+
+const MAX_TEXT_FIELDS = 100
+
 
 const UploadOptions = styled.div`
   display: flex;
@@ -27,7 +32,6 @@ const FileUpload = styled.input`
   display: none;
 `
 
-
 const StyledButton = styled.button`
   background-color: ${colors.background.button};
   border: 1px solid ${colors.background.button};
@@ -44,18 +48,78 @@ const StyledButton = styled.button`
   }
 `
 
+
 export const Editor = () => {
+    const {isLoggedIn} = useContext(LoginContext)
+    let navigate = useNavigate()
     const {
         handleSubmit,
         control
     } = useForm<{ imageURL: string }>({
         mode: 'onSubmit',
     });
-    const [uploadFromUrlActive, setUploadFromUrlActive] = useState<boolean>(false)
-    const [hasImage, setHasImage] = useState<boolean>(false)
+
     const imageEditor = createRef()
     const fileInput = useRef<HTMLInputElement>(null);
 
+    const [uploadFromUrlActive, setUploadFromUrlActive] = useState<boolean>(false)
+    const [hasImage, setHasImage] = useState<boolean>(false)
+    let jwt = ""
+
+
+    useEffect(()=> {
+        if(isLoggedIn){
+            jwt = localStorage.getItem('meme-token') || ""
+        }else {
+            //todo add fallback for reload (try to use jwt from local storage)
+            navigate('/login')
+        }
+    }, [])
+
+
+    const handleSaveMeme = () => {
+        // @ts-ignore
+        const imageEditorInst = imageEditor.current.imageEditorInst;
+        const image = imageEditorInst.toDataURL();
+        const texts = []
+        const xCoordinates = []
+        const yCoordinates = []
+
+        for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
+            const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top"])
+            if(properties?.type === "i-text"){
+                const {text, left, top} = properties
+                texts.push(text)
+                xCoordinates.push(left)
+                yCoordinates.push(top)
+            }
+        }
+
+        const finalMeme = {
+            //todo add missing fields
+            //todo was ist status
+            name: "TODO: name muss im Frontend noch hinzugefügt werden",
+            desc: "TODO: desc muss im Frontend noch hinzugefügt werden",
+            image,
+            texts,
+            xCoordinates,
+            yCoordinates,
+            status: 0,
+            width: 1,
+            height: 1,
+            pixels: 1
+        }
+
+        console.log(finalMeme)
+        console.log(getJwt(jwt))
+        fetch('http://localhost:3000/editor' + getJwt(jwt), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(finalMeme)
+        }).then(r => {console.log(r)})
+    }
 
     const handleFileUpload = (event: React.FormEvent) => {
         event.preventDefault();
@@ -64,6 +128,8 @@ export const Editor = () => {
             const imageEditorInst = imageEditor.current.imageEditorInst;
             imageEditorInst.loadImageFromFile(fileInput.current.files[0], "image-from-file")
             imageEditorInst.ui.activeMenuEvent()
+
+            setHasImage(true)
         }
     }
 
@@ -72,9 +138,10 @@ export const Editor = () => {
         const imageEditorInst = imageEditor.current.imageEditorInst;
         imageEditorInst.loadImageFromURL(imageURL, "image-from-url")
         imageEditorInst.ui.activeMenuEvent()
-        setUploadFromUrlActive(false)
-    }
 
+        setUploadFromUrlActive(false)
+        setHasImage(true)
+    }
 
     return (
         <>
@@ -87,7 +154,6 @@ export const Editor = () => {
                                    pattern: {value: URL_PATTERN, message: URL_ERROR}
                                }}/>
                     <StyledButton type="submit">Submit URL</StyledButton>
-
                 </StyledForm> :
                 <UploadOptions>
                     <StyledButton as="label">
@@ -103,21 +169,11 @@ export const Editor = () => {
                     <StyledButton onClick={() => {setUploadFromUrlActive(true)}}>
                         Use Image URL
                     </StyledButton>
+
+                    {hasImage && <StyledButton onClick={handleSaveMeme}>Save Meme</StyledButton>}
                 </UploadOptions>
             }
-
-            <BaseImageEditor
-                includeUI={{
-                    menu: ['text', 'filter'],
-                    menuBarPosition: 'bottom',
-                    initMenu: ""
-
-                }}
-                usageStatistics={false}
-                //@ts-ignore
-                ref={imageEditor}
-            />
-
+            <ImageEditor editorRef={imageEditor} />
         </>
     )
 }

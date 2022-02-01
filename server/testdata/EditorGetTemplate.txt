@@ -1,4 +1,4 @@
-GET http://localhost:3000/editor?token=THE-TOKEN
+GET http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta
 
 bzw. als Query Param angeben: token - THE-TOKEN
 

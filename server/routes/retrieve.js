@@ -15,12 +15,10 @@ function respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes
             } else {
                 // console.log(meme.creator.username, creatorName);
                 if (creatorName === undefined || meme.creator.username === creatorName) {
-                    result = result + "localhost:3000/image?metadata=" + meme.metadata + "\n";
+                    result = result + ut.getDomain() + "/image?metadata=" + meme.metadata + "\n";
                     counter += 1;
-                    respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res);
-                } else {
-                    respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res);
                 }
+                respondDepCreator(possiblePictures, creatorName, counter, numberOfMemes, result, res);
             }
         });
     } else {

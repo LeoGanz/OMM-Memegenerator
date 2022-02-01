@@ -82,7 +82,10 @@ router.get('/', (req, res) => {
                                                 fitting = fitting && elem.dateOfCreation.includes(creationDate);
                                             }
                                             if (possibleTexts !== []) {
-                                                fitting = fitting && [...new Set([...possibleTexts, ...elem.texts])].length !== 0;
+                                                const textIntersection = possibleTexts.filter((el) => {
+                                                    return el in elem.texts;
+                                                })
+                                                fitting = fitting && textIntersection.length !== 0;
                                             }
                                             return fitting;
                                         });

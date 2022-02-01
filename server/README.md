@@ -57,4 +57,22 @@ There are 4 possible parameters in the body:
 3. `start` (essential parameter): An integer indexing the first image the clients wants to see
 4. `end` (essential parameter): An integer indexing the last image the clients wants to see
 
+There is again a login required like under "Editor-get"
+
 ### Images-post
+
+Under the route POST http://localhost:3000/images?token=THE-TOKEN the client can up- or 
+down-vote a meme or comment a meme. Therefore, he/she just needs to specify which images he 
+wants to access by giving the `metadata` in the JSON-Body and define `up` in the body to vote 
+the meme up `down` to vote the meme down or give as `comment` a String to comment that under the 
+wanted meme. Only one of `up`, `down`, `comment` should be defined in the body. An example 
+JSON-body would look like this:
+```
+{
+    "metadata": "someMeta",
+    "comment":"this picture is great!"
+}
+```
+
+Then the client has to be logged-in again.
+

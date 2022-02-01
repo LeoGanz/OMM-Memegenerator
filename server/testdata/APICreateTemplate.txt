@@ -1,10 +1,11 @@
 POST http://localhost:3000/create
 
-No login needed currently, metadata of test image in editor given
+No login needed currently.
+memeId is the identifier of the template that shall be used. It is returned when creating a template through editor create
 
 JSON-Body:
 {
-    "metadata":"898aa3ed8d18da3ee8e8ec380a8b1434",
+    "memeId":"b717756bf5921681aa91b08feb1af324",
     "memes":
     [
         {
@@ -12,18 +13,18 @@ JSON-Body:
         "desc":"descriptionOfMeme1",
         "texts":["text1OfMeme1","text2OfMeme1"],
         "xCoordinates":[111, 222],
-        "yCoordinates":[111, 222],
-        "xSizes":[1, 2],
-        "ySizes":[1, 2]
+        "yCoordinates":[111, 222]
         },
         {
         "name":"nameOfMeme2",
         "desc":"descriptionOfMeme2",
         "texts":["text1OfMeme2","text2OfMeme2"],
         "xCoordinates":[333, 444],
-        "yCoordinates":[333, 444],
-        "xSizes":[3, 4],
-        "ySizes":[3, 4]
+        "yCoordinates":[333, 444]
         }
     ]
 }
+
+
+xSizes and ySizes are no longer in use as they can result in distorted text.
+At a later stage fontSize and other properties will be supported.

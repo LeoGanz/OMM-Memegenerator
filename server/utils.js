@@ -1,6 +1,7 @@
 const jwt = require("njwt");
 const md5 = require('md5');
 const userSchema = require("./models/userSchema");
+const memeSchema = require("./models/memeSchema");
 
 module.exports = function () {
 
@@ -49,6 +50,8 @@ module.exports = function () {
             res.status(code).send(message);
         }
     }
+    this.dbConnectionFailureHandler = (res, err) => this.respond(res, 503, "Connection to db failed", err);
+    this.noMemeFoundHandler = (res) => this.respond(res, 400, "No meme found");
 
     /**
      * This method checks if every array in an array of arrays has the same length
@@ -71,27 +74,57 @@ module.exports = function () {
         return true;
     }
 
-    this.calcMetadataForMeme = function (pictureSchema) {
+    this.calcMemeIdFor = function (memeSchema) {
         const keyData =
-            pictureSchema.name
-            + pictureSchema.desc
-            + pictureSchema.img.base64
-            + pictureSchema.creator._id
+            memeSchema.name
+            + memeSchema.desc
+            + memeSchema.img.base64
+            + memeSchema.creator._id
             // For users the id can be used as a user with updated data (e.g. after marriage)
             // shall still be seen as the same person.
             // For texts the text data is used because an update to the text results in a different meme.
-            + pictureSchema.texts.map(text =>
+            + memeSchema.texts.map(text =>
                 text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize).join("")
-            + pictureSchema.upVoters.map(usr => usr._id).join("")
-            + pictureSchema.downVoters.map(usr => usr._id).join("")
-            + pictureSchema.comments.map(cmt => cmt._id).join("")
-            + pictureSchema.status
-            + pictureSchema.format.width
-            + pictureSchema.format.height
-            + pictureSchema.format.pixels
-            + pictureSchema.usage;
+            // + memeSchema.upVoters.map(usr => usr._id).join("")
+            // + memeSchema.downVoters.map(usr => usr._id).join("")
+            // + memeSchema.comments.map(cmt => cmt._id).join("")
+            + memeSchema.status
+            + memeSchema.format.width
+            + memeSchema.format.height
+            + memeSchema.format.pixels
+            // + memeSchema.usages;
         return md5(keyData);
     }
+
+    this.collectMetadata = function (memeId, onSuccess, onError, onNoMemeAvailable) {
+        memeSchema
+            .findOne({memeId: memeId})
+            .populate('creator')
+            .populate('texts')
+            .exec((err, meme) => {
+                if (err) {
+                    onError(err);
+                } else if (!meme) {
+                    onNoMemeAvailable();
+                } else {
+                    const metadata = {
+                        name: meme.name,
+                        desc: meme.desc,
+                        creator: meme.creator.username,
+                        dateOfCreation: meme.dateOfCreation,
+                        format: meme.format,
+                        texts: meme.texts.map(({text, xCoordinate, yCoordinate}) => ({text, xCoordinate, yCoordinate})),
+                        status: meme.status,
+                        usages: meme.usages,
+                        upVotes: meme.upVoters.length,
+                        downVotes: meme.downVoters.length,
+                        comments: meme.comments.length,
+                    }
+                    onSuccess(metadata);
+                }
+            });
+
+    };
 
 
     /**

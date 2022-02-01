@@ -6,8 +6,11 @@ const textSchema = new Schema({
     text: String,
     xCoordinate: Number,
     yCoordinate: Number,
-    xSize: Number,
-    ySize: Number,
+    // distorted text possible with xSize and ySize
+    // xSize: Number,
+    // ySize: Number,
+    fontSize: Number, // in px
+    color: String // CSS color string
     //things addable here
 });
 

@@ -1,24 +1,19 @@
 let express = require('express');
 let router = express.Router();
-const pictureSchema = require("../models/pictureSchema");
 const utils = require("../utils");
+const {getOrRenderMeme} = require("../renderManager");
 const ut = new utils();
 
 router.get("/", (req, res) => {
-    const metadata = req.query.metadata;
-    pictureSchema.find({metadata: metadata}, (err, lst) => {
-        if (err) {
-            ut.respond(res, 503, "Connection to db failed", err);
-        } else {
-            if (lst.length === 0) {
-                ut.respond(res, 400, "No picture with this metadata found");
-            } else {
-                const pict = lst[0];
-                console.log("Picture found:");
-                ut.respond(res, 200, pict);
-            }
-        }
-    });
+    const memeId = req.query.memeId;
+    getOrRenderMeme(memeId,
+        dataUrl => ut.collectMetadata(memeId, metadata => ut.respondSilently(res, 200, {
+            metadata: metadata,
+            dataUrl: dataUrl,
+        }), err => ut.dbConnectionFailureHandler(res, err), () => ut.noMemeFoundHandler(res)),
+        () => ut.noMemeFoundHandler(res),
+        err => ut.dbConnectionFailureHandler(res, err)
+    );
 });
 
 module.exports = router;

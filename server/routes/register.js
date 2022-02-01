@@ -16,7 +16,7 @@ let userSchema = require("../models/userSchema.js");
 function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
     userSchema.find({email: email}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db failed", err);
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
 
@@ -70,7 +70,7 @@ router.post("/", (req, res) => {
 
                     userSchema.find({username: username}, (err, lst) => {
                         if (err) {
-                            ut.respond(res, 503, "Connection to db failed", err);
+                            ut.dbConnectionFailureHandler(res, err)
                         } else {
                             if (lst.length === 0) {
                                 userSchema.find({fullName: fullName}, (err, lst) => {

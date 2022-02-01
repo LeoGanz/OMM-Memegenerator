@@ -119,7 +119,7 @@ There is no previous log-in required.
 ### Statistics-single
 
 Under the route GET http://localhost:3000/single?token=THE-TOKEN a client gets a class back with 
-`.pictures` as an array of metadata for pictures, `.up` as an array of numbers of up voters and 
+`.pictures` as an array of metadata for memes, `.up` as an array of numbers of up voters and 
 `.down` as an array of down voters. The data is mapped index-wise, so the image at position one 
 in the pictures has up the up voters of position one from up and down voters from position one 
 of down.
@@ -131,5 +131,14 @@ There is no JSON-Body for this request needed, but it is only accessible for a l
 
 Under the route GET http://localhost:3000/single?token=THE-TOKEN&metadata=someMeta the clients 
 gets a single view of the picture identified in the query parameter `metadata`.
+
+No JSON-Body needed but log-in.
+
+### Statistics-template
+
+Under the route GET http://localhost:3000/template?token=THE-TOKEN a client gets statistics for 
+the usage of every template. This is returned in a class with `.pictures` as a list of metadata 
+of the template metadata and with `.usages` as a list of usages for the templates. The data is 
+again mapped index-wise.
 
 No JSON-Body needed but log-in.

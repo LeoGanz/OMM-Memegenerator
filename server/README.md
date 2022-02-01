@@ -124,6 +124,12 @@ Under the route GET http://localhost:3000/single?token=THE-TOKEN a client gets a
 in the pictures has up the up voters of position one from up and down voters from position one 
 of down.
 
-There is no JSON-Body for this request needed but it is only accessible for a logged-in client.
+There is no JSON-Body for this request needed, but it is only accessible for a logged-in client.
 
 
+### SingleView-get
+
+Under the route GET http://localhost:3000/single?token=THE-TOKEN&metadata=someMeta the clients 
+gets a single view of the picture identified in the query parameter `metadata`.
+
+No JSON-Body needed but log-in.

@@ -4,6 +4,7 @@ const memeSchema = require("../models/memeSchema");
 const commentSchema = require("../models/commentSchema");
 const userSchema = require("../models/userSchema");
 const utils = require("../utils");
+const {getOrRenderMemes} = require("../renderManager");
 const ut = new utils();
 // const multer = require('multer');
 // const path = require("path");
@@ -149,7 +150,10 @@ router.get("/", (req, res) => {
     const filterBy = req.body.filterBy;
     const start = req.body.start;
     const end = req.body.end;
-    memeSchema.find({status:2}, (err, items) => {
+    memeSchema
+        .find({status: 2})
+        .populate('creator')
+        .exec((err, items) => {
         if (err) {
             ut.respond(res, 500, 'No images found', err);
         } else {
@@ -204,9 +208,10 @@ router.get("/", (req, res) => {
             }
             if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
                 items = items.slice(start, end);
-                ut.respond(res, 200, null);
-                // TODO adapt to looking up rendered images via memeId
-                res.send(items);
+                getOrRenderMemes(
+                    items.map(meme => meme.memeId),
+                    renderingArray => ut.respondSilently(res, 200, renderingArray),
+                    err => ut.dbConnectionFailureHandler(res, err))
             } else {
                 ut.respond(res, 400, "You have to give a number as start and a number as end," +
                     " which part of the items you want");

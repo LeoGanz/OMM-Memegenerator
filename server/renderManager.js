@@ -42,7 +42,7 @@ function renderAndStoreMeme(meme) {
     }).catch(err => console.log("Could not render Meme " + meme.memeId + " Reason: " + err));
 }
 
-function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError, retry = true) {
+function getOrRenderMemeInternal(memeId, onSuccess, onNoMemeFound, onError, retry = true) {
     renderSchema
         .findOne({memeId: memeId})
         .exec((err, render) => {
@@ -70,4 +70,26 @@ function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError, retry = true
         });
 }
 
-module.exports = {renderMeme, renderAndStoreMeme, getOrRenderMeme}
+function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError) {
+    return getOrRenderMemeInternal(memeId, onSuccess, onNoMemeFound, onError);
+}
+
+function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {
+    if (memeIdArray.length <= 0) {
+        console.log("rec end")
+        onSuccess(result);
+    } else {
+        const memeId = memeIdArray.shift();
+        getOrRenderMeme(memeId, dataUrl => {
+                result.push(dataUrl);
+                console.log("pushing next")
+                getOrRenderMemesRec(memeIdArray, onSuccess, onError, result);
+            }, _ => undefined,
+            onError);
+    }
+}
+function getOrRenderMemes(memeIdArray, onSuccess, onError) {
+    return getOrRenderMemesRec(memeIdArray, onSuccess, onError);
+}
+
+module.exports = {renderMeme, renderAndStoreMeme, getOrRenderMeme, getOrRenderMemes}

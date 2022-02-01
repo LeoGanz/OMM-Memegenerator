@@ -20,4 +20,5 @@ JSON-Body:
     "end":4
 }
 
-Gives back a list of images which were found for this body definition
+Gives back a list of rendered memes which were found for this body definition.
+The renderings are provided as data Urls with base64 encoding.

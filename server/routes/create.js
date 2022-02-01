@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
     const memeIdTemplate = req.body.memeId;
     memeSchema.find({memeId: memeIdTemplate, status: 0}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db memes failed", err);
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 400, "There is no template with this memeId")
@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
             //TODO consider which user created the meme instead of API
             userSchema.find({username: "API"}, (err, lst) => {
                 if (err) {
-                    ut.respond(res, 503, "Connection to db users failed", err);
+                    ut.dbConnectionFailureHandler(res, err)
                 } else {
                     if (lst.length === 0) {
                         ut.respond(res, 400, "No API user found");

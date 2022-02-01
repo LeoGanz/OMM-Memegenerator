@@ -9,7 +9,7 @@ const ut = new utils();
 router.get('/', (req, res) => {
     memeSchema.find({}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db failed");
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 400, "No meme with this memeId found");
@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     userSchema.find({currentToken: req.query.token}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db failed");
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 400, "No user with this token found");

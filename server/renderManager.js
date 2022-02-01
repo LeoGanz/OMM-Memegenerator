@@ -43,26 +43,31 @@ function renderAndStoreMeme(meme) {
 }
 
 function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError, retry = true) {
-    renderSchema.find({memeId: memeId}, (err, lst) => {
-        if ((err || lst.length === 0) && retry) {
-            memeSchema.find({memeId: memeId}, (err, lst) => {
-                if (err) {
-                    onError(err);
-                } else {
-                    if (lst.length === 0) {
-                        onNoMemeFound();
-                    } else {
-                        renderAndStoreMeme(lst[0]);
-                        return getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound, false);
-                    }
-                }
-            });
-        } else if (lst.length > 0) {
-            onSuccess(lst[0].dataUrl)
-        } else {
-            onError("Could not load rendered meme or rerender it.")
-        }
-    });
+    renderSchema
+        .findOne({memeId: memeId})
+        .exec((err, render) => {
+            if ((err || !render) && retry) {
+                memeSchema
+                    .findOne({memeId: memeId})
+                    .populate('texts')
+                    .exec((err, meme) => {
+                        if (err) {
+                            onError(err);
+                        } else {
+                            if (meme) {
+                                renderAndStoreMeme(meme);
+                                return getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound, false);
+                            } else {
+                                onNoMemeFound();
+                            }
+                        }
+                    });
+            } else if (render) {
+                onSuccess(render.dataUrl)
+            } else {
+                onError("Could not load rendered meme or rerender it.")
+            }
+        });
 }
 
 module.exports = {renderMeme, renderAndStoreMeme, getOrRenderMeme}

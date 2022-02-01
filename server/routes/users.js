@@ -8,7 +8,7 @@ const ut = new utils();
 router.get('/', function (req, res) {
     userSchema.find({}, (err, lst) => {
         if (err) {
-            ut.respond(res, 500, "Some problem with the database occurred", err);
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             ut.respond(res, 200, lst);
         }

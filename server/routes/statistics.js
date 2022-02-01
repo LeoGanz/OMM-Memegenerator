@@ -10,7 +10,7 @@ router.get('/single', (req, res) => {
     let downVotes = [];
     memeSchema.find({status: 2}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db memes failed", err);
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 500, "No meme found in the database");
@@ -32,7 +32,7 @@ router.get('/template', (req, res) => {
     let usages = [];
     memeSchema.find({status: 0}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db memes failed");
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 500, "No template found in the database");

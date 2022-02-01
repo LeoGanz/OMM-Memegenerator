@@ -4,10 +4,10 @@ bzw. als Query Param angeben: token - THE-TOKEN
 
 Login required
 
-metadata (essential): the metadata of the picture you want to handle
+memeId (essential): the memeId of the picture you want to handle
 
 up, down (optional): Something put here changes the up or down votes of the image given in
-metadata
+memeId
 -> Defining both makes no sense as the it will automatically be voted up
 
 comment (optional): A string you want to comment under
@@ -16,6 +16,6 @@ comment (optional): A string you want to comment under
 
 JSON-Body:
 {
-    "metadata": "someMeta",
+    "memeId": "someId",
     "comment":"this picture is great!"
 }

@@ -46,7 +46,7 @@ function checkForAppropriateForm(memeJson, res) {
 function canNewMemeBeStoredInDb(memeId, onConnectionFailure, onAlreadyExists, onNotInDb) {
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
-            onConnectionFailure();
+            onConnectionFailure(err);
         } else {
             if (lst.length !== 0) {
                 onAlreadyExists();
@@ -138,10 +138,10 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                 texts: newTexts,
                 usages: 0,
             });
-            meme.memeId = ut.calcMemeIdForMeme(meme)
+            meme.memeId = ut.calcMemeIdFor(meme)
 
-            canNewMemeBeStoredInDb(meme.memeId, () => {
-                ut.respond(res, 503, "Connection to db failed");
+            canNewMemeBeStoredInDb(meme.memeId, err => {
+                ut.dbConnectionFailureHandler(res, err)
             }, () => {
                 ut.respond(res, 400, "This meme does already exist");
             }, () => {

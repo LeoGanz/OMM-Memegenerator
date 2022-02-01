@@ -90,22 +90,21 @@ function handleComment(comment, memeId, user, res) {
     };
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db meme failed");
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 400, "No meme with this memeId found");
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
-                ut.respond(res, 503, "Connection to db comment failed");
+                ut.dbConnectionFailureHandler(res, err)
 
                 commentSchema.find({comment: comment, creator: user}, (err, lst) => {
                     if (err) {
-                        ut.respond(res, 503, "Connection to db comment failed");
+                        ut.dbConnectionFailureHandler(res, err)
                     } else {
                         if (lst.length === 0) {
-                            ut.respond(res, 400, "No comment with this user and string" +
-                                " found");
+                            ut.respond(res, 400, "No comment with this user and string found");
                         }
                         let toPush = lst[0]
                         pict.comments.push(toPush);
@@ -126,7 +125,7 @@ router.post("/", (req, res) => {
     let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db user failed");
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
                 ut.respond(res, 400, "No user with this token found");

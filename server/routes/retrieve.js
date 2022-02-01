@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 
     textSchema.find({}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db texts failed", err);
+            ut.dbConnectionFailureHandler(res, err)
         } else {
             let possibleTexts = [];
             if (lst.length === 0 && text !== undefined) {
@@ -52,7 +52,7 @@ router.get('/', (req, res) => {
             // console.log(possibleTexts);
             userSchema.find({}, (err, lst) => {
                 if (err) {
-                    ut.respond(res, 503, "Connection to db users failed", err);
+                    ut.dbConnectionFailureHandler(res, err)
                 } else {
                     if (lst.length === 0) {
                         ut.respond(res, 200, "No users found");
@@ -69,7 +69,7 @@ router.get('/', (req, res) => {
                         } else {
                             memeSchema.find({}, (err, lst) => {
                                 if (err) {
-                                    ut.respond(res, 503, "Connection to db memes failed", err);
+                                    ut.dbConnectionFailureHandler(res, err)
                                 } else {
                                     if (lst.length === 0) {
                                         ut.respond(res, 200, "No memes in the db");

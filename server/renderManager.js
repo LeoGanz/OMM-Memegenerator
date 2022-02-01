@@ -76,13 +76,11 @@ function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError) {
 
 function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {
     if (memeIdArray.length <= 0) {
-        console.log("rec end")
         onSuccess(result);
     } else {
         const memeId = memeIdArray.shift();
         getOrRenderMeme(memeId, dataUrl => {
                 result.push(dataUrl);
-                console.log("pushing next")
                 getOrRenderMemesRec(memeIdArray, onSuccess, onError, result);
             }, _ => undefined,
             onError);

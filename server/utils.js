@@ -99,7 +99,7 @@ module.exports = function () {
     this.collectMetadata = function (memeId, onSuccess, onError, onNoMemeAvailable) {
         memeSchema
             .findOne({memeId: memeId})
-            .populate('creator')
+            .populate('creator', 'username')
             .populate('texts')
             .exec((err, meme) => {
                 if (err) {

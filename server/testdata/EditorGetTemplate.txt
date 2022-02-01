@@ -1,6 +1,7 @@
-GET http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta
+GET http://localhost:3000/editor?token=THE-TOKEN&memeId=SOME-ID
 
-bzw. als Query Param angeben: token - THE-TOKEN
+bzw. als Query Param angeben:   token  - THE-TOKEN
+                                memeId - SOME-ID
 
 Login required
 

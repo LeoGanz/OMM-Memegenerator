@@ -7,27 +7,32 @@ const utils = require("../utils");
 const ut = new utils();
 
 router.get('/', (req, res) => {
-    memeSchema.find({}, (err, lst) => {
-        if (err) {
-            ut.dbConnectionFailureHandler(res, err)
-        } else {
-            if (lst.length === 0) {
-                ut.respond(res, 400, "No meme with this memeId found");
+    memeSchema
+        .find({})
+        .populate('texts')
+        // do not populate whole creator as this would leak private data
+        .populate('creator', 'username')
+        .exec((err, memes) => {
+            if (err) {
+                ut.dbConnectionFailureHandler(res, err)
             } else {
-                let templates = lst.filter((pict) => {
-                    return pict.status === 0;
-                });
-                let wanted = lst.filter((pict) => {
-                    return pict.memeId = req.query.memeId;
-                });
-                let toSend = {
-                    wanted: wanted,
-                    templates: templates,
+                if (memes.length === 0) {
+                    ut.respond(res, 400, "No meme with this memeId found");
+                } else {
+                    let templates = memes.filter((meme) => {
+                        return meme.status === 0;
+                    });
+                    let wanted = memes.filter((meme) => {
+                        return meme.memeId = req.query.memeId;
+                    });
+                    let toSend = {
+                        wanted: wanted,
+                        templates: templates,
+                    }
+                    ut.respondSilently(res, 200, toSend);
                 }
-                ut.respond(res, 200, toSend);
             }
-        }
-    });
+        });
 });
 
 router.post('/', (req, res) => {

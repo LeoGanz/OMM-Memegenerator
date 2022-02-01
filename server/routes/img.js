@@ -6,20 +6,6 @@ const userSchema = require("../models/userSchema");
 const utils = require("../utils");
 const {getOrRenderMemes} = require("../renderManager");
 const ut = new utils();
-// const multer = require('multer');
-// const path = require("path");
-// const fs = require('fs');
-
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads');
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, file.fieldname + '-' + ut.giveBackDateString());
-//     }
-// });
-
-// const upload = multer({storage: storage});
 
 /**
  * Handles an up vote
@@ -151,73 +137,74 @@ router.get("/", (req, res) => {
     const start = req.body.start;
     const end = req.body.end;
     memeSchema
-        .find({status: 2})
-        .populate('creator')
+        .find({status: 2}) // published only
+        // do not populate whole creator as this would leak private data
+        .populate('creator', 'username')
         .exec((err, items) => {
-        if (err) {
-            ut.respond(res, 500, 'No images found', err);
-        } else {
-            if (filterBy) {
-                items = items.filter(item => {
-                    return item.creator.username === filterBy;
-                });
-            }
-            if (sortBy === "up desc") {
-                items = items.sort((a, b) => {
-                    if (a.upVoters.length > b.upVoters.length) {
-                        return -1;
-                    }
-                    if (a.upVoters.length < b.upVoters.length) {
-                        return 1;
-                    }
-                    return 0;
-                });
-            }
-            if (sortBy === "up asc") {
-                items = items.sort((a, b) => {
-                    if (a.upVoters.length > b.upVoters.length) {
-                        return 1;
-                    }
-                    if (a.upVoters.length < b.upVoters.length) {
-                        return -1;
-                    }
-                    return 0;
-                });
-            }
-            if (sortBy === "down desc") {
-                items = items.sort((a, b) => {
-                    if (a.downVoters.length > b.downVoters.length) {
-                        return -1;
-                    }
-                    if (a.downVoters.length < b.downVoters.length) {
-                        return 1;
-                    }
-                    return 0;
-                });
-            }
-            if (sortBy === "down asc") {
-                items = items.sort((a, b) => {
-                    if (a.downVoters.length > b.downVoters.length) {
-                        return 1;
-                    }
-                    if (a.downVoters.length < b.downVoters.length) {
-                        return -1;
-                    }
-                    return 0;
-                });
-            }
-            if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
-                items = items.slice(start, end);
-                getOrRenderMemes(
-                    items.map(meme => meme.memeId),
-                    renderingArray => ut.respondSilently(res, 200, renderingArray),
-                    err => ut.dbConnectionFailureHandler(res, err))
+            if (err) {
+                ut.respond(res, 500, 'No images found', err);
             } else {
-                ut.respond(res, 400, "You have to give a number as start and a number as end," +
-                    " which part of the items you want");
+                if (filterBy) {
+                    items = items.filter(item => {
+                        return item.creator.username === filterBy;
+                    });
+                }
+                if (sortBy === "up desc") {
+                    items = items.sort((a, b) => {
+                        if (a.upVoters.length > b.upVoters.length) {
+                            return -1;
+                        }
+                        if (a.upVoters.length < b.upVoters.length) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                }
+                if (sortBy === "up asc") {
+                    items = items.sort((a, b) => {
+                        if (a.upVoters.length > b.upVoters.length) {
+                            return 1;
+                        }
+                        if (a.upVoters.length < b.upVoters.length) {
+                            return -1;
+                        }
+                        return 0;
+                    });
+                }
+                if (sortBy === "down desc") {
+                    items = items.sort((a, b) => {
+                        if (a.downVoters.length > b.downVoters.length) {
+                            return -1;
+                        }
+                        if (a.downVoters.length < b.downVoters.length) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                }
+                if (sortBy === "down asc") {
+                    items = items.sort((a, b) => {
+                        if (a.downVoters.length > b.downVoters.length) {
+                            return 1;
+                        }
+                        if (a.downVoters.length < b.downVoters.length) {
+                            return -1;
+                        }
+                        return 0;
+                    });
+                }
+                if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
+                    items = items.slice(start, end);
+                    getOrRenderMemes(
+                        items.map(meme => meme.memeId),
+                        renderingArray => ut.respondSilently(res, 200, renderingArray),
+                        err => ut.dbConnectionFailureHandler(res, err))
+                } else {
+                    ut.respond(res, 400, "You have to give a number as start and a number as end," +
+                        " which part of the items you want");
+                }
             }
-        }
-    });
+        });
 
 })
 

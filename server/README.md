@@ -17,7 +17,9 @@ The sites are accessible under `http://localhost:3000`.
 
 ###API-retrieval
 
+
 ###Editor-create
+
 
 ###Editor-get
 Under the route http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta the clients gets 
@@ -28,4 +30,25 @@ possible templates are given back. The parameter `metadata` in the query specifi
 template is wanted.
 
 For this route the client has to be logged-in so he/she needs to pass an access token in the query, 
-which was given after the log-in page. 
+which was given after the log-in page.
+
+
+###Images-get
+Under the route GET http://localhost:3000/images?token=THE-TOKEN the client gets back a list of 
+images which were found for the parameters given in the JSON-Body. The body has to look like this:
+```
+{
+"sortBy":"up asc",
+"filterBy":"Tester",
+"start":0,
+"end":4
+}
+```
+
+There are 4 possible parameters in the body:
+1. `sortBy` (optional parameter): For sorting the images in an order
+   
+   (possibilities: "up asc", "up desc", "down asc" and "down desc")
+2. `filterBy` (optional parameter): For usernames to filter after
+3. `start` (essential parameter): An integer indexing the first image the clients wants to see
+4. `end` (essential parameter): An integer indexing the last image the clients wants to see

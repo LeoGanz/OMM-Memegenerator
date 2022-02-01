@@ -2,7 +2,26 @@ import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import {Title} from "../components/layout/typography";
 import {MemeCard, MemeCardType} from "../components/meme-card/meme-card";
-import {Button} from "../components/button/button";
+import {colors} from "../components/layout/colors";
+import {Link} from "react-router-dom";
+
+const ButtonLink = styled(Link)`
+  background-color: ${colors.background.button};
+  border: 1px solid ${colors.background.button};
+  text-decoration: none;
+  color: white;
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  height: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  &:hover{
+    opacity: 90%;
+  }
+  
+`
+
 
 const OverviewGrid = styled.div`
   display: grid;
@@ -42,7 +61,7 @@ export const Overview = () => {
         <>
             <HeadlineSection>
                 <Title>Overview</Title>
-                <Button>+ Create your own meme</Button>
+                <ButtonLink to="/editor">+ Create your own meme</ButtonLink>
             </HeadlineSection>
 
             <OverviewGrid>

@@ -27,7 +27,7 @@ export const StyledErrorMessage = styled.span`
 `;
 
 export const TextInput = (
-    props: UseControllerProps<any> & { label: string, type: string },
+    props: UseControllerProps<any> & { label?: string, type: string },
 ) => {
   const { field, fieldState, formState } = useController(props);
   const errorMessage = fieldState?.error?.message;

@@ -139,76 +139,99 @@ router.get("/", (req, res) => {
     const filterBy = req.body.filterBy;
     const start = req.body.start;
     const end = req.body.end;
-    memeSchema
-        .find({status: 2}) // published only
-        // do not populate whole creator as this would leak private data
-        .populate('creator', 'username')
-        .exec((err, items) => {
-            if (err) {
-                ut.respond(res, 500, 'No images found', err);
-            } else {
-                if (filterBy) {
-                    items = items.filter(item => {
-                        return item.creator.username === filterBy;
-                    });
-                }
-                if (sortBy === "up desc") {
-                    items = items.sort((a, b) => {
-                        if (a.upVoters.length > b.upVoters.length) {
-                            return -1;
-                        }
-                        if (a.upVoters.length < b.upVoters.length) {
-                            return 1;
-                        }
-                        return 0;
-                    });
-                }
-                if (sortBy === "up asc") {
-                    items = items.sort((a, b) => {
-                        if (a.upVoters.length > b.upVoters.length) {
-                            return 1;
-                        }
-                        if (a.upVoters.length < b.upVoters.length) {
-                            return -1;
-                        }
-                        return 0;
-                    });
-                }
-                if (sortBy === "down desc") {
-                    items = items.sort((a, b) => {
-                        if (a.downVoters.length > b.downVoters.length) {
-                            return -1;
-                        }
-                        if (a.downVoters.length < b.downVoters.length) {
-                            return 1;
-                        }
-                        return 0;
-                    });
-                }
-                if (sortBy === "down asc") {
-                    items = items.sort((a, b) => {
-                        if (a.downVoters.length > b.downVoters.length) {
-                            return 1;
-                        }
-                        if (a.downVoters.length < b.downVoters.length) {
-                            return -1;
-                        }
-                        return 0;
-                    });
-                }
-                if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
-                    items = items.slice(start, end);
-                    getOrRenderMemes(
-                        items.map(meme => meme.memeId),
-                        renderingArray => ut.respondSilently(res, 200, renderingArray),
-                        err => ut.dbConnectionFailureHandler(res, err))
+    const status = req.body.status;
+
+    // Do not allow lookup of other users' drafts
+    if (status === 1) {
+        userSchema.findOne({currentToken: req.query.token}).exec(
+            (err, user) => {
+                if (err) {
+                    ut.dbConnectionFailureHandler(res, err);
+                } else if (!user) {
+                    // should never occur as login is checked by eternal route
+                    ut.respond(res, 400, "Could not find user with the current token");
+                } else if (user.username !== filterBy) {
+                    ut.respond(res, 400, "You may only lookup your own drafts")
                 } else {
-                    ut.respond(res, 400, "You have to give a number as start and a number as end," +
-                        " which part of the items you want");
+                    performRetrieval();
                 }
             }
-        });
+        )
+    } else {
+        performRetrieval();
+    }
 
+    function performRetrieval() {
+        memeSchema
+            .find({status: status}) // published only
+            // do not populate whole creator as this would leak private data
+            .populate('creator', 'username')
+            .exec((err, items) => {
+                if (err) {
+                    ut.respond(res, 500, 'No images found', err);
+                } else {
+                    if (filterBy) {
+                        items = items.filter(item => {
+                            return item.creator.username === filterBy;
+                        });
+                    }
+                    if (sortBy === "up desc") {
+                        items = items.sort((a, b) => {
+                            if (a.upVoters.length > b.upVoters.length) {
+                                return -1;
+                            }
+                            if (a.upVoters.length < b.upVoters.length) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+                    if (sortBy === "up asc") {
+                        items = items.sort((a, b) => {
+                            if (a.upVoters.length > b.upVoters.length) {
+                                return 1;
+                            }
+                            if (a.upVoters.length < b.upVoters.length) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                    }
+                    if (sortBy === "down desc") {
+                        items = items.sort((a, b) => {
+                            if (a.downVoters.length > b.downVoters.length) {
+                                return -1;
+                            }
+                            if (a.downVoters.length < b.downVoters.length) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+                    if (sortBy === "down asc") {
+                        items = items.sort((a, b) => {
+                            if (a.downVoters.length > b.downVoters.length) {
+                                return 1;
+                            }
+                            if (a.downVoters.length < b.downVoters.length) {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                    }
+                    if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
+                        items = items.slice(start, end);
+                        getOrRenderMemes(
+                            items.map(meme => meme.memeId),
+                            renderingArray => ut.respondSilently(res, 200, renderingArray),
+                            err => ut.dbConnectionFailureHandler(res, err))
+                    } else {
+                        ut.respond(res, 400, "You have to give a number as start and a number as end," +
+                            " which part of the items you want");
+                    }
+                }
+            });
+    }
 })
 
 module.exports = router;

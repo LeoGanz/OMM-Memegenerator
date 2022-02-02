@@ -14,11 +14,18 @@ end (essential): end point of the list you get with filter and sortBy
 
 JSON-Body:
 {
+    "status":0,
     "sortBy":"up asc",
     "filterBy":"Tester",
     "start":0,
     "end":4
 }
+
+status: 0 - template
+        1 - private draft
+        2 - published meme
+
+Access to other users' drafts is prohibited. You have to enter the requester's name in filterBy when setting status 1.
 
 Gives back a list of rendered memes which were found for this body definition.
 The renderings are provided as data Urls with base64 encoding.

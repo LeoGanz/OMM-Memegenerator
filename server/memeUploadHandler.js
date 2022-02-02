@@ -16,7 +16,10 @@ function checkForAppropriateForm(memeJson, res) {
     const texts = memeJson.texts ?? [];
     const xCoordinates = memeJson.xCoordinates ?? [];
     const yCoordinates = memeJson.yCoordinates ?? [];
-    const numericData = [xCoordinates, yCoordinates]
+    const fontSizes = memeJson.fontSizes ?? [];
+    const colors = memeJson.colors ?? [];
+    const alphabeticData = [texts, colors]
+    const numericData = [xCoordinates, yCoordinates, fontSizes];
     if (typeof name !== "string" || typeof desc !== "string") {
         ut.respond(res, 400, "Name or Description is no string");
         return false;
@@ -25,16 +28,18 @@ function checkForAppropriateForm(memeJson, res) {
         ut.respond(res, 400, "Please provide lists of equal length " +
             "for texts, xCoordinates and yCoordinates")
     }
-    for (let text in texts) {
-        if (typeof text !== "string") {
-            ut.respond(res, 400, "texts are no strings");
-            return false;
+    for (const strings in alphabeticData) {
+        for (const text in strings) {
+            if (typeof text !== "string") {
+                ut.respond(res, 400, "texts or colors are no strings");
+                return false;
+            }
         }
     }
     for (const subarray of numericData) {
         for (const elem of subarray) {
             if (typeof elem !== "number") {
-                ut.respond(res, 400, "coordinates or sizes are no number");
+                ut.respond(res, 400, "coordinates or fontSizes are no number");
                 return false;
             }
         }
@@ -64,16 +69,21 @@ function processTextsInBody(memeJson, res, onSuccess) {
     const xCoordinates = memeJson.xCoordinates ?? [];
     const yCoordinates = memeJson.yCoordinates ?? [];
     const fontSizes = memeJson.fontSizes ?? [];
+    const colors = memeJson.colors ?? [];
     let failureOccurred = false;
     for (let i = 0; i < texts.length && !failureOccurred; i++) {
         const text = texts[i];
         const xCoordinate = xCoordinates[i];
         const yCoordinate = yCoordinates[i];
+        const fontSize = fontSizes[i];
+        const color = colors[i];
 
         const textSch = new textSchema({
             text: text,
             xCoordinate: xCoordinate,
             yCoordinate: yCoordinate,
+            fontSize: fontSize,
+            color: color,
         });
         textSchema.create(textSch).then(_ => {
             newTexts.push(textSch);

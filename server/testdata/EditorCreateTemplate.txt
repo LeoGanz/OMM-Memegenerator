@@ -10,6 +10,8 @@ JSON-Body:
   "texts":["Hello", "World"],
   "xCoordinates":[150, 150],
   "yCoordinates":[100, 650],
+  "fontSizes":[30, 25],
+  "colors": ["#000000", "#0000FF"],
   "status": 0,
   "width": 400,
   "height": 700,

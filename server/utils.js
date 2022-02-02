@@ -42,12 +42,12 @@ module.exports = function () {
         }
     }
 
-    this.jwtVerify = function(request, onSuccess, onFailure){
+    this.jwtVerify = function (request, onSuccess, onFailure) {
         const adjustedToken = this.adjustToken(request);
         jwt.verify(adjustedToken, 'top-secret', (err) => {
             if (!err) {
                 onSuccess();
-            }else{
+            } else {
                 onFailure();
             }
         })
@@ -95,7 +95,7 @@ module.exports = function () {
             // shall still be seen as the same person.
             // For texts the text data is used because an update to the text results in a different meme.
             + memeSchema.texts.map(text =>
-                text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize).join("")
+                text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize + text.fontSize + text.color).join("")
             // + memeSchema.upVoters.map(usr => usr._id).join("")
             // + memeSchema.downVoters.map(usr => usr._id).join("")
             // + memeSchema.comments.map(cmt => cmt._id).join("")
@@ -103,7 +103,7 @@ module.exports = function () {
             + memeSchema.format.width
             + memeSchema.format.height
             + memeSchema.format.pixels
-            // + memeSchema.usages;
+        // + memeSchema.usages;
         return md5(keyData);
     }
 
@@ -136,13 +136,19 @@ module.exports = function () {
             });
     };
 
-    this.cleanTextComponent = ({text, xCoordinate, yCoordinate}) => ({text, xCoordinate, yCoordinate});
+    this.cleanTextComponent = ({text, xCoordinate, yCoordinate, fontSize, color}) => ({
+        text,
+        xCoordinate,
+        yCoordinate,
+        fontSize,
+        color
+    });
     this.cleanMeme = function (meme) {
         const {
             name,
             desc,
             img,
-            creator = {username:"N/A"},
+            creator = {username: "N/A"},
             texts = [],
             dateOfCreation,
             upVoters = [],
@@ -160,11 +166,15 @@ module.exports = function () {
             img,
             creator: creator.username,
             // TODO: find out why this.cleanTextComponent results in undefined
-            texts: texts.map(({text, xCoordinate, yCoordinate}) => ({text, xCoordinate, yCoordinate})),
+            texts: texts.map(({text, xCoordinate, yCoordinate}) => ({
+                text,
+                xCoordinate,
+                yCoordinate
+            })),
             dateOfCreation,
             upVoters: upVoters.map(usr => usr.username),
             downVoters: downVoters.map(usr => usr.username),
-            comments: comments.map(({dateOfCreation, text, creator = {username:"N/A"}}) => ({
+            comments: comments.map(({dateOfCreation, text, creator = {username: "N/A"}}) => ({
                 dateOfCreation,
                 text,
                 creator: creator.username

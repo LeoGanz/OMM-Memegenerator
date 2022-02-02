@@ -13,14 +13,18 @@ JSON-Body:
         "desc":"descriptionOfMeme1",
         "texts":["text1OfMeme1","text2OfMeme1"],
         "xCoordinates":[111, 222],
-        "yCoordinates":[111, 222]
+        "yCoordinates":[111, 222],
+        "fontSizes":[11, 22],
+        "colors":["#000000", "#0000FF"]
         },
         {
         "name":"nameOfMeme2",
         "desc":"descriptionOfMeme2",
         "texts":["text1OfMeme2","text2OfMeme2"],
         "xCoordinates":[333, 444],
-        "yCoordinates":[333, 444]
+        "yCoordinates":[333, 444],
+        "fontSizes":[33, 44],
+        "colors":["#32CD32", "#800000"]
         }
     ]
 }

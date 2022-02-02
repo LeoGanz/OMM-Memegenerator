@@ -6,6 +6,10 @@ bzw. als Query Param angeben:   token  - THE-TOKEN
 Login required
 
 JSON-Body:
-{}
+{
+    "start":0,
+    "end":5
+}
 
-Gives back a class with an image as ".wanted" and all the templates as ".templates"
+Gives back a class with an image as ".wanted" and all the templates as ".templates" the
+templates from the list of templates specified in start and end

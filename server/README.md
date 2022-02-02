@@ -26,11 +26,18 @@ request.
 
 ### Editor-get
 
-Under the route GET http://localhost:3000/editor?token=THE-TOKEN&metadata=somemeta the clients gets
-back a class. In the class under `.wanted` there is one image which then can be edited and
-under `.templates` all possible templates are given back. The parameter `metadata` in the query
-specifies which template is wanted. **Metadata serves in every part of the server as identifier of
-memes**.
+Under the route GET http://localhost:3000/editor?token=THE-TOKEN&memeId=someId the clients gets back
+a class. In the class under `.wanted` there is one image which then can be edited and
+under `.templates` all possible templates are given back. The parameter `memeId` in the query
+specifies which template is wanted. The parameters `.start` and `.end`in the JSON-Body specify which
+part of the template list is taken. The example body would look like this:
+
+```
+{
+"start":0,
+"end":5 
+}
+```
 
 For this route the client has to be logged-in so he/she needs to pass an access token in the query,
 which was given after the log-in page.
@@ -64,13 +71,13 @@ There is again a login required like under "Editor-get"
 
 Under the route POST http://localhost:3000/images?token=THE-TOKEN the client can up- or down-vote a
 meme or comment a meme. Therefore, he/she just needs to specify which images he wants to access by
-giving the `metadata` in the JSON-Body and define `up` in the body to vote the meme up `down` to
-vote the meme down or give as `comment` a String to comment that under the wanted meme. Only one
-of `up`, `down`, `comment` should be defined in the body. An example JSON-body would look like this:
+giving the `memeId` in the JSON-Body and define `up` in the body to vote the meme up `down` to vote
+the meme down or give as `comment` a String to comment that under the wanted meme. Only one of `up`
+, `down`, `comment` should be defined in the body. An example JSON-body would look like this:
 
 ```
 {
-    "metadata": "someMeta",
+    "memeId": "someId",
     "comment":"this picture is great!"
 }
 ```
@@ -126,7 +133,7 @@ There is no previous log-in required.
 ### Statistics-single
 
 Under the route GET http://localhost:3000/single?token=THE-TOKEN a client gets a class back with
-`.pictures` as an array of metadata for memes, `.up` as an array of numbers of up voters and
+`.pictures` as an array of memeId for memes, `.up` as an array of numbers of up voters and
 `.down` as an array of down voters. The data is mapped index-wise, so the image at position one in
 the pictures has up the up voters of position one from up and down voters from position one of down.
 
@@ -134,16 +141,16 @@ There is no JSON-Body for this request needed, but it is only accessible for a l
 
 ### SingleView-get
 
-Under the route GET http://localhost:3000/single?token=THE-TOKEN&metadata=someMeta the clients gets
-a single view of the picture identified in the query parameter `metadata`.
+Under the route GET http://localhost:3000/single?token=THE-TOKEN&memeId=someId the clients gets a
+single view of the picture identified in the query parameter `memeId`.
 
 No JSON-Body needed but log-in.
 
 ### Statistics-template
 
 Under the route GET http://localhost:3000/template?token=THE-TOKEN a client gets statistics for the
-usage of every template. This is returned in a class with `.pictures` as a list of metadata of the
-template metadata and with `.usages` as a list of usages for the templates. The data is again mapped
+usage of every template. This is returned in a class with `.pictures` as a list of memeId of the
+template memeId and with `.usages` as a list of usages for the templates. The data is again mapped
 index-wise.
 
 No JSON-Body needed but log-in.

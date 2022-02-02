@@ -28,9 +28,9 @@ function checkForAppropriateForm(memeJson, res) {
         ut.respond(res, 400, "Please provide lists of equal length " +
             "for texts, xCoordinates and yCoordinates")
     }
-    for (const strings in alphabeticData) {
-        for (const text in strings) {
-            if (typeof text !== "string") {
+    for (const subarray in alphabeticData) {
+        for (const elem in subarray) {
+            if (typeof elem !== "string") {
                 ut.respond(res, 400, "texts or colors are no strings");
                 return false;
             }

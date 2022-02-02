@@ -96,7 +96,17 @@ No log-in or JSON-body is required previously.
 ### Profile-get
 
 Under the route GET http://localhost:3000/profile?token=THE-TOKEN a client gets his/her profile 
-page. A log-in is again required with the access token but no JSON-Body.
+page. 
+
+A log-in is again required with the access token. The JSON-body needs to include a 
+`start`-number and an `end`-number to determine which memes of the profile history are displayed.
+An example body would look like this:
+```
+{
+"start": 0,
+"end": 10
+}
+```
 
 
 ### Register-Post

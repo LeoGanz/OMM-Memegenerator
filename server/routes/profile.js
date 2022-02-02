@@ -10,7 +10,7 @@ const ut = new utils();
  */
 router.get('/', (req, res) => {
     const token = req.query.token;
-    userSchema.find({currentToken: token}, (err, lst) => {
+    userSchema.find({currentToken: token}).populate('lastEdited').exec((err, lst) => {
         if (err) {
             ut.dbConnectionFailureHandler(res, err)
         } else {
@@ -19,8 +19,22 @@ router.get('/', (req, res) => {
             } else {
                 const user = lst[0];
                 console.log("User found:");
-                user.populate('');
-                ut.respond(res, 200, user);
+                if (err) {
+                    ut.respond(res, 500, 'No user found');
+                } else {
+                    const username = user.username;
+                    const fullName = user.fullName;
+                    const email = user.email;
+                    let history = user.lastEdited;
+                    history = history.slice(req.body.start, req.body.end);
+                    let response = {
+                        username: username,
+                        fullName: fullName,
+                        email: email,
+                        memeHistory: history
+                    }
+                    ut.respond(res, 200, response);
+                }
             }
         }
     });

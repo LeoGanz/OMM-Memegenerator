@@ -5,6 +5,9 @@ bzw. als Query Param angeben: token - THE-TOKEN
 Login required
 
 JSON-body:
-{}
+{
+    start: 0,
+    end: 10
+}
 
-Gives back a whole userSchema for the user with the token in the db
+Gives back a class with .username, .fullName, .email and .memeHistory to display the profile page

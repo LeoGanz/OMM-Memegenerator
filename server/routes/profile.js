@@ -4,6 +4,10 @@ const userSchema = require("../models/userSchema");
 const utils = require("../utils");
 const ut = new utils();
 
+
+/**
+ * This route gets all necessary information of the currently logged in user
+ */
 router.get('/', (req, res) => {
     const token = req.query.token;
     userSchema.find({currentToken: token}, (err, lst) => {
@@ -15,6 +19,7 @@ router.get('/', (req, res) => {
             } else {
                 const user = lst[0];
                 console.log("User found:");
+                user.populate('');
                 ut.respond(res, 200, user);
             }
         }

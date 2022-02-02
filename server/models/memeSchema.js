@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+/**
+ * This schema describes how every meme is structered
+ * @type {module:mongoose.Schema<any, Model<any, any, any, any>, any, any>}
+ */
 const memeSchema = new Schema(
     {
         name: String,

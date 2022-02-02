@@ -29,7 +29,7 @@ function handleUp(memeId, user, res) {
                 pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
                 pict.upVoters.push(user);
                 pict.save();
-                ut.respond(res, 200, "Meme update succeeded");
+                ut.respond(res, 200, "Meme upvote succeeded");
             }
         }
     });

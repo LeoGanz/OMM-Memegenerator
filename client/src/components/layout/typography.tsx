@@ -9,6 +9,10 @@ export const Title = styled.h1`
   font-weight: bold;
 `
 
+export const SubTitle = styled.h2`
+  font-size: 24px;
+`
+
 export const ButtonText = styled.div`
   font-size: 20px;
 `

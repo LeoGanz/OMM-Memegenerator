@@ -1,6 +1,12 @@
-GET http://localhost:3000/images?token=THE-TOKEN
+GET http://localhost:3000/images?token=THE-TOKEN&status=0&sortBy=up+asc&filterBy=Tester&start=0&end
+=4
 
 bzw. als Query Param angeben: token - THE-TOKEN
+                              status - the number status of a meme
+                              sortBy - the order in which the memes should be
+                              filterBy - the username of the creator
+                              start - a number as start of search in the list
+                              end - a number as end of search in the list
 
 Login required
 sortBy (optional): For sorting the images,
@@ -14,14 +20,9 @@ end (essential): end point of the list you get with filter and sortBy
 
 JSON-Body:
 {
-    "status":0,
-    "sortBy":"up asc",
-    "filterBy":"Tester",
-    "start":0,
-    "end":4
 }
 
-status: 0 - template
+status (essential): 0 - template
         1 - private draft
         2 - published meme
 

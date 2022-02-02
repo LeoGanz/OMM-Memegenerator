@@ -1,13 +1,13 @@
-GET http://localhost:3000/profile?token=THE-TOKEN
+GET http://localhost:3000/profile?token=THE-TOKEN&start=0&end=10
 
 bzw. als Query Param angeben: token - THE-TOKEN
+                              start - the number where to start in the list of lastEdited
+                              end - the number where to end in the list of lastEdited
 
 Login required
 
 JSON-body:
 {
-    "start": 0,
-    "end": 10
 }
 
 Gives back a class with .username, .fullName, .email and .memeHistory to display the profile page

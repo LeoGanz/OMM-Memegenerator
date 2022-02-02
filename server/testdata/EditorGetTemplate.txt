@@ -1,14 +1,14 @@
-GET http://localhost:3000/editor?token=THE-TOKEN&memeId=SOME-ID
+GET http://localhost:3000/editor?token=THE-TOKEN&memeId=SOME-ID&start=0&end=5
 
 bzw. als Query Param angeben:   token  - THE-TOKEN
                                 memeId - SOME-ID
+                                start - eine number als start der Liste von memes, die man will
+                                end - eine number als end der Liste von memes
 
 Login required
 
 JSON-Body:
 {
-    "start":0,
-    "end":5
 }
 
 Gives back a class with an image as ".wanted" and all the templates as ".templates" the

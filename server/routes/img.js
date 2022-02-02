@@ -108,11 +108,11 @@ function handleComment(comment, memeId, user, res) {
 }
 
 router.post("/", (req, res) => {
-    let memeId = req.body.memeId;
+    let memeId = req.query.memeId;
     let userToken = req.query.token;
-    let upVote = req.body.up;
-    let downVote = req.body.down;
-    let comment = req.body.comment;
+    let upVote = req.query.up;
+    let downVote = req.query.down;
+    let comment = req.query.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
             ut.dbConnectionFailureHandler(res, err)

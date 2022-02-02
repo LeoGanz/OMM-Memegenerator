@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
                     const fullName = user.fullName;
                     const email = user.email;
                     let history = user.lastEdited;
-                    history = history.slice(req.body.start, req.body.end);
+                    history = history.slice(req.query.start, req.query.end);
                     let response = {
                         username: username,
                         fullName: fullName,

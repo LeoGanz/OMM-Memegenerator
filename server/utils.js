@@ -42,6 +42,17 @@ module.exports = function () {
         }
     }
 
+    this.jwtVerify = function(request, onSuccess, onFailure){
+        const adjustedToken = this.adjustToken(request);
+        jwt.verify(adjustedToken, 'top-secret', (err) => {
+            if (!err) {
+                onSuccess();
+            }else{
+                onFailure();
+            }
+        })
+    }
+
     /**
      * Same functionality as respond but without logging.
      */

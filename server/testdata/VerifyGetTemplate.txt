@@ -1,0 +1,10 @@
+GET http://localhost:3000/verify?token=THE-TOKEN
+
+bzw. als Query Param angeben: token - THE-TOKEN
+
+Login required
+
+JSON-body:
+{}
+
+Gives back true if the token is verified and false if not.

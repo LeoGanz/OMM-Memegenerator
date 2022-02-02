@@ -6,7 +6,8 @@ const ut = new utils();
 
 
 /**
- * This route gets all necessary information of the currently logged in user
+ * This route gets all necessary information of the currently logged in user. Refer to
+ * ProfileGetTemplate or the Readme for more information
  */
 router.get('/', (req, res) => {
     const token = req.query.token;

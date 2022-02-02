@@ -17,6 +17,7 @@ let profileRouter = require('./routes/profile');
 let createRouter = require('./routes/create');
 let retrieveRouter = require('./routes/retrieve');
 let statisticRouter = require('./routes/statistics');
+let verifyRouter = require('./routes/verify');
 const utils = require("./utils");
 const ut = new utils();
 
@@ -56,6 +57,7 @@ app.use('/create', createRouter); //API create
 app.use('/retrieve', retrieveRouter); //API retrieve
 app.use('/register', registerRouter); //register-activity
 app.use('/login', loginRouter); //login activity
+app.use('/verify', verifyRouter);
 app.use(express.static(path.join(__dirname, 'public')));
 
 //constant checking if someone is logged in

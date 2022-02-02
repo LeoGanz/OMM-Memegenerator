@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import styled from "styled-components";
 import {colors} from "../layout/colors";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import LoginContext from "../../login-context";
 
 const LoginSectionContainer = styled.div`
@@ -42,10 +42,12 @@ const LogOutButton = styled.button`
 
 export const LoginSection = () => {
     const {setIsLoggedIn, isLoggedIn} = useContext(LoginContext)
+    let navigate = useNavigate()
 
     const handleLogOut = () => {
         //todo send logout to server
         setIsLoggedIn(false)
+        navigate('/')
     }
     return (
         <LoginSectionContainer>

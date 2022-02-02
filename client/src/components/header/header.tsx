@@ -19,6 +19,7 @@ const StyledHeader = styled.header`
   padding: 0 15px;
   color: ${colors.font.white};
   font-size: 20px;
+  z-index: 1000;
 
   ${up('md')} {
     padding: 0 100px;

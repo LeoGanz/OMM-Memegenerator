@@ -170,6 +170,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                         processMemeCreation(memeJsonArray, creator, res, optionalTemplate, optionalResults);
                     }
                     creator.lastEdited.push(meme);
+                    creator.save();
                 }).catch(err => {
                     ut.respond(res, 503, "Meme creation went wrong", err);
                 });

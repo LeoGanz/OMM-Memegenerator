@@ -1,5 +1,4 @@
 const express = require('express');
-const jwt = require("njwt");
 const router = express.Router();
 let utils = require("../utils");
 let ut = new utils();
@@ -54,47 +53,48 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
     });
 }
 
+
+/**
+ * This route registers a user to the platform. For more information look into
+ * RegisterTestUser.txt or the Readme.
+ */
 router.post("/", (req, res) => {
     // console.log("route reached");
     res.set('Access-Control-Allow-Origin', '*');
-    let token = ut.adjustToken(req);
-    jwt.verify(token, "top-secret", (err) => {
-            if (err) {
-                if (req.headers.authorization !== undefined) {
-                    ut.respond(res, 502, "You already have an account");
-                } else {
-                    let username = req.body.username;
-                    let fullName = req.body.fullName;
-                    let password = req.body.password;
-                    let email = req.body.email;
+    ut.jwtVerify(req, _ => {
+        ut.respond(res, 503, "No logged-in user can register a user");
+    }, _ => {
+        if (req.headers.authorization !== undefined) {
+            ut.respond(res, 502, "You already have an account");
+        } else {
+            let username = req.body.username;
+            let fullName = req.body.fullName;
+            let password = req.body.password;
+            let email = req.body.email;
 
-                    userSchema.find({username: username}, (err, lst) => {
-                        if (err) {
-                            ut.dbConnectionFailureHandler(res, err)
-                        } else {
-                            if (lst.length === 0) {
-                                userSchema.find({fullName: fullName}, (err, lst) => {
-                                    if (err) {
-                                        ut.respond(res, 503, "Connection to db failed", err);
-                                    } else {
-                                        if (lst.length === 0) {
-                                            addUserIfEmailDoesNotExist(email, password, username, fullName, res);
-                                        } else {
-                                            ut.respond(res, 502, "You already have an account");
-                                        }
-                                    }
-                                });
+            userSchema.find({username: username}, (err, lst) => {
+                if (err) {
+                    ut.dbConnectionFailureHandler(res, err)
+                } else {
+                    if (lst.length === 0) {
+                        userSchema.find({fullName: fullName}, (err, lst) => {
+                            if (err) {
+                                ut.respond(res, 503, "Connection to db failed", err);
                             } else {
-                                ut.respond(res, 502, "username already exists");
+                                if (lst.length === 0) {
+                                    addUserIfEmailDoesNotExist(email, password, username, fullName, res);
+                                } else {
+                                    ut.respond(res, 502, "You already have an account");
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        ut.respond(res, 502, "username already exists");
+                    }
                 }
-            } else {
-                ut.respond(res, 503, "No logged-in user can register a user");
-            }
+            });
         }
-    )
+    });
 });
 
 module.exports = router;

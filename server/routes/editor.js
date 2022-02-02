@@ -25,7 +25,9 @@ router.get('/', (req, res) => {
                     let templates = memes.filter((meme) => {
                         return meme.status === 0;
                     });
-                    templates = templates.slice(req.body.start, req.body.end);
+                    const start = req.body.start ?? 0;
+                    const end = req.body.end ?? 10;
+                    templates = templates.slice(start, end);
                     let wanted = memes.filter((meme) => {
                         return meme.memeId = req.query.memeId;
                     });

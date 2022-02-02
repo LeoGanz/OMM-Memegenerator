@@ -63,6 +63,7 @@ function processTextsInBody(memeJson, res, onSuccess) {
     const texts = memeJson.texts ?? [];
     const xCoordinates = memeJson.xCoordinates ?? [];
     const yCoordinates = memeJson.yCoordinates ?? [];
+    const fontSizes = memeJson.fontSizes ?? [];
     let failureOccurred = false;
     for (let i = 0; i < texts.length && !failureOccurred; i++) {
         const text = texts[i];

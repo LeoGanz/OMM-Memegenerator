@@ -28,7 +28,7 @@ function handleUp(memeId, user, res) {
             } else {
                 pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
                 pict.upVoters.push(user);
-
+                pict.save();
                 ut.respond(res, 200, "Meme update succeeded");
             }
         }
@@ -56,7 +56,7 @@ function handleDown(memeId, user, res) {
             } else {
                 pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
                 pict.downVoters.push(user);
-
+                pict.save();
                 ut.respond(res, 200, "Meme downvote succeeded");
             }
         }
@@ -95,7 +95,9 @@ function handleComment(comment, memeId, user, res) {
                         } else {
                             let toPush = lst[0]
                             pict.comments.push(toPush);
+                            pict.save();
                             user.lastComments.push(toPush);
+                            user.save();
                             ut.respond(res, 200, "Meme comment add succeeded");
                         }
                     }

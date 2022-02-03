@@ -21,4 +21,4 @@ JSON-Body:
 Should result in memeId b717756bf5921681aa91b08feb1af324
 
 xSizes and ySizes are no longer in use as they can result in distorted text.
-At a later stage fontSize and other properties will be supported.
+Colors can be provided in a format supported by HTML 5 Canvas API.

@@ -1,0 +1,26 @@
+
+- Editor upload: User zeichnet selber
+- fontsizes und tsxt color in anfrage parsing integrieren
+- images übers meme drüberklatschen (bevorzugt frontend only, backend möglich)
+- Meldung nach publishing
+- download von gesamten memes (nachschauen, wie das am einfachsten geht)
+- Koordinaten in editor und backend gleich?
+- File size für renderings festlegen, für download
+- templates: aufteilen zw. dem schicken von gerenderten previews (img route anpassen) und anfrage
+- nach rohdaten für ein einzelnes template (editor get)
+- (api creation: base64 upload zusätzlich zu auswahl nach memeId) -> später
+- API pages: bsp anfragen und doku im frontend
+- Overview: mit backend verbinden
+- Overview: sort & filter integrieren
+- Up/downvote in overview ermöglichen
+- Single View: mit backend verbinden
+- Single View: Buttons um zu nächstem element aus overview weiter zu schalten, Autoplay
+- Single view: Kommentare schreiben ermöglichen
+- komplette Profile Page
+- Kommentare post: evtl. nach single route verschieben -> später
+- Kommentare in single view get integrieren
+- 5 features unit testen (frontend?)
+- komplettes statistics frontend (graphen)
+- Metadaten bei der Single view anzeigen
+- Metadaten bei Overview (/images) mitschicken
+- Kommentare zu routen und Klassen hinzufügen

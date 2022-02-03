@@ -80,7 +80,7 @@ function handleComment(comment, memeId, user, res) {
     const comm = {
         dateOfCreation: currentDate,
         creator: user,
-        comment: comment
+        text: comment
     };
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {

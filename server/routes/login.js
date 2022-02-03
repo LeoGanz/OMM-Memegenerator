@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userSchema = require("../models/userSchema");
-const utils = require("../utils");
-const ut = new utils();
+const {jwtVerify, respond, dbConnectionFailureHandler, createToken, respondSilently} = require("../utils");
 
 /**
  * This method logs a user in. For more information look into LoginTestUser.txt or the REadme.
@@ -10,8 +9,8 @@ const ut = new utils();
 
 router.get('/', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
-    ut.jwtVerify(req, _ => {
-        ut.respond(res, 401, "You are already logged in");
+    jwtVerify(req, _ => {
+        respond(res, 401, "You are already logged in");
     }, _ => {
         let email;
         let pw;
@@ -21,28 +20,28 @@ router.get('/', (req, res) => {
             email = namePW[0];
             pw = namePW[1];
         } else {
-            ut.respond(res, 401, "No user-credentials given");
+            respond(res, 401, "No user-credentials given");
             return;
         }
         userSchema.find({email: email, password: pw}, (err, lst) => {
             if (err) {
-                ut.dbConnectionFailureHandler(res, err)
+                dbConnectionFailureHandler(res, err)
             } else {
                 if (lst.length !== 0) {
-                    let tokenString = ut.createToken(email);
+                    let tokenString = createToken(email);
                     userSchema.findOneAndUpdate({
                         email: email,
                         password: pw
                     }, {currentToken: tokenString}, null, (err) => {
                         if (err) {
-                            ut.respond(res, 401, "Wrong user-credentials given");
+                            respond(res, 401, "Wrong user-credentials given");
                         } else {
-                            ut.respondSilently(res, 200, tokenString);
+                            respondSilently(res, 200, tokenString);
                         }
                     })
 
                 } else {
-                    ut.respond(res, 401, "Wrong user-credentials given");
+                    respond(res, 401, "Wrong user-credentials given");
                 }
             }
         });

@@ -18,12 +18,11 @@ let createRouter = require('./routes/create');
 let retrieveRouter = require('./routes/retrieve');
 let statisticRouter = require('./routes/statistics');
 let verifyRouter = require('./routes/verify');
-const utils = require("./utils");
-const ut = new utils();
 
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
+const {userAPI} = require("./utils");
 let app = express();
 
 const corsOptions = {origin: true, credentials: true}
@@ -40,7 +39,7 @@ mongoose.connect(process.env.MONGO_URL,
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
         console.log('db connection initiated');
     });
-ut.userAPI();
+userAPI();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -1,8 +1,7 @@
 let express = require('express');
 let router = express.Router();
 const userSchema = require("../models/userSchema");
-const utils = require("../utils");
-const ut = new utils();
+const {dbConnectionFailureHandler, respond} = require("../utils");
 
 
 /**
@@ -13,15 +12,15 @@ router.get('/', (req, res) => {
     const token = req.query.token;
     userSchema.find({currentToken: token}).populate('lastEdited').exec((err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "Impossible Error: No meme with this memeId found");
+                respond(res, 400, "Impossible Error: No meme with this memeId found");
             } else {
                 const user = lst[0];
                 console.log("User found:");
                 if (err) {
-                    ut.respond(res, 500, 'No user found');
+                    respond(res, 500, 'No user found');
                 } else {
                     const username = user.username;
                     const fullName = user.fullName;
@@ -36,7 +35,7 @@ router.get('/', (req, res) => {
                         email: email,
                         memeHistory: history
                     }
-                    ut.respond(res, 200, response);
+                    respond(res, 200, response);
                 }
             }
         }

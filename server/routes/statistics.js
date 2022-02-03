@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const memeSchema = require("../models/memeSchema");
-const utils = require("../utils");
-const ut = new utils();
+const {dbConnectionFailureHandler, respond, respondSilently} = require("../utils");
 
 router.get('/single', (req, res) => {
     let memes = [];
@@ -10,10 +9,10 @@ router.get('/single', (req, res) => {
     let downVotes = [];
     memeSchema.find({status: 2}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 500, "No meme found in the database");
+                respond(res, 500, "No meme found in the database");
             }
             for (let elem in lst) {
                 memes.push(elem.memeId);
@@ -22,7 +21,7 @@ router.get('/single', (req, res) => {
             }
             const answer = {memes: memes, upVotes: upVotes, downVotes: downVotes};
             console.log("Single statistics successful");
-            ut.respondSilently(res, 200, answer);
+            respondSilently(res, 200, answer);
         }
     });
 });
@@ -32,10 +31,10 @@ router.get('/template', (req, res) => {
     let usages = [];
     memeSchema.find({status: 0}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 500, "No template found in the database");
+                respond(res, 500, "No template found in the database");
             }
             for (let elem in lst) {
                 templates.push(elem.memeId);
@@ -43,7 +42,7 @@ router.get('/template', (req, res) => {
             }
             const answer = {templates: templates, usages: usages};
             console.log("Template statistics successful");
-            ut.respondSilently(res, 200, answer);
+            respondSilently(res, 200, answer);
         }
     });
 });

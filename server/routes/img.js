@@ -3,9 +3,8 @@ const router = express.Router();
 const memeSchema = require("../models/memeSchema");
 const commentSchema = require("../models/commentSchema");
 const userSchema = require("../models/userSchema");
-const utils = require("../utils");
 const {getOrRenderMemes} = require("../renderManager");
-const ut = new utils();
+const {respond, getCurrentDateString, dbConnectionFailureHandler, respondSilently} = require("../utils");
 
 /**
  * Handles an up vote
@@ -16,20 +15,20 @@ const ut = new utils();
 function handleUp(memeId, user, res) {
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db meme failed");
+            respond(res, 503, "Connection to db meme failed");
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "No meme with this memeId found");
+                respond(res, 400, "No meme with this memeId found");
             }
             let pict = lst[0];
             let upVoters = pict.upVoters;
             if (user in upVoters) {
-                ut.respond(res, 400, "You have already up voted this");
+                respond(res, 400, "You have already up voted this");
             } else {
                 pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
                 pict.upVoters.push(user);
                 pict.save();
-                ut.respond(res, 200, "Meme upvote succeeded");
+                respond(res, 200, "Meme upvote succeeded");
             }
         }
     });
@@ -44,20 +43,20 @@ function handleUp(memeId, user, res) {
 function handleDown(memeId, user, res) {
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
-            ut.respond(res, 503, "Connection to db meme failed");
+            respond(res, 503, "Connection to db meme failed");
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "No meme with this memeId found");
+                respond(res, 400, "No meme with this memeId found");
             }
             let pict = lst[0];
             let downVoters = pict.downVoters;
             if (user in downVoters) {
-                ut.respond(res, 400, "You have already down voted this");
+                respond(res, 400, "You have already down voted this");
             } else {
                 pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
                 pict.downVoters.push(user);
                 pict.save();
-                ut.respond(res, 200, "Meme downvote succeeded");
+                respond(res, 200, "Meme downvote succeeded");
             }
         }
     });
@@ -71,7 +70,7 @@ function handleDown(memeId, user, res) {
  * @param res The result to give back
  */
 function handleComment(comment, memeId, user, res) {
-    const currentDate = ut.getCurrentDateString();
+    const currentDate = getCurrentDateString();
     const comm = {
         dateOfCreation: currentDate,
         creator: user,
@@ -79,26 +78,26 @@ function handleComment(comment, memeId, user, res) {
     };
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "No meme with this memeId found");
+                respond(res, 400, "No meme with this memeId found");
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
                 commentSchema.find({comment: comment, creator: user}, (err, lst) => {
                     if (err) {
-                        ut.dbConnectionFailureHandler(res, err)
+                        dbConnectionFailureHandler(res, err)
                     } else {
                         if (lst.length === 0) {
-                            ut.respond(res, 400, "No comment with this user and string found");
+                            respond(res, 400, "No comment with this user and string found");
                         } else {
                             let toPush = lst[0]
                             pict.comments.push(toPush);
                             pict.save();
                             user.lastComments.push(toPush);
                             user.save();
-                            ut.respond(res, 200, "Meme comment add succeeded");
+                            respond(res, 200, "Meme comment add succeeded");
                         }
                     }
                 });
@@ -115,10 +114,10 @@ router.post("/", (req, res) => {
     let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "No user with this token found");
+                respond(res, 400, "No user with this token found");
             }
             let user = lst[0];
             if (upVote !== undefined) {
@@ -128,7 +127,7 @@ router.post("/", (req, res) => {
             } else if (comment !== undefined) {
                 handleComment(comment, memeId, user, res);
             } else {
-                ut.respond(res, 200, "Nothing done");
+                respond(res, 200, "Nothing done");
             }
         }
     });
@@ -146,12 +145,12 @@ router.get("/", (req, res) => {
         userSchema.findOne({currentToken: req.query.token}).exec(
             (err, user) => {
                 if (err) {
-                    ut.dbConnectionFailureHandler(res, err);
+                    dbConnectionFailureHandler(res, err);
                 } else if (!user) {
                     // should never occur as login is checked by eternal route
-                    ut.respond(res, 400, "Could not find user with the current token");
+                    respond(res, 400, "Could not find user with the current token");
                 } else if (user.username !== filterBy) {
-                    ut.respond(res, 400, "You may only lookup your own drafts")
+                    respond(res, 400, "You may only lookup your own drafts")
                 } else {
                     performRetrieval();
                 }
@@ -168,7 +167,7 @@ router.get("/", (req, res) => {
             .populate('creator', 'username')
             .exec((err, items) => {
                 if (err) {
-                    ut.respond(res, 500, 'No images found', err);
+                    respond(res, 500, 'No images found', err);
                 } else {
                     if (filterBy) {
                         items = items.filter(item => {
@@ -223,10 +222,10 @@ router.get("/", (req, res) => {
                         items = items.slice(start, end);
                         getOrRenderMemes(
                             items.map(meme => meme.memeId),
-                            renderingArray => ut.respondSilently(res, 200, renderingArray),
-                            err => ut.dbConnectionFailureHandler(res, err))
+                            renderingArray => respondSilently(res, 200, renderingArray),
+                            err => dbConnectionFailureHandler(res, err))
                     } else {
-                        ut.respond(res, 400, "You have to give a number as start and a number as end," +
+                        respond(res, 400, "You have to give a number as start and a number as end," +
                             " which part of the items you want");
                     }
                 }

@@ -1,16 +1,15 @@
 let express = require('express');
 let router = express.Router();
 const userSchema = require("../models/userSchema");
-const utils = require("../utils");
-const ut = new utils();
+const {dbConnectionFailureHandler, respond} = require("../utils");
 
 /* GET users in DB. */
 router.get('/', function (req, res) {
     userSchema.find({}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
-            ut.respond(res, 200, lst);
+            respond(res, 200, lst);
         }
     });
 });

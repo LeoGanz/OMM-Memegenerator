@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-let utils = require("../utils");
-let ut = new utils();
 let userSchema = require("../models/userSchema.js");
+const {jwtVerify, respond, dbConnectionFailureHandler, createToken, getCurrentDateString} = require("../utils");
 
 /**
  * Creates a user if the user is not in the database
@@ -15,7 +14,7 @@ let userSchema = require("../models/userSchema.js");
 function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
     userSchema.find({email: email}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
 
@@ -24,9 +23,9 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
 
 
                 //Main code
-                let creationDate = ut.getCurrentDateString();
+                let creationDate = getCurrentDateString();
                 let hashedPw = password;
-                let tokenString = ut.createToken(email);
+                let tokenString = createToken(email);
 
 
                 // console.log("everything defined");
@@ -44,10 +43,10 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
                 // console.log(creationDate);
                 userSchema.create(user).then(_ => {
                     console.log("registration succeeded");
-                    ut.respond(res, 200, tokenString);
+                    respond(res, 200, tokenString);
                 });
             } else {
-                ut.respond(res, 502, "This email already has an account");
+                respond(res, 502, "This email already has an account");
             }
         }
     });
@@ -61,11 +60,11 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
 router.post("/", (req, res) => {
     // console.log("route reached");
     res.set('Access-Control-Allow-Origin', '*');
-    ut.jwtVerify(req, _ => {
-        ut.respond(res, 503, "No logged-in user can register a user");
+    jwtVerify(req, _ => {
+        respond(res, 503, "No logged-in user can register a user");
     }, _ => {
         if (req.headers.authorization !== undefined) {
-            ut.respond(res, 502, "You already have an account");
+            respond(res, 502, "You already have an account");
         } else {
             let username = req.body.username;
             let fullName = req.body.fullName;
@@ -74,22 +73,22 @@ router.post("/", (req, res) => {
 
             userSchema.find({username: username}, (err, lst) => {
                 if (err) {
-                    ut.dbConnectionFailureHandler(res, err)
+                    dbConnectionFailureHandler(res, err)
                 } else {
                     if (lst.length === 0) {
                         userSchema.find({fullName: fullName}, (err, lst) => {
                             if (err) {
-                                ut.respond(res, 503, "Connection to db failed", err);
+                                respond(res, 503, "Connection to db failed", err);
                             } else {
                                 if (lst.length === 0) {
                                     addUserIfEmailDoesNotExist(email, password, username, fullName, res);
                                 } else {
-                                    ut.respond(res, 502, "You already have an account");
+                                    respond(res, 502, "You already have an account");
                                 }
                             }
                         });
                     } else {
-                        ut.respond(res, 502, "username already exists");
+                        respond(res, 502, "username already exists");
                     }
                 }
             });

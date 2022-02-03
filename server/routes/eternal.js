@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userSchema = require("../models/userSchema");
-const utils = require('../utils');
-const ut = new utils();
+const {jwtVerify, respond} = require("../utils");
 
 /**
  * This route checks if a user is logged in.
@@ -10,7 +9,7 @@ const ut = new utils();
 
 router.use((req, res, next) => {
     // console.log(typeof token === "string");
-    ut.jwtVerify(req, _ => {
+    jwtVerify(req, _ => {
         next();
     }, _ => {
         const credentials = req.headers.authorization;
@@ -20,17 +19,17 @@ router.use((req, res, next) => {
             let pw = namePW[1];
             userSchema.find({username: name, password: pw}, (err, lst) => {
                 if (err) {
-                    ut.respond(res, 401, "Wrong user-credentials given");
+                    respond(res, 401, "Wrong user-credentials given");
                 } else {
                     if (lst.length === 0) {
-                        ut.respond(res, 401, "No authorization to do this");
+                        respond(res, 401, "No authorization to do this");
                     } else {
                         next();
                     }
                 }
             });
         } else {
-            ut.respond(res, 401, "No authorization to do this");
+            respond(res, 401, "No authorization to do this");
         }
     });
 });

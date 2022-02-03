@@ -1,8 +1,14 @@
 const textSchema = require("./models/textSchema");
 const memeSchema = require("./models/memeSchema");
-const utils = require("./utils");
 const {renderAndStoreMeme} = require("./renderManager");
-const ut = new utils();
+const {
+    checkForEqualLength,
+    respond,
+    getCurrentDateString,
+    calcMemeIdFor,
+    dbConnectionFailureHandler,
+    getDomain
+} = require("./utils");
 
 /**
  * This method checks if the given meme-array from the API is well-formed
@@ -21,17 +27,17 @@ function checkForAppropriateForm(memeJson, res) {
     const alphabeticData = [texts, colors]
     const numericData = [xCoordinates, yCoordinates, fontSizes];
     if (typeof name !== "string" || typeof desc !== "string") {
-        ut.respond(res, 400, "Name or Description is no string");
+        respond(res, 400, "Name or Description is no string");
         return false;
     }
-    if (!ut.checkForEqualLength([texts, ...numericData])) {
-        ut.respond(res, 400, "Please provide lists of equal length " +
+    if (!checkForEqualLength([texts, ...numericData])) {
+        respond(res, 400, "Please provide lists of equal length " +
             "for texts, xCoordinates and yCoordinates")
     }
     for (const strings in alphabeticData) {
         for (const text in strings) {
             if (typeof text !== "string") {
-                ut.respond(res, 400, "texts or colors are no strings");
+                respond(res, 400, "texts or colors are no strings");
                 return false;
             }
         }
@@ -39,7 +45,7 @@ function checkForAppropriateForm(memeJson, res) {
     for (const subarray of numericData) {
         for (const elem of subarray) {
             if (typeof elem !== "number") {
-                ut.respond(res, 400, "coordinates or fontSizes are no number");
+                respond(res, 400, "coordinates or fontSizes are no number");
                 return false;
             }
         }
@@ -92,7 +98,7 @@ function processTextsInBody(memeJson, res, onSuccess) {
             }
         }).catch(_ => {
             failureOccurred = true;
-            ut.respond(res, 503, "Error occurred during initialization of texts");
+            respond(res, 503, "Error occurred during initialization of texts");
         });
     }
 }
@@ -115,7 +121,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
     if (optionalResults !== undefined && memeJsonArray.length === 0) {
         // results being present indicates use of results list
         // empty meme array is end of recursion
-        ut.respond(res, 200, "Memes successfully created; result: " + optionalResults);
+        respond(res, 200, "Memes successfully created; result: " + optionalResults);
         return;
     }
     let memeJson = memeJsonArray.shift(); // take first elem from array
@@ -138,7 +144,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                     base64: newBackgroundImg
                 },
                 creator: creator,
-                dateOfCreation: ut.getCurrentDateString(),
+                dateOfCreation: getCurrentDateString(),
                 upVoters: [],
                 downVoters: [],
                 comments: [],
@@ -149,12 +155,12 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                 texts: newTexts,
                 usages: 0,
             });
-            meme.memeId = ut.calcMemeIdFor(meme)
+            meme.memeId = calcMemeIdFor(meme)
 
             canNewMemeBeStoredInDb(meme.memeId, err => {
-                ut.dbConnectionFailureHandler(res, err)
+                dbConnectionFailureHandler(res, err)
             }, () => {
-                ut.respond(res, 400, "This meme does already exist");
+                respond(res, 400, "This meme does already exist");
             }, () => {
                 renderAndStoreMeme(meme); // TODO run async
                 memeSchema.create(meme).then(_ => {
@@ -173,17 +179,17 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                         if (newStatus === 2) {
                             res.redirect(memeRelativeUrl);
                         } else {
-                            ut.respond(res, 200, "Saving complete for meme " + meme.memeId);
+                            respond(res, 200, "Saving complete for meme " + meme.memeId);
                         }
                     } else {
                         // Process Memes as list
-                        optionalResults += ut.getDomain() + memeRelativeUrl + "\n";
+                        optionalResults += getDomain() + memeRelativeUrl + "\n";
                         processMemeCreation(memeJsonArray, creator, res, optionalTemplate, optionalResults);
                     }
                     creator.lastEdited.push(meme);
                     creator.save();
                 }).catch(err => {
-                    ut.respond(res, 503, "Meme creation went wrong", err);
+                    respond(res, 503, "Meme creation went wrong", err);
                 });
             });
         });

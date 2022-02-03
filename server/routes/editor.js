@@ -3,8 +3,7 @@ const router = express.Router();
 const memeSchema = require("../models/memeSchema");
 const userSchema = require("../models/userSchema");
 const {processSingleMemeCreation} = require("../memeUploadHandler");
-const utils = require("../utils");
-const ut = new utils();
+const {dbConnectionFailureHandler, cleanMeme, respondSilently} = require("../utils");
 
 router.get('/', (req, res) => {
     memeSchema
@@ -17,10 +16,10 @@ router.get('/', (req, res) => {
         .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
         .exec((err, memes) => {
             if (err) {
-                ut.dbConnectionFailureHandler(res, err)
+                dbConnectionFailureHandler(res, err)
             } else {
                 if (memes.length === 0) {
-                    ut.respond(res, 400, "No meme with this memeId found");
+                    respond(res, 400, "No meme with this memeId found");
                 } else {
                     let templates = memes.filter((meme) => {
                         return meme.status === 0;
@@ -32,10 +31,10 @@ router.get('/', (req, res) => {
                         return meme.memeId = req.query.memeId;
                     });
                     let toSend = {
-                        wanted: wanted.map(ut.cleanMeme),
-                        templates: templates.map(ut.cleanMeme),
+                        wanted: wanted.map(cleanMeme),
+                        templates: templates.map(cleanMeme),
                     }
-                    ut.respondSilently(res, 200, toSend);
+                    respondSilently(res, 200, toSend);
                 }
             }
         });
@@ -44,10 +43,10 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     userSchema.find({currentToken: req.query.token}, (err, lst) => {
         if (err) {
-            ut.dbConnectionFailureHandler(res, err)
+            dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                ut.respond(res, 400, "No user with this token found");
+                respond(res, 400, "No user with this token found");
             }
             processSingleMemeCreation(req.body, lst[0], res)
         }

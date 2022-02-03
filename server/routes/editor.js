@@ -3,7 +3,7 @@ const router = express.Router();
 const memeSchema = require("../models/memeSchema");
 const userSchema = require("../models/userSchema");
 const {processSingleMemeCreation} = require("../memeUploadHandler");
-const {dbConnectionFailureHandler, cleanMeme, respondSilently} = require("../utils");
+const {dbConnectionFailureHandler, cleanMeme, respondSilently, respond} = require("../utils");
 
 router.get('/', (req, res) => {
     memeSchema

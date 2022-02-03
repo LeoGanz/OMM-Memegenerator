@@ -4,7 +4,13 @@ const memeSchema = require("../models/memeSchema");
 const commentSchema = require("../models/commentSchema");
 const userSchema = require("../models/userSchema");
 const {getOrRenderMemes} = require("../renderManager");
-const {respond, getCurrentDateString, dbConnectionFailureHandler, respondSilently} = require("../utils");
+const {
+    respond,
+    getCurrentDateString,
+    dbConnectionFailureHandler,
+    respondSilently,
+    parseMetadata
+} = require("../utils");
 
 /**
  * Handles an up vote
@@ -163,8 +169,12 @@ router.get("/", (req, res) => {
     function performRetrieval() {
         memeSchema
             .find({status: status}) // published only
+            .populate('texts')
             // do not populate whole creator as this would leak private data
             .populate('creator', 'username')
+            .populate('upVoters.username')
+            .populate('downVoters.username')
+            .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
             .exec((err, items) => {
                 if (err) {
                     respond(res, 500, 'No images found', err);
@@ -222,7 +232,16 @@ router.get("/", (req, res) => {
                         items = items.slice(start, end);
                         getOrRenderMemes(
                             items.map(meme => meme.memeId),
-                            renderingArray => respondSilently(res, 200, renderingArray),
+                            renderingArray => {
+                                const dataMetadataCombinations = [];
+                                for (let i = 0; i < items.length; i++) {
+                                    dataMetadataCombinations.push({
+                                        dataUrl: renderingArray[i],
+                                        metadata: parseMetadata(items[i])
+                                    })
+                                }
+                                respondSilently(res, 200, dataMetadataCombinations)
+                            },
                             err => dbConnectionFailureHandler(res, err))
                     } else {
                         respond(res, 400, "You have to give a number as start and a number as end," +

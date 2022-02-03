@@ -112,6 +112,22 @@ function calcMemeIdFor(memeSchema) {
     return md5(keyData);
 }
 
+function parseMetadata(meme) {
+    return {
+        name: meme.name,
+        desc: meme.desc,
+        creator: meme.creator.username,
+        dateOfCreation: meme.dateOfCreation,
+        format: meme.format,
+        texts: meme.texts.map(cleanTextComponent),
+        status: meme.status,
+        usages: meme.usages,
+        upVotes: meme.upVoters.length,
+        downVotes: meme.downVoters.length,
+        comments: meme.comments.length,
+    }
+}
+
 function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
     memeSchema
         .findOne({memeId: memeId})
@@ -124,20 +140,7 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
             } else if (!meme) {
                 onNoMemeAvailable();
             } else {
-                const metadata = {
-                    name: meme.name,
-                    desc: meme.desc,
-                    creator: meme.creator.username,
-                    dateOfCreation: meme.dateOfCreation,
-                    format: meme.format,
-                    texts: meme.texts.map(cleanTextComponent),
-                    status: meme.status,
-                    usages: meme.usages,
-                    upVotes: meme.upVoters.length,
-                    downVotes: meme.downVoters.length,
-                    comments: meme.comments.map(cleanCommentComponent),
-                }
-                onSuccess(metadata);
+                onSuccess(parseMetadata(meme));
             }
         });
 }
@@ -248,6 +251,7 @@ module.exports = {
     checkForEqualLength,
     cleanMeme,
     cleanTextComponent,
+    parseMetadata,
     collectMetadata,
     createToken,
     dbConnectionFailureHandler,

@@ -26,37 +26,24 @@ request.
 
 ### Editor-get
 
-Under the route GET http://localhost:3000/editor?token=THE-TOKEN&memeId=someId the clients gets back
-a class. In the class under `.wanted` there is one image which then can be edited and
+Under the route GET http://localhost:3000/editor?token=THE-TOKEN&memeId=someId&start=0&end=5 the 
+clients gets back a class. In the class under `.wanted` there is one image which then can be 
+edited and
 under `.templates` all possible templates are given back. The parameter `memeId` in the query
-specifies which template is wanted. The parameters `.start` and `.end`in the JSON-Body specify which
-part of the template list is taken. The example body would look like this:
-
-```
-{
-"start":0,
-"end":5 
-}
-```
+specifies which template is wanted. The parameters `start` and `end`in the JSON-Query to 
+determine which part of the possible templates he/she wants.
 
 For this route the client has to be logged-in so he/she needs to pass an access token in the query,
 which was given after the log-in page.
 
 ### Images-get
 
-Under the route GET http://localhost:3000/images?token=THE-TOKEN the client gets back a list of
-images which were found for the parameters given in the JSON-Body. The body has to look like this:
+Under the route GET http://localhost:3000/images?token=THE-TOKEN&status=0&sortBy=up+asc&filterBy=Tester&start=0&end
+=4 the client gets back a list of images which were found for the parameters given in the 
+JSON-Query.
 
-```
-{
-"sortBy":"up asc",
-"filterBy":"Tester",
-"start":0,
-"end":4
-}
-```
 
-There are 4 possible parameters in the body:
+There are 4 possible parameters in the query:
 
 1. `sortBy` (optional parameter): For sorting the images in an order
 
@@ -64,6 +51,7 @@ There are 4 possible parameters in the body:
 2. `filterBy` (optional parameter): For usernames to filter after
 3. `start` (essential parameter): An integer indexing the first image the clients wants to see
 4. `end` (essential parameter): An integer indexing the last image the clients wants to see
+5. `status` (essential parameter): The status of the memes which should be found
 
 There is again a login required like under "Editor-get"
 
@@ -100,19 +88,11 @@ No log-in or JSON-body is required previously.
 
 ### Profile-get
 
-Under the route GET http://localhost:3000/profile?token=THE-TOKEN a client gets his/her profile
+Under the route GET http://localhost:3000/profile?token=THE-TOKEN&start=0&end=10 a client gets his/her profile
 page.
 
-A log-in is again required with the access token. The JSON-body needs to include a
-`start`-number and an `end`-number to determine which memes of the profile history are displayed. An
-example body would look like this:
-
-```
-{
-"start": 0,
-"end": 10
-}
-```
+A log-in is again required with the access token. The JSON-Query needs to include a
+`start`-number and an `end`-number to determine which memes of the profile history are displayed.
 
 ### Register-Post
 

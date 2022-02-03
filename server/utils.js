@@ -100,7 +100,7 @@ function calcMemeIdFor(memeSchema) {
         // shall still be seen as the same person.
         // For texts the text data is used because an update to the text results in a different meme.
         + memeSchema.texts.map(text =>
-            text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize + text.fontSize + text.color).join("")
+            text.text + text.xCoordinate + text.yCoordinate + text.fontSize + text.color).join("")
         // + memeSchema.upVoters.map(usr => usr._id).join("")
         // + memeSchema.downVoters.map(usr => usr._id).join("")
         // + memeSchema.comments.map(cmt => cmt._id).join("")
@@ -117,6 +117,7 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
         .findOne({memeId: memeId})
         .populate('creator', 'username')
         .populate('texts')
+        .populate('comments')
         .exec((err, meme) => {
             if (err) {
                 onError(err);
@@ -134,11 +135,16 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
                     usages: meme.usages,
                     upVotes: meme.upVoters.length,
                     downVotes: meme.downVoters.length,
-                    comments: meme.comments.length,
+                    comments: meme.comments.map(cleanCommentComponent),
                 }
                 onSuccess(metadata);
             }
         });
+}
+
+function cleanCommentComponent({dateOfCreation, creator, text}) {
+    console.log(creator.username);
+    return ({dateOfCreation, creator: creator.username, text})
 }
 
 function cleanTextComponent({text, xCoordinate, yCoordinate, fontSize, color}) {
@@ -231,7 +237,7 @@ function createToken(email) {
 function adjustToken(request) {
     let token = request.query.token;
     if (token === undefined) {
-        console.log("token undefined");
+        // console.log("token undefined");
         token = ""
     }
     return token;

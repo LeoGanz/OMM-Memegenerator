@@ -107,11 +107,11 @@ function handleComment(comment, memeId, user, res) {
 }
 
 router.post("/", (req, res) => {
-    let memeId = req.query.memeId;
-    let userToken = req.query.token;
-    let upVote = req.query.up;
-    let downVote = req.query.down;
-    let comment = req.query.comment;
+    let memeId = req.body.memeId;
+    let userToken = req.body.token;
+    let upVote = req.body.up;
+    let downVote = req.body.down;
+    let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
             dbConnectionFailureHandler(res, err)
@@ -134,11 +134,11 @@ router.post("/", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-    const sortBy = req.body.sortBy;
-    const filterBy = req.body.filterBy;
-    const start = req.body.start;
-    const end = req.body.end;
-    const status = req.body.status;
+    const sortBy = req.query.sortBy;
+    const filterBy = req.query.filterBy;
+    const start = req.query.start;
+    const end = req.query.end;
+    const status = req.query.status;
 
     // Do not allow lookup of other users' drafts
     if (status === 1) {

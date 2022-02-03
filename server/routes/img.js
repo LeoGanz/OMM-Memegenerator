@@ -114,7 +114,7 @@ function handleComment(comment, memeId, user, res) {
 
 router.post("/", (req, res) => {
     let memeId = req.body.memeId;
-    let userToken = req.body.token;
+    let userToken = req.query.token;
     let upVote = req.body.up;
     let downVote = req.body.down;
     let comment = req.body.comment;

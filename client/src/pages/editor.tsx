@@ -1,4 +1,4 @@
-import {Title} from "../components/layout/typography";
+import {SubTitle, Title} from "../components/layout/typography";
 import 'tui-image-editor/dist/tui-image-editor.css';
 import styled from "styled-components";
 import {createRef, useContext, useEffect, useRef, useState} from "react";
@@ -9,7 +9,9 @@ import {REQUIRED_FIELD_ERROR, URL_ERROR, URL_PATTERN} from "../constants";
 import {ImageEditor} from "../components/image-editor/image-editor";
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
-import {getJwt} from "../util/jwt";
+import {getJwt, objectToQuery} from "../util/jwt";
+import {Carousel} from "../components/carousel/carousel";
+import {MemeType} from "../util/typedef";
 
 const MAX_TEXT_FIELDS = 100
 
@@ -63,21 +65,32 @@ export const Editor = () => {
     const fileInput = useRef<HTMLInputElement>(null);
 
     const [uploadFromUrlActive, setUploadFromUrlActive] = useState<boolean>(false)
+    const [base64, setBase64] = useState<string | undefined>(undefined)
     const [hasImage, setHasImage] = useState<boolean>(false)
+    const [templates, setTemplates] = useState<MemeType[]>([])
+    const [usersCreation, setUsersCreations] = useState<MemeType[]>([])
     let jwt = ""
 
 
     useEffect(()=> {
         if(isLoggedIn){
             jwt = localStorage.getItem('meme-token') || ""
+            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start:0, end:20}), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({start:0, end:20})
+            }).then(r => r.json()).then(r => setTemplates(r))
+            console.log(templates)
         }else {
-            //todo add fallback for reload (try to use jwt from local storage)
             navigate('/login')
         }
     }, [])
 
 
     const handleSaveMeme = () => {
+        setBase64(undefined)
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;
         const image = imageEditorInst.toDataURL();
@@ -111,7 +124,7 @@ export const Editor = () => {
         }
 
         console.log(finalMeme)
-        console.log(getJwt(jwt))
+
         fetch('http://localhost:3000/editor' + getJwt(jwt), {
             method: 'POST',
             headers: {
@@ -124,10 +137,12 @@ export const Editor = () => {
     const handleFileUpload = (event: React.FormEvent) => {
         event.preventDefault();
         if (fileInput?.current?.files) {
+            setBase64(undefined)
             // @ts-ignore
             const imageEditorInst = imageEditor.current.imageEditorInst;
             imageEditorInst.loadImageFromFile(fileInput.current.files[0], "image-from-file")
             imageEditorInst.ui.activeMenuEvent()
+
 
             setHasImage(true)
         }
@@ -139,13 +154,24 @@ export const Editor = () => {
         imageEditorInst.loadImageFromURL(imageURL, "image-from-url")
         imageEditorInst.ui.activeMenuEvent()
 
+        setBase64(undefined)
         setUploadFromUrlActive(false)
         setHasImage(true)
+    }
+
+    const handleCarouselSelect = async (meme: MemeType) => {
+        await setBase64(undefined)
+        await setBase64(meme.img.base64)
     }
 
     return (
         <>
             <Title>Editor</Title>
+            <SubTitle>Use a template</SubTitle>
+            <Carousel onCarouselSelect={handleCarouselSelect} memes={templates}/>
+            <SubTitle>Use your recent creations</SubTitle>
+            <Carousel onCarouselSelect={handleCarouselSelect} memes={templates}/>
+            <SubTitle>Or select an upload option</SubTitle>
             {uploadFromUrlActive ?
                 <StyledForm name="sign-up" onSubmit={handleSubmit(onUrlUpload)}>
                     <TextInput name={'imageURL'} type={'text'} control={control}
@@ -163,17 +189,18 @@ export const Editor = () => {
                             ref={fileInput}
                             onChange={handleFileUpload}
                             onClick={(event) => {
+                                setBase64(undefined);
                                 (event.target as HTMLInputElement).value = "";
                             }}/>
                     </StyledButton>
-                    <StyledButton onClick={() => {setUploadFromUrlActive(true)}}>
+                    <StyledButton onClick={() => {setBase64(undefined); setUploadFromUrlActive(true)}}>
                         Use Image URL
                     </StyledButton>
 
                     {hasImage && <StyledButton onClick={handleSaveMeme}>Save Meme</StyledButton>}
                 </UploadOptions>
             }
-            <ImageEditor editorRef={imageEditor} />
+            <ImageEditor editorRef={imageEditor} base64String={base64}/>
         </>
     )
 }

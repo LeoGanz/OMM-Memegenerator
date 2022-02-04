@@ -15,7 +15,7 @@ export const ImageEditor = ({editorRef, base64String, drawModeActive}: ImageEdit
                 <>
                 <BaseImageEditor
                     includeUI={{
-                        menu: ['text', 'filter', drawModeActive ? 'draw' : ''],
+                        menu: ['text', 'filter'].concat(drawModeActive ? ['draw'] : []),
                         menuBarPosition: 'bottom',
                         initMenu: "",
                         loadImage: {

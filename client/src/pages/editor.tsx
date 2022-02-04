@@ -133,6 +133,7 @@ export const Editor = () => {
     useEffect(() => {
         const func = async () => {
             if (templateIndex !== undefined) {
+                setDrawModeActive(false)
                 await setBase64(undefined)
                 await setBase64(templates[templateIndex].img.base64)
             }
@@ -143,6 +144,7 @@ export const Editor = () => {
     useEffect(() => {
         const func = async () => {
             if (usersCreationIndex !== undefined) {
+                setDrawModeActive(false)
                 await setBase64(undefined)
                 await setBase64(usersCreation[usersCreationIndex].img.base64)
             }
@@ -284,13 +286,20 @@ export const Editor = () => {
                             onChange={handleFileUpload}
                             onClick={(event) => {
                                 setBase64(undefined);
+                                setDrawModeActive(false);
+                                setTemplateIndex(undefined);
+                                setUsersCreationsIndex(undefined);
                                 (event.target as HTMLInputElement).value = "";
                             }}/>
                     </StyledButton>
                     {/*from URL upload button*/}
                     <StyledButton onClick={() => {
+                        setDrawModeActive(false)
                         setBase64(undefined);
                         setUploadFromUrlActive(true)
+                        setTemplateIndex(undefined)
+                        setUsersCreationsIndex(undefined)
+
                     }}>
                         Use Image URL
                     </StyledButton>

@@ -45,8 +45,37 @@ const StyledButton = styled.button`
   transition: opacity 0.2s;
   color: white;
   font-size: 14px;
+
   &:hover {
     opacity: 90%;
+  }
+`
+
+const EditorWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`
+
+const NavigationButton = styled.button`
+  background-color: ${colors.background.button};
+  border: none;
+  border-radius: 10px;
+  padding: 20px 8px;
+  display: flex;
+  height: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-size: 14px;
+
+  &:hover {
+    opacity: 90%;
+  }
+
+  &:disabled {
+    background-color: ${colors.background.memeCard.hover};
+    cursor: default;
   }
 `
 
@@ -67,26 +96,58 @@ export const Editor = () => {
     const [uploadFromUrlActive, setUploadFromUrlActive] = useState<boolean>(false)
     const [base64, setBase64] = useState<string | undefined>(undefined)
     const [hasImage, setHasImage] = useState<boolean>(false)
+
     const [templates, setTemplates] = useState<MemeType[]>([])
+    const [templateIndex, setTemplateIndex] = useState<number | undefined>(undefined)
+
     const [usersCreation, setUsersCreations] = useState<MemeType[]>([])
+    const [usersCreationIndex, setUsersCreationsIndex] = useState<number | undefined>(undefined)
     let jwt = ""
 
 
-    useEffect(()=> {
-        if(isLoggedIn){
+    useEffect(() => {
+        if (isLoggedIn) {
             jwt = localStorage.getItem('meme-token') || ""
-            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start:0, end:20}), {
+            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start: 0, end: 20}), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 // body: JSON.stringify({start:0, end:20})
             }).then(r => r.json()).then(r => setTemplates(r))
-            console.log(templates)
-        }else {
+
+            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start: 0, end: 20, status: 1}), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({start:0, end:20})
+            }).then(r => r.json()).then(r => setUsersCreations(r))
+
+        } else {
             navigate('/login')
         }
     }, [])
+
+    useEffect(() => {
+        const func = async () => {
+            if (templateIndex !== undefined) {
+                await setBase64(undefined)
+                await setBase64(templates[templateIndex].img.base64)
+            }
+        }
+        func()
+    }, [templateIndex])
+
+    useEffect(() => {
+        const func = async () => {
+            if (usersCreationIndex !== undefined) {
+                await setBase64(undefined)
+                await setBase64(usersCreation[usersCreationIndex].img.base64)
+            }
+        }
+        func()
+    }, [usersCreationIndex])
 
 
     const handleSaveMeme = () => {
@@ -100,7 +161,7 @@ export const Editor = () => {
 
         for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
             const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top"])
-            if(properties?.type === "i-text"){
+            if (properties?.type === "i-text") {
                 const {text, left, top} = properties
                 texts.push(text)
                 xCoordinates.push(left)
@@ -131,7 +192,9 @@ export const Editor = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(finalMeme)
-        }).then(r => {console.log(r)})
+        }).then(r => {
+            console.log(r)
+        })
     }
 
     const handleFileUpload = (event: React.FormEvent) => {
@@ -159,18 +222,47 @@ export const Editor = () => {
         setHasImage(true)
     }
 
-    const handleCarouselSelect = async (meme: MemeType) => {
-        await setBase64(undefined)
-        await setBase64(meme.img.base64)
+    const handleCarouselSelect = (index: number, from: string) => {
+        console.log(index)
+        if (from === "template") {
+            setUsersCreationsIndex(undefined)
+            setTemplateIndex(index)
+
+        } else {
+            setTemplateIndex(undefined)
+            setUsersCreationsIndex(index)
+
+        }
     }
+
+    const next = () => {
+        if(templateIndex !== undefined){
+            setTemplateIndex(templateIndex + 1)
+        }else if(usersCreationIndex !== undefined){
+            setUsersCreationsIndex(usersCreationIndex + 1)
+        }
+    }
+    const prev = () => {
+        if(templateIndex !== undefined){
+            setTemplateIndex(templateIndex - 1)
+        }else if(usersCreationIndex !== undefined){
+            setUsersCreationsIndex(usersCreationIndex - 1)
+        }
+    }
+    const prevDisabled = usersCreationIndex === 0 || templateIndex === 0 || !base64
+    const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length -1 || !base64
 
     return (
         <>
             <Title>Editor</Title>
             <SubTitle>Use a template</SubTitle>
-            <Carousel onCarouselSelect={handleCarouselSelect} memes={templates}/>
+            <Carousel currentSelection={templateIndex}
+                      onCarouselSelect={(index) => handleCarouselSelect(index, "template")}
+                      memes={templates}/>
             <SubTitle>Use your recent creations</SubTitle>
-            <Carousel onCarouselSelect={handleCarouselSelect} memes={templates}/>
+            <Carousel currentSelection={usersCreationIndex}
+                      onCarouselSelect={(index) => handleCarouselSelect(index, "userCreation")}
+                      memes={templates}/>
             <SubTitle>Or select an upload option</SubTitle>
             {uploadFromUrlActive ?
                 <StyledForm name="sign-up" onSubmit={handleSubmit(onUrlUpload)}>
@@ -193,14 +285,21 @@ export const Editor = () => {
                                 (event.target as HTMLInputElement).value = "";
                             }}/>
                     </StyledButton>
-                    <StyledButton onClick={() => {setBase64(undefined); setUploadFromUrlActive(true)}}>
+                    <StyledButton onClick={() => {
+                        setBase64(undefined);
+                        setUploadFromUrlActive(true)
+                    }}>
                         Use Image URL
                     </StyledButton>
 
                     {hasImage && <StyledButton onClick={handleSaveMeme}>Save Meme</StyledButton>}
                 </UploadOptions>
             }
-            <ImageEditor editorRef={imageEditor} base64String={base64}/>
+            <EditorWrapper>
+                <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
+                <ImageEditor editorRef={imageEditor} base64String={base64}/>
+                <NavigationButton onClick={next} disabled={nextDisabled}>{">"}</NavigationButton>
+            </EditorWrapper>
         </>
     )
 }

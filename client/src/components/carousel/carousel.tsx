@@ -14,27 +14,32 @@ const CarouselWrapper = styled.div`
   overflow: auto;
 `
 
-const StyledImage = styled.img`
+const StyledImage = styled.img<{selected: boolean}>`
   height: 150px;
   margin: 0 auto;
   transition: transform 0.2s;
+  padding-bottom: 2px;
   &:hover{
     transform: scale(1.02);
   }
   cursor: pointer;
+
+  border-bottom: ${props => props.selected ? colors.background.header : "white"} 4px solid;
+  
 `
 
 interface CarouselProps {
     memes: MemeType[],
-    onCarouselSelect: (meme: MemeType) => any
+    onCarouselSelect: (index: number) => any
+    currentSelection: number |undefined
 }
 
-export const Carousel = ({memes, onCarouselSelect}: CarouselProps) => {
+export const Carousel = ({memes, onCarouselSelect, currentSelection}: CarouselProps) => {
 
 
     return (
         <CarouselWrapper>
-            {memes.map(meme => <StyledImage onClick={() => onCarouselSelect(meme)} src={meme.img.base64}/>)}
+            {memes.map((meme, index) => <StyledImage selected={index === currentSelection} onClick={() => onCarouselSelect(index)} src={meme.img.base64}/>)}
         </CarouselWrapper>
     )
 }

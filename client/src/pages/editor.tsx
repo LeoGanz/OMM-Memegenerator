@@ -5,7 +5,7 @@ import {createRef, useContext, useEffect, useRef, useState} from "react";
 import {colors} from "../components/layout/colors";
 import {TextInput} from "../components/text-input/input-field";
 import {useForm} from "react-hook-form";
-import {REQUIRED_FIELD_ERROR, URL_ERROR, URL_PATTERN} from "../constants";
+import {DRAW_IMAGE_TEMPLATE, REQUIRED_FIELD_ERROR, URL_ERROR, URL_PATTERN} from "../constants";
 import {ImageEditor} from "../components/image-editor/image-editor";
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
@@ -96,6 +96,7 @@ export const Editor = () => {
     const [uploadFromUrlActive, setUploadFromUrlActive] = useState<boolean>(false)
     const [base64, setBase64] = useState<string | undefined>(undefined)
     const [hasImage, setHasImage] = useState<boolean>(false)
+    const [drawModeActive, setDrawModeActive] = useState<boolean>(false)
 
     const [templates, setTemplates] = useState<MemeType[]>([])
     const [templateIndex, setTemplateIndex] = useState<number | undefined>(undefined)
@@ -249,8 +250,8 @@ export const Editor = () => {
             setUsersCreationsIndex(usersCreationIndex - 1)
         }
     }
-    const prevDisabled = usersCreationIndex === 0 || templateIndex === 0 || !base64
-    const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length -1 || !base64
+    const prevDisabled = usersCreationIndex === 0 || templateIndex === 0 || templateIndex === usersCreationIndex
+    const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length -1 || templateIndex === usersCreationIndex
 
     return (
         <>
@@ -274,6 +275,7 @@ export const Editor = () => {
                     <StyledButton type="submit">Submit URL</StyledButton>
                 </StyledForm> :
                 <UploadOptions>
+                    {/*file upload button*/}
                     <StyledButton as="label">
                         Upload from File
                         <FileUpload
@@ -285,11 +287,23 @@ export const Editor = () => {
                                 (event.target as HTMLInputElement).value = "";
                             }}/>
                     </StyledButton>
+                    {/*from URL upload button*/}
                     <StyledButton onClick={() => {
                         setBase64(undefined);
                         setUploadFromUrlActive(true)
                     }}>
                         Use Image URL
+                    </StyledButton>
+                    {/*draw own meme button*/}
+                    <StyledButton onClick={async () => {
+                        setDrawModeActive(true)
+                        await setBase64(undefined)
+                        await setBase64(DRAW_IMAGE_TEMPLATE);
+                        setTemplateIndex(undefined)
+                        setUsersCreationsIndex(undefined)
+
+                    }}>
+                        Drawn your own meme
                     </StyledButton>
 
                     {hasImage && <StyledButton onClick={handleSaveMeme}>Save Meme</StyledButton>}
@@ -297,7 +311,7 @@ export const Editor = () => {
             }
             <EditorWrapper>
                 <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
-                <ImageEditor editorRef={imageEditor} base64String={base64}/>
+                <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>
                 <NavigationButton onClick={next} disabled={nextDisabled}>{">"}</NavigationButton>
             </EditorWrapper>
         </>

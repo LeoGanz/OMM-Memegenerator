@@ -45,3 +45,27 @@ export interface UserType {
     lastEdited: MemeType[],
     lastComments: CommentType[],
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

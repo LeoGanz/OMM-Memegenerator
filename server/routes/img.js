@@ -91,7 +91,7 @@ function handleComment(comment, memeId, user, res) {
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
-                commentSchema.find({comment: comment, creator: user}, (err, lst) => {
+                commentSchema.find({text: comment, creator: user}, (err, lst) => {
                     if (err) {
                         dbConnectionFailureHandler(res, err)
                     } else {

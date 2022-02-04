@@ -124,30 +124,32 @@ function parseMetadata(meme) {
         usages: meme.usages,
         upVotes: meme.upVoters.length,
         downVotes: meme.downVoters.length,
-        comments: meme.comments.length,
+        comments: meme.comments.map(cleanCommentComponent),
     }
 }
 
 function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
     memeSchema
         .findOne({memeId: memeId})
-        .populate('creator', 'username')
-        .populate('texts')
+        .populate('creator')
         .populate('comments')
+        .populate('texts')
         .exec((err, meme) => {
             if (err) {
                 onError(err);
             } else if (!meme) {
                 onNoMemeAvailable();
             } else {
+                console.log(meme.comments);
                 onSuccess(parseMetadata(meme));
             }
         });
 }
 
 function cleanCommentComponent({dateOfCreation, creator, text}) {
-    console.log(creator.username);
-    return ({dateOfCreation, creator: creator.username, text})
+    console.log(creator);
+    console.log(text);
+    return ({dateOfCreation, creator, text})
 }
 
 function cleanTextComponent({text, xCoordinate, yCoordinate, fontSize, color}) {

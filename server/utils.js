@@ -133,6 +133,7 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
         .findOne({memeId: memeId})
         .populate('creator')
         .populate('comments')
+        .populate({path: 'comments', populate: {path: 'creator', model: 'user'}})
         .populate('texts')
         .exec((err, meme) => {
             if (err) {
@@ -140,7 +141,6 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
             } else if (!meme) {
                 onNoMemeAvailable();
             } else {
-                console.log(meme.comments);
                 onSuccess(parseMetadata(meme));
             }
         });
@@ -148,8 +148,8 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
 
 function cleanCommentComponent({dateOfCreation, creator, text}) {
     console.log(creator);
-    console.log(text);
-    return ({dateOfCreation, creator, text})
+    const username = creator.username;
+    return ({dateOfCreation, username, text})
 }
 
 function cleanTextComponent({text, xCoordinate, yCoordinate, fontSize, color}) {

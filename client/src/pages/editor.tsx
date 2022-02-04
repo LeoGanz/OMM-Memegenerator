@@ -232,8 +232,8 @@ export const Editor = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(finalMeme)
-        }).then(r => {
-            console.log(r)
+        }).then(() => {
+            window.alert("Your meme was successfully uploaded")
         })
     }
 

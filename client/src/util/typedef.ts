@@ -4,16 +4,16 @@ export interface MemeType {
     img: {
         base64: string,
     },
-    creator: UserType,
+    creator?: UserType,
     texts: MemeTextType[],
-    dateOfCreation: string,
-    upVoters: UserType[],
-    downVoters: UserType[],
-    comments: CommentType[],
-    memeId: string,
-    status: Number,
+    dateOfCreation?: string,
+    upVoters?: UserType[],
+    downVoters?: UserType[],
+    comments?: CommentType[],
+    memeId?: string,
+    status?: Number,
     format: {width: Number, height: Number, pixels: Number},
-    usages: Number,
+    usages?: Number,
 }
 
 export interface CommentType     {

@@ -11,7 +11,7 @@ import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import {Carousel} from "../components/carousel/carousel";
-import {MemeType} from "../util/typedef";
+import {MemeTextType, MemeType} from "../util/typedef";
 
 const MAX_TEXT_FIELDS = 100
 
@@ -124,15 +124,18 @@ export const Editor = () => {
                 },
                 // body: JSON.stringify({start:0, end:20})
             }).then(r => r.json()).then(r => setUsersCreations(r))
+            console.log(usersCreation)
 
         } else {
             navigate('/login')
         }
     }, [])
 
+
     useEffect(() => {
         const func = async () => {
             if (templateIndex !== undefined) {
+                setHasImage(true)
                 setDrawModeActive(false)
                 await setBase64(undefined)
                 await setBase64(templates[templateIndex].img.base64)
@@ -144,6 +147,7 @@ export const Editor = () => {
     useEffect(() => {
         const func = async () => {
             if (usersCreationIndex !== undefined) {
+                setHasImage(true)
                 setDrawModeActive(false)
                 await setBase64(undefined)
                 await setBase64(usersCreation[usersCreationIndex].img.base64)
@@ -153,38 +157,70 @@ export const Editor = () => {
     }, [usersCreationIndex])
 
 
+    const setText = (texts: MemeTextType[]) => {
+        console.log(texts)
+        texts.forEach(textObj => {
+
+            const {text, color, xCoordinate, yCoordinate, fontSize} = textObj
+
+
+            setTimeout(() => {
+                // @ts-ignore
+                const imageEditorInst = imageEditor.current.imageEditorInst;
+                imageEditorInst.addText(text, {
+                    styles: {
+                        fill: color,
+                        fontSize,
+                        fontWeight: 'bold'
+                    },
+                    position: {
+                        x: xCoordinate,
+                        y: yCoordinate
+                    }
+                })
+                imageEditorInst.deactivateAll();
+                imageEditorInst.stopDrawingMode();
+                console.log("Alive")
+            }, 100)
+        })
+    }
+
+
     const handleSaveMeme = () => {
         setBase64(undefined)
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;
         const image = imageEditorInst.toDataURL();
-        const texts = []
-        const xCoordinates = []
-        const yCoordinates = []
+        const texts: MemeTextType[] = []
 
         for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
-            const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top"])
+            const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top", "fill", "fontSize"])
             if (properties?.type === "i-text") {
-                const {text, left, top} = properties
-                texts.push(text)
-                xCoordinates.push(left)
-                yCoordinates.push(top)
+                const {text, left, top, fill, fontSize} = properties
+                texts.push({
+                    text,
+                    xCoordinate: left,
+                    yCoordinate: top,
+                    color: fill,
+                    fontSize
+                })
             }
         }
 
-        const finalMeme = {
+        const finalMeme: MemeType = {
             //todo add missing fields
             //todo was ist status
             name: "TODO: name muss im Frontend noch hinzugefügt werden",
             desc: "TODO: desc muss im Frontend noch hinzugefügt werden",
-            image,
+            img: {
+                base64: image
+            },
             texts,
-            xCoordinates,
-            yCoordinates,
-            status: 0,
-            width: 1,
-            height: 1,
-            pixels: 1
+            format: {
+                width: 1,
+                height: 1,
+                pixels: 1
+            }
         }
 
         console.log(finalMeme)
@@ -239,22 +275,23 @@ export const Editor = () => {
     }
 
     const next = () => {
-        if(templateIndex !== undefined){
+        if (templateIndex !== undefined) {
             setTemplateIndex(templateIndex + 1)
-        }else if(usersCreationIndex !== undefined){
+        } else if (usersCreationIndex !== undefined) {
             setUsersCreationsIndex(usersCreationIndex + 1)
         }
     }
     const prev = () => {
-        if(templateIndex !== undefined){
+        if (templateIndex !== undefined) {
             setTemplateIndex(templateIndex - 1)
-        }else if(usersCreationIndex !== undefined){
+        } else if (usersCreationIndex !== undefined) {
             setUsersCreationsIndex(usersCreationIndex - 1)
         }
     }
     const prevDisabled = usersCreationIndex === 0 || templateIndex === 0 || templateIndex === usersCreationIndex
-    const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length -1 || templateIndex === usersCreationIndex
+    const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length - 1 || templateIndex === usersCreationIndex
 
+    // @ts-ignore
     return (
         <>
             <Title>Editor</Title>
@@ -323,6 +360,14 @@ export const Editor = () => {
                 <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>
                 <NavigationButton onClick={next} disabled={nextDisabled}>{">"}</NavigationButton>
             </EditorWrapper>
+            <button onClick={
+
+                () => {
+                    // @ts-ignore
+                    setText(usersCreation[usersCreationIndex].texts)
+                }
+            }>Test
+            </button>
         </>
     )
 }

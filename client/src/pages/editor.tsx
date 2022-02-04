@@ -12,6 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import {Carousel} from "../components/carousel/carousel";
 import {MemeTextType, MemeType} from "../util/typedef";
+import { MemeSaveArea } from "../components/meme-save-area/meme-save-area";
 
 const MAX_TEXT_FIELDS = 100
 
@@ -34,7 +35,7 @@ const FileUpload = styled.input`
   display: none;
 `
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
   background-color: ${colors.background.button};
   border: 1px solid ${colors.background.button};
   border-radius: 10px;
@@ -186,7 +187,7 @@ export const Editor = () => {
     }
 
 
-    const handleSaveMeme = () => {
+    const handleSaveMeme = (title: string, description: string) => {
         setBase64(undefined)
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;
@@ -210,8 +211,8 @@ export const Editor = () => {
         const finalMeme: MemeType = {
             //todo add missing fields
             //todo was ist status
-            name: "TODO: name muss im Frontend noch hinzugefügt werden",
-            desc: "TODO: desc muss im Frontend noch hinzugefügt werden",
+            name: title,
+            desc: description,
             img: {
                 base64: image
             },
@@ -351,10 +352,9 @@ export const Editor = () => {
                     }}>
                         Drawn your own meme
                     </StyledButton>
-
-                    {hasImage && <StyledButton onClick={handleSaveMeme}>Save Meme</StyledButton>}
                 </UploadOptions>
             }
+            {hasImage && <MemeSaveArea handleSaveMeme={handleSaveMeme}/>}
             <EditorWrapper>
                 <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
                 <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>

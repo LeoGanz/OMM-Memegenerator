@@ -62,6 +62,7 @@ export const Overview = () => {
             <HeadlineSection>
                 <Title>Overview</Title>
                 <ButtonLink to="/editor">+ Create your own meme</ButtonLink>
+                <ButtonLink to="/api-doc"> Go to API documentation</ButtonLink>
             </HeadlineSection>
 
             <OverviewGrid>

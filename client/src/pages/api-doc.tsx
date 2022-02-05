@@ -71,12 +71,14 @@ const createBody: APIcreate = {
 }
 
 const openCreate = () => {
-    window.fetch('http://localhost:3000/post', {
+    window.fetch('http://localhost:3000/create', {
         method: 'POST',
         body: JSON.stringify(createBody),
     }).then(r => {
         const status = r.status;
+        console.log(r);
         if (status === 200) {
+            window.open("",)
             window.alert("Your memes wer successfully uploaded");
         } else {
             window.alert("Something went wrong with the upload");

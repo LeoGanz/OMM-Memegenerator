@@ -28,11 +28,9 @@ router.get('/', (req, res) => {
 
     memeSchema.find({}).populate("creator", "username").populate("texts"
     ).exec((err, lst) => {
-        console.log(lst[0]);
         if (err) {
             dbConnectionFailureHandler(res, err);
         } else {
-            console.log(lst[0]);
             const filteredList = lst.filter((elem) => {
                 let filter = true;
                 filter = filter && textInText(text, elem.texts);
@@ -40,7 +38,6 @@ router.get('/', (req, res) => {
                 filter = filter && (elem.creationDate === creationDate || creationDate === undefined);
                 return filter;
             });
-            console.log(filteredList);
             const slicedList = filteredList.slice(0, numberOfMemes);
             if (slicedList.length === 0) {
                 respond(res, 200, "No memes with these parameters found");

@@ -1,8 +1,15 @@
 import {Title} from "../components/layout/typography";
-import {StyledLink} from "../components/api/api";
+import styled from "styled-components";
 
+const Wrapper = styled.p`
+  font-size: 1.5em;
+  color: blue;
+  
+`
 
-const retrieveText = {}
+const openCreate = () => {
+    window.open("http://localhost:3000/retrieve?numberOfMemes=10");
+}
 
 export const APIDoc = () => {
     return (
@@ -14,7 +21,7 @@ export const APIDoc = () => {
                 For retrieving memes a machine needs to make a GET-request. There need to be certain
                 parameters given
                 within the query. An essential parameter needed to be
-                given is the number of memes to retreive as Integer-value. Sending every meme is too
+                given is the number of memes to retrieve as Integer-value. Sending every meme is too
                 much for the API, so this is needed.
                 The optional parameters are for searching memes. You can search for texts in memes.
                 Therefore give a String to the
@@ -27,6 +34,10 @@ export const APIDoc = () => {
 
                 An example request would look like this:
             </p>
+            <Wrapper onClick={openCreate}>
+                GET
+                localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=2022-2-2
+            </Wrapper>
             <p/>
             <p/>
             <p/>

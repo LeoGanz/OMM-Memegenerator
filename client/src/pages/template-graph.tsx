@@ -3,10 +3,10 @@ import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {
     getBottomMargin, getHeight,
-    useWindowDimensions, getRightMargin,
+    getRightMargin,
     getTopMargin,
     getWidth,
-    getWindowDimensions, getLeftMargin
+    getLeftMargin
 } from "../util/statistics";
 import {
     LineChart,

@@ -8,7 +8,7 @@ router.get('/single', (req, res) => {
     let memes = [];
     let upVotes = [];
     let downVotes = [];
-    memeSchema.find({status: 2}, (err, lst) => {
+    memeSchema.find({status: 2}).populate('upVoters').populate('downVoters').exec((err, lst) => {
         if (err) {
             dbConnectionFailureHandler(res, err)
         } else {
@@ -22,7 +22,9 @@ router.get('/single', (req, res) => {
                 downVotes.push(elem.downVoters.length);
             }
             const answer = {memes: memes, upVotes: upVotes, downVotes: downVotes};
-            console.log("Single statistics successful:" + memes + upVotes + downVotes);
+            console.log("Single statistics successful:" + "\n" + "memes: " + memes + "\n" + "upVotes: " +
+                upVotes + "\n" + "downVotes: " +
+                downVotes);
             respondSilently(res, 200, answer);
         }
     });

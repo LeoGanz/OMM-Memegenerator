@@ -2,7 +2,13 @@ import React, {PureComponent, useEffect} from 'react';
 import {useContext, useState} from "react";
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
-import useWindowDimensions, {getWindowDimensions} from "../util/statistics";
+import {
+    getBottomMargin, getHeight,
+    useWindowDimensions, getRightMargin,
+    getTopMargin,
+    getWidth,
+    getWindowDimensions
+} from "../util/statistics";
 import {
     LineChart,
     Line,
@@ -59,14 +65,14 @@ const ExampleData = [
     }
 ]
 
-function transformToRechartTemplate (memeIds: string[], usages: number[]){
+function transformToRechartTemplate(memeIds: string[], usages: number[]) {
     let result = [];
-    for (let i = 0; i < memeIds.length; i++){
+    for (let i = 0; i < memeIds.length; i++) {
         let usage = usages[i];
         let memeId = memeIds[i];
         let toAdd = {
-            name:memeId,
-            usage:usage,
+            name: memeId,
+            usage: usage,
         }
         result.push(toAdd);
     }
@@ -88,14 +94,14 @@ export const TemplateGraph = () => {
     return (
         <>
             <LineChart
-                width={width * (1 - 150 / 1920)}
-                height={height * (1 - 200 / 1080)}
+                width={getWidth()}
+                height={getHeight()}
                 data={ExampleData}
                 margin={{
-                    top: height * 150 / 1080,
-                    right: width * 100 / 1920,
+                    top: getTopMargin(),
+                    right: getRightMargin(),
                     left: 0,
-                    bottom: height * 10 / 1080
+                    bottom: getBottomMargin(),
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>

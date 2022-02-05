@@ -1,4 +1,6 @@
 export const SingleGraph = ()=>{
+
+
     return (
         <>
 

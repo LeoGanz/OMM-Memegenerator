@@ -41,10 +41,15 @@ export function getRightMargin() {
 
 export function getTopMargin() {
     const {height, width} = useWindowDimensions();
-    return height * 150 / 1080;
+    return height * 70 / 1080;
 }
 
 export function getBottomMargin() {
     const {height, width} = useWindowDimensions();
     return height * 10 / 1080;
+}
+
+export function getLeftMargin(){
+    const {height, width} = useWindowDimensions();
+    return width * 0 / 1920;
 }

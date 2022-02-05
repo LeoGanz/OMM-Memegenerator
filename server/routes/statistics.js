@@ -14,13 +14,14 @@ router.get('/single', (req, res) => {
             if (lst.length === 0) {
                 respond(res, 500, "No meme found in the database");
             }
-            for (let elem in lst) {
+            for (let i = 0; i < lst.length; i++) {
+                let elem = lst[i];
                 memes.push(elem.memeId);
                 upVotes.push(elem.upVoters.length);
                 downVotes.push(elem.downVoters.length);
             }
             const answer = {memes: memes, upVotes: upVotes, downVotes: downVotes};
-            console.log("Single statistics successful");
+            console.log("Single statistics successful:" + memes + upVotes + downVotes);
             respondSilently(res, 200, answer);
         }
     });
@@ -36,12 +37,14 @@ router.get('/template', (req, res) => {
             if (lst.length === 0) {
                 respond(res, 500, "No template found in the database");
             }
-            for (let elem in lst) {
+            for (let i = 0; i < lst.length; i++) {
+                let elem = lst[i];
                 templates.push(elem.memeId);
                 usages.push(elem.usages);
             }
             const answer = {templates: templates, usages: usages};
-            console.log("Template statistics successful");
+            console.log("Template statistics successful:" + "\n" + "templates: " + templates + "\n" + "usages" +
+                usages);
             respondSilently(res, 200, answer);
         }
     });

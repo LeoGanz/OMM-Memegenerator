@@ -93,7 +93,6 @@ function processTextsInBody(memeJson, res, onSuccess) {
         });
         textSchema.create(textSch).then(_ => {
             newTexts.push(textSch);
-            newTexts.save();
             if (i === texts.length - 1 && !failureOccurred) {
                 onSuccess(newTexts);
             }

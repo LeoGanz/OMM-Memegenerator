@@ -31,6 +31,7 @@ function transformToRechartTemplate(memeIds: string[], usages: number[]) {
         }
         result.push(toAdd);
     }
+    console.log(result);
     return result;
 }
 

@@ -4,6 +4,7 @@ const memeSchema = require("../models/memeSchema");
 const {dbConnectionFailureHandler, respond, respondSilently} = require("../utils");
 
 router.get('/single', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     let memes = [];
     let upVotes = [];
     let downVotes = [];
@@ -28,6 +29,7 @@ router.get('/single', (req, res) => {
 });
 
 router.get('/template', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     let templates = [];
     let usages = [];
     memeSchema.find({status: 0}, (err, lst) => {

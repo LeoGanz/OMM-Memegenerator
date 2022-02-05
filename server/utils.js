@@ -100,7 +100,7 @@ function calcMemeIdFor(memeSchema) {
         // shall still be seen as the same person.
         // For texts the text data is used because an update to the text results in a different meme.
         + memeSchema.texts.map(text =>
-            text.text + text.xCoordinate + text.yCoordinate + text.xSize + text.ySize + text.fontSize + text.color).join("")
+            text.text + text.xCoordinate + text.yCoordinate + text.fontSize + text.color).join("")
         // + memeSchema.upVoters.map(usr => usr._id).join("")
         // + memeSchema.downVoters.map(usr => usr._id).join("")
         // + memeSchema.comments.map(cmt => cmt._id).join("")
@@ -112,10 +112,28 @@ function calcMemeIdFor(memeSchema) {
     return md5(keyData);
 }
 
+function parseMetadata(meme) {
+    return {
+        name: meme.name,
+        desc: meme.desc,
+        creator: meme.creator.username,
+        dateOfCreation: meme.dateOfCreation,
+        format: meme.format,
+        texts: meme.texts.map(cleanTextComponent),
+        status: meme.status,
+        usages: meme.usages,
+        upVotes: meme.upVoters.length,
+        downVotes: meme.downVoters.length,
+        comments: meme.comments.map(cleanCommentComponent),
+    }
+}
+
 function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
     memeSchema
         .findOne({memeId: memeId})
-        .populate('creator', 'username')
+        .populate('creator')
+        .populate('comments')
+        .populate({path: 'comments', populate: {path: 'creator', model: 'user'}})
         .populate('texts')
         .exec((err, meme) => {
             if (err) {
@@ -123,22 +141,15 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
             } else if (!meme) {
                 onNoMemeAvailable();
             } else {
-                const metadata = {
-                    name: meme.name,
-                    desc: meme.desc,
-                    creator: meme.creator.username,
-                    dateOfCreation: meme.dateOfCreation,
-                    format: meme.format,
-                    texts: meme.texts.map(cleanTextComponent),
-                    status: meme.status,
-                    usages: meme.usages,
-                    upVotes: meme.upVoters.length,
-                    downVotes: meme.downVoters.length,
-                    comments: meme.comments.length,
-                }
-                onSuccess(metadata);
+                onSuccess(parseMetadata(meme));
             }
         });
+}
+
+function cleanCommentComponent({dateOfCreation, creator, text}) {
+    console.log(creator);
+    const username = creator.username;
+    return ({dateOfCreation, username, text})
 }
 
 function cleanTextComponent({text, xCoordinate, yCoordinate, fontSize, color}) {
@@ -231,7 +242,7 @@ function createToken(email) {
 function adjustToken(request) {
     let token = request.query.token;
     if (token === undefined) {
-        console.log("token undefined");
+        // console.log("token undefined");
         token = ""
     }
     return token;
@@ -242,6 +253,7 @@ module.exports = {
     checkForEqualLength,
     cleanMeme,
     cleanTextComponent,
+    parseMetadata,
     collectMetadata,
     createToken,
     dbConnectionFailureHandler,

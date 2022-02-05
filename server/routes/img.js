@@ -4,7 +4,13 @@ const memeSchema = require("../models/memeSchema");
 const commentSchema = require("../models/commentSchema");
 const userSchema = require("../models/userSchema");
 const {getOrRenderMemes} = require("../renderManager");
-const {respond, getCurrentDateString, dbConnectionFailureHandler, respondSilently} = require("../utils");
+const {
+    respond,
+    getCurrentDateString,
+    dbConnectionFailureHandler,
+    respondSilently,
+    parseMetadata
+} = require("../utils");
 
 /**
  * Handles an up vote
@@ -74,7 +80,7 @@ function handleComment(comment, memeId, user, res) {
     const comm = {
         dateOfCreation: currentDate,
         creator: user,
-        comment: comment
+        text: comment
     };
     memeSchema.find({memeId: memeId}, (err, lst) => {
         if (err) {
@@ -85,7 +91,7 @@ function handleComment(comment, memeId, user, res) {
             }
             let pict = lst[0];
             commentSchema.create(comm, _ => {
-                commentSchema.find({comment: comment, creator: user}, (err, lst) => {
+                commentSchema.find({text: comment, creator: user}, (err, lst) => {
                     if (err) {
                         dbConnectionFailureHandler(res, err)
                     } else {
@@ -107,11 +113,11 @@ function handleComment(comment, memeId, user, res) {
 }
 
 router.post("/", (req, res) => {
-    let memeId = req.query.memeId;
+    let memeId = req.body.memeId;
     let userToken = req.query.token;
-    let upVote = req.query.up;
-    let downVote = req.query.down;
-    let comment = req.query.comment;
+    let upVote = req.body.up;
+    let downVote = req.body.down;
+    let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
             dbConnectionFailureHandler(res, err)
@@ -134,11 +140,11 @@ router.post("/", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-    const sortBy = req.body.sortBy;
-    const filterBy = req.body.filterBy;
-    const start = req.body.start;
-    const end = req.body.end;
-    const status = req.body.status;
+    const sortBy = req.query.sortBy;
+    const filterBy = req.query.filterBy;
+    const start = req.query.start;
+    const end = req.query.end;
+    const status = req.query.status;
 
     // Do not allow lookup of other users' drafts
     if (status === 1) {
@@ -163,8 +169,12 @@ router.get("/", (req, res) => {
     function performRetrieval() {
         memeSchema
             .find({status: status}) // published only
+            .populate('texts')
             // do not populate whole creator as this would leak private data
             .populate('creator', 'username')
+            .populate('upVoters.username')
+            .populate('downVoters.username')
+            .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
             .exec((err, items) => {
                 if (err) {
                     respond(res, 500, 'No images found', err);
@@ -222,7 +232,16 @@ router.get("/", (req, res) => {
                         items = items.slice(start, end);
                         getOrRenderMemes(
                             items.map(meme => meme.memeId),
-                            renderingArray => respondSilently(res, 200, renderingArray),
+                            renderingArray => {
+                                const dataMetadataCombinations = [];
+                                for (let i = 0; i < items.length; i++) {
+                                    dataMetadataCombinations.push({
+                                        dataUrl: renderingArray[i],
+                                        metadata: parseMetadata(items[i])
+                                    })
+                                }
+                                respondSilently(res, 200, dataMetadataCombinations)
+                            },
                             err => dbConnectionFailureHandler(res, err))
                     } else {
                         respond(res, 400, "You have to give a number as start and a number as end," +

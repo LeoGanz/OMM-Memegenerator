@@ -1,7 +1,8 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, useEffect} from 'react';
 import {useContext, useState} from "react";
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
+import useWindowDimensions, {getWindowDimensions} from "../util/statistics";
 import {
     LineChart,
     Line,
@@ -58,40 +59,57 @@ const ExampleData = [
     }
 ]
 
+function transformToRechartTemplate (memeIds: string[], usages: number[]){
+    let result = [];
+    for (let i = 0; i < memeIds.length; i++){
+        let usage = usages[i];
+        let memeId = memeIds[i];
+        let toAdd = {
+            name:memeId,
+            usage:usage,
+        }
+        result.push(toAdd);
+    }
+    return result;
+}
+
 export const TemplateGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
     let jwt = "";
     const [memeIds, setMemeIds] = useState<string[]>([]);
     const [usages, setUsages] = useState<number[]>([]);
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions);
     if (isLoggedIn) {
         jwt = localStorage.getItem('meme-token') || "";
     }
+    const {height, width} = useWindowDimensions();
+    console.log(width, height);
     return (
         <>
             <LineChart
-                width={500}
-                height={300}
+                width={width * (1 - 150 / 1920)}
+                height={height * (1 - 200 / 1080)}
                 data={ExampleData}
                 margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5
+                    top: height * 150 / 1080,
+                    right: width * 100 / 1920,
+                    left: 0,
+                    bottom: height * 10 / 1080
                 }}
             >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="name"/>
+                <YAxis/>
+                <Tooltip/>
+                <Legend/>
                 <Line
                     type="monotone"
                     dataKey="pv"
                     stroke="#8884d8"
-                    activeDot={{ r: 8 }}
+                    activeDot={{r: 8}}
                 />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="uv" stroke="#82ca9d"/>
             </LineChart>
         </>
     )

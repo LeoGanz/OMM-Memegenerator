@@ -10,6 +10,7 @@ const Wrapper = styled.p`
 
   &:hover {
     text-decoration: underline;
+    cursor: pointer;
   }
 `
 
@@ -70,16 +71,20 @@ const createBody: APIcreate = {
         ]
 }
 
+    console.log(JSON.stringify(createBody))
+
 const openCreate = () => {
-    window.fetch('http://localhost:3000/create', {
+    fetch('http://localhost:3000/create', {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(createBody),
-    }).then(r => {
+    }).then(r => { //TODO: check if this is working like in editor
         const status = r.status;
         console.log(r);
         if (status === 200) {
-            window.open("",)
-            window.alert("Your memes wer successfully uploaded");
+            window.alert("Your memes were successfully uploaded");
         } else {
             window.alert("Something went wrong with the upload");
         }

@@ -8,6 +8,8 @@ import {Login} from "./pages/login";
 import {SignUp} from "./pages/sign-up";
 import {Editor} from "./pages/editor";
 import {APIDoc} from "./pages/api-doc";
+import {SingleGraph} from "./pages/single-graph";
+import {TemplateGraph} from "./pages/template-graph";
 
 ReactDOM.render(
     <BrowserRouter>
@@ -19,6 +21,8 @@ ReactDOM.render(
                 <Route path="sign-up" element={<SignUp/>}/>
                 <Route path="editor" element={<Editor/>}/>
                 <Route path="api-doc" element={<APIDoc/>}/>
+                <Route path="single-graph" element={<SingleGraph/>}/>
+                <Route path="template-graph" element={<TemplateGraph/>}/>
             </Routes>
         </App>
     </BrowserRouter>,

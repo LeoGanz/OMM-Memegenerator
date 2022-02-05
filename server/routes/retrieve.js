@@ -30,16 +30,16 @@ function respondDepCreator(possibleMemes, creatorName, counter, numberOfMemes, r
 router.get('/', (req, res) => {
     let result = "List of URLs leading to a by you specified meme: \n"
     const {numberOfMemes} = req.query;
-    const text = req.query.text;
+    const text = req.query.text ?? "";
     const {creatorName} = req.query;
-    let {creationDate} = req.query;
+    let {creationDate} = req.query ?? "";
 
     textSchema.find({}, (err, lst) => {
         if (err) {
             dbConnectionFailureHandler(res, err)
         } else {
             let possibleTexts = [];
-            if (lst.length === 0 && text !== undefined) {
+            if (lst.length === 0 && text !== "") {
                 respond(res, 200, "No meme-texts found");
             } else {
                 if (lst.length !== 0) {
@@ -48,12 +48,12 @@ router.get('/', (req, res) => {
                     });
                 }
             }
-            // console.log(possibleTexts);
+            console.log(possibleTexts);
             userSchema.find({}, (err, lst) => {
                 if (err) {
                     dbConnectionFailureHandler(res, err)
                 } else {
-                    if (lst.length === 0) {
+                    if (lst.length === 0 && creatorName !== undefined) {
                         respond(res, 200, "No users found");
                     } else {
                         let possibleUsers = lst.filter((elem) => {
@@ -66,7 +66,7 @@ router.get('/', (req, res) => {
                         if (possibleUsers.length === 0) {
                             respond(res, 400, "No user with this username exists", "");
                         } else {
-                            memeSchema.find({}, (err, lst) => {
+                            memeSchema.find({}).populate("texts").exec((err, lst) => {
                                 if (err) {
                                     dbConnectionFailureHandler(res, err)
                                 } else {
@@ -80,6 +80,9 @@ router.get('/', (req, res) => {
                                             }
                                             if (possibleTexts !== []) {
                                                 const textIntersection = possibleTexts.filter((el) => {
+                                                    console.log(el);
+                                                    console.log(elem.texts);
+                                                    console.log(el in elem.texts);
                                                     return el in elem.texts;
                                                 })
                                                 fitting = fitting && textIntersection.length !== 0;

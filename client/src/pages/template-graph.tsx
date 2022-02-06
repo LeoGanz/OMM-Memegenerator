@@ -2,11 +2,11 @@ import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {
-    getBottomMargin, getHeight,
-    getRightMargin,
-    getTopMargin,
-    getWidth,
-    getLeftMargin
+    useBottomMargin, useHeight,
+    useRightMargin,
+    useTopMargin,
+    useWidth,
+    useLeftMargin, TemplateData
 } from "../util/statistics";
 import {
     LineChart,
@@ -39,8 +39,7 @@ export const TemplateGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
     let jwt = "";
-    const [memeIds, setMemeIds] = useState<string[]>([]);
-    const [usages, setUsages] = useState<number[]>([]);
+    const [templateData, setTemplateData] = useState<TemplateData[]>();
     if (isLoggedIn) {
         jwt = localStorage.getItem('meme-token') || "";
     }
@@ -53,8 +52,7 @@ export const TemplateGraph = () => {
                     'Content-Type': 'application/json'
                 }
             }).then(r => r.json()).then(r => {
-                setMemeIds(r.templates);
-                setUsages(r.usages);
+                return setTemplateData(transformToRechartTemplate(r.templates, r.usages));
             })
         } else {
             navigate('/login');
@@ -64,19 +62,19 @@ export const TemplateGraph = () => {
         <>
             <Title>Usages of Templates</Title>
             <LineChart
-                width={getWidth()}
-                height={getHeight()}
-                data={transformToRechartTemplate(memeIds, usages)}
+                width={useWidth()}
+                height={useHeight()}
+                data={templateData}
                 margin={{
-                    top: getTopMargin(),
-                    right: getRightMargin(),
-                    left: getLeftMargin(),
-                    bottom: getBottomMargin(),
+                    top: useTopMargin(),
+                    right: useRightMargin(),
+                    left: useLeftMargin(),
+                    bottom: useBottomMargin(),
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="Memes"/>
-                <YAxis dataKey="Usages"/>
+                <XAxis dataKey="name"/>
+                <YAxis/>
                 <Tooltip/>
                 <Legend/>
                 <Line

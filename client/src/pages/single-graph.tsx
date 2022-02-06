@@ -2,10 +2,10 @@ import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {
-    getBottomMargin, getHeight, getRightMargin,
-    getTopMargin,
-    getWidth,
-    getLeftMargin
+    useBottomMargin, useHeight, useRightMargin,
+    useTopMargin,
+    useWidth,
+    useLeftMargin, SingleData
 } from "../util/statistics";
 import {
     BarChart,
@@ -39,9 +39,7 @@ export const SingleGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
     let jwt = "";
-    const [memeIds, setMemeIds] = useState<string[]>([]);
-    const [ups, setUps] = useState<number[]>([]);
-    const [downs, setDowns] = useState<number[]>([]);
+    const [singleData, setSingleData] = useState<SingleData[]>();
     if (isLoggedIn) {
         jwt = localStorage.getItem('meme-token') || "";
     }
@@ -54,9 +52,7 @@ export const SingleGraph = () => {
                     'Content-Type': 'application/json'
                 }
             }).then(r => r.json()).then(r => {
-                setMemeIds(r.memes);
-                setUps(r.upVotes);
-                setDowns(r.downVotes);
+                return setSingleData(transformToRechartSingle(r.memes, r.upVotes, r.downVotes));
             })
         } else {
             navigate('/login');
@@ -66,31 +62,30 @@ export const SingleGraph = () => {
         <>
             <Title>Up- and DownVotes of Memes</Title>
             <BarChart
-                width={getWidth()}
-                height={getHeight()}
-                data={transformToRechartSingle(memeIds, ups, downs)}
+                width={useWidth()}
+                height={useHeight()}
+                data={singleData}
                 margin={{
-                    top: getTopMargin(),
-                    right: getRightMargin(),
-                    left: getLeftMargin(),
-                    bottom: getBottomMargin(),
+                    top: useTopMargin(),
+                    right: useRightMargin(),
+                    left: useLeftMargin(),
+                    bottom: useBottomMargin(),
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="Memes"/>
-                <YAxis dataKey="UpVotes/DownVotes"/>
+                <XAxis dataKey="name"/>
+                <YAxis/>
                 <Tooltip/>
                 <Legend/>
-                <Bar dataKey="downVotes"
-                    stackId="a"
-                    fill="#8884d8"
+                <Bar dataKey="down"
+                     stackId="a"
+                     fill="#8884d8"
                 />
                 <Bar
-                    dataKey="upVotes"
+                    dataKey="up"
                     stackId="a"
                     fill="#82ca9d"
                 />
-
             </BarChart>
         </>
     )

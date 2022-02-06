@@ -8,6 +8,18 @@ export function getWindowDimensions() {
     };
 }
 
+export interface SingleData {
+    name: string,
+    down: number,
+    up: number,
+}
+
+export interface TemplateData {
+    name: string,
+    usage: number,
+}
+
+
 export function useWindowDimensions() {
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
@@ -24,32 +36,32 @@ export function useWindowDimensions() {
 }
 
 
-export function getWidth() {
+export function useWidth() {
     const {height, width} = useWindowDimensions();
     return width * (1 - 150 / 1920);
 }
 
-export function getHeight() {
+export function useHeight() {
     const {height, width} = useWindowDimensions();
     return height * (1 - 200 / 1080)
 }
 
-export function getRightMargin() {
+export function useRightMargin() {
     const {height, width} = useWindowDimensions();
     return width * 100 / 1920;
 }
 
-export function getTopMargin() {
+export function useTopMargin() {
     const {height, width} = useWindowDimensions();
     return height * 70 / 1080;
 }
 
-export function getBottomMargin() {
+export function useBottomMargin() {
     const {height, width} = useWindowDimensions();
     return height * 10 / 1080;
 }
 
-export function getLeftMargin(){
+export function useLeftMargin() {
     const {height, width} = useWindowDimensions();
     return width * 0 / 1920;
 }

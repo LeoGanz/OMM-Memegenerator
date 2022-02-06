@@ -41,16 +41,37 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    userSchema.find({currentToken: req.query.token}, (err, lst) => {
-        if (err) {
-            dbConnectionFailureHandler(res, err)
-        } else {
-            if (lst.length === 0) {
-                respond(res, 400, "No user with this token found");
+    userSchema
+        .findOne({currentToken: req.query.token})
+        .exec((err, creator) => {
+            if (err) {
+                dbConnectionFailureHandler(res, err)
+            } else {
+                if (!creator) {
+                    respond(res, 400, "No user with this token found");
+                } else {
+                    const memeIdTemplate = req.body.memeId;
+                    if (memeIdTemplate) {
+                        memeSchema
+                            .findOne({memeId: memeIdTemplate, status: 0})
+                            .exec((err, template) => {
+                                if (err) {
+                                    dbConnectionFailureHandler(res, err)
+                                } else {
+                                    if (!template) {
+                                        respond(res, 400, "There is no template with this memeId. " +
+                                            "Providing a template is optional.")
+                                    } else {
+                                        processSingleMemeCreation(req.body, creator, res, template)
+                                    }
+                                }
+                            });
+                    } else {
+                        processSingleMemeCreation(req.body, creator, res)
+                    }
+                }
             }
-            processSingleMemeCreation(req.body, lst[0], res)
-        }
-    });
+        });
 });
 
 module.exports = router;

@@ -8,14 +8,15 @@ memeId (essential): the memeId of the picture you want to handle
 
 up, down (optional): Something put here changes the up or down votes of the image given in
 memeId
--> Defining both makes no sense as the it will automatically be voted up
 
-comment (optional): A string you want to comment under
+comment (optional): A string you want to comment
 
-=> Only one thing can be defined out of comment, up, down
+Note: Only "up","down" OR "comment" will have an effect, even if they are all part of the body.
+Priorities: "up" > "down" > "comment"
 
 JSON-Body:
 {
     "memeId": "someId",
-    "comment":"this picture is great!"
+    "comment":"this picture is great!",
+    "up":"Anything here - acts like a flag - has higher priority than comment field"
 }

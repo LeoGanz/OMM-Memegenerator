@@ -28,10 +28,10 @@ function handleUp(memeId, user, res) {
             }
             let pict = lst[0];
             let upVoters = pict.upVoters;
-            if (user in upVoters) {
+            if (upVoters.includes(user._id)) {
                 respond(res, 400, "You have already up voted this");
             } else {
-                pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
+                pict.downVoters = pict.downVoters.filter((elem) => !elem.equals(user._id));
                 pict.upVoters.push(user);
                 pict.save();
                 respond(res, 200, "Meme upvote succeeded");
@@ -56,10 +56,10 @@ function handleDown(memeId, user, res) {
             }
             let pict = lst[0];
             let downVoters = pict.downVoters;
-            if (user in downVoters) {
+            if (downVoters.includes(user._id)) {
                 respond(res, 400, "You have already down voted this");
             } else {
-                pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
+                pict.upVoters = pict.upVoters.filter((elem) => !elem.equals(user._id));
                 pict.downVoters.push(user);
                 pict.save();
                 respond(res, 200, "Meme downvote succeeded");

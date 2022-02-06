@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
         .populate('texts')
         // do not populate whole creator as this would leak private data
         .populate('creator', 'username')
-        .populate('upVoters.username')
-        .populate('downVoters.username')
+        .populate('upVoters', 'username')
+        .populate('downVoters', 'username')
         .populate({
             path: 'comments',
             populate: [{path: 'dateOfCreation'}, {path: 'text'}, {path: 'creator', select: 'username'}]

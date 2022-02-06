@@ -7,7 +7,7 @@ const {dbConnectionFailureHandler, cleanMeme, respondSilently, respond} = requir
 
 router.get('/', (req, res) => {
     memeSchema
-        .find({})
+        .findOne({memeId: req.query.memeId})
         .populate('texts')
         // do not populate whole creator as this would leak private data
         .populate('creator', 'username')
@@ -17,27 +17,17 @@ router.get('/', (req, res) => {
             path: 'comments',
             populate: [{path: 'dateOfCreation'}, {path: 'text'}, {path: 'creator', select: 'username'}]
         })
-        .exec((err, memes) => {
+        .exec((err, meme) => {
             if (err) {
                 dbConnectionFailureHandler(res, err)
             } else {
-                if (memes.length === 0) {
-                    respond(res, 400, "No meme with this memeId found");
+                if (!meme) {
+                    respond(res, 400, "No template with this memeId found");
+                } else if (meme.status !== 0) {
+                    respond(res, 400, "The requested meme is not a template (status 0)");
                 } else {
-                    let templates = memes.filter((meme) => {
-                        return meme.status === 0;
-                    });
-                    const start = req.body.start ?? 0;
-                    const end = req.body.end ?? 10;
-                    templates = templates.slice(start, end);
-                    let wanted = memes.filter((meme) => {
-                        return meme.memeId = req.query.memeId;
-                    });
-                    let toSend = {
-                        wanted: wanted.map(cleanMeme),
-                        templates: templates.map(cleanMeme),
-                    }
-                    respondSilently(res, 200, toSend);
+                    respondSilently(res, 200, cleanMeme(meme));
+
                 }
             }
         });

@@ -178,7 +178,7 @@ function cleanMeme(meme) {
     return {
         name,
         desc,
-        img,
+        image: img.base64,
         creator: creator.username,
         texts: texts.map(cleanTextComponent),
         dateOfCreation,

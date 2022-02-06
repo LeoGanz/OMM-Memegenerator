@@ -35,15 +35,15 @@ export interface MemeTextType {
 }
 
 export interface UserType {
-    username: string,
-    fullName: string,
-    password: string,
-    currentToken: string,
-    email: string,
+    userName?: string,
+    fullName?: string,
+    password?: string,
+    currentToken?: string,
+    email?: string,
     //accounts: ...
-    dateOfCreation: string,
-    lastEdited: MemeType[],
-    lastComments: CommentType[],
+    dateOfCreation?: string,
+    lastEdited?: MemeType[],
+    lastComments?: CommentType[],
 }
 
 

@@ -1,11 +1,12 @@
-import React from 'react';
-import styled from "styled-components";
+import React, {useState} from 'react';
+import styled, {css} from "styled-components";
 import {colors} from "../layout/colors";
 import {up} from "../../util/breakpoint";
 import {MemeInfos} from "../meme-infos/meme-infos";
 import {Link} from "react-router-dom";
+import {MemeType} from "../../util/typedef";
 
-const StyledMemeCard = styled(Link)`
+const StyledMemeCard = styled(Link)<{voteHoverActive: boolean}>`
   background-color: ${colors.background.memeCard.default};
   border: 1px solid ${colors.background.memeCard.default};
   border-radius: 4px;
@@ -26,10 +27,13 @@ const StyledMemeCard = styled(Link)`
   ${up('lg')} {
     grid-column-start: span 3;
   }
+  
+  ${props => !props.voteHoverActive && css`
+    &:hover {
+      background-color: ${colors.background.memeCard.hover};
+    }
+  `}
 
-  &:hover {
-    background-color: ${colors.background.memeCard.hover};
-  }
 `
 
 const MemePreview = styled.img`
@@ -37,21 +41,12 @@ const MemePreview = styled.img`
 `
 
 
-export interface MemeCardType {
-    memePath: string;
-    author: string;
-    formattedDate: string;
-    amountOfComments: number;
-    upVotes: number;
-    downVotes: number;
-}
-
-
-export const MemeCard = ({memePath, ...props}: MemeCardType) => {
+export const MemeCard = ({img, ...props}: MemeType) => {
+    const [voteHoverActive, setVoteHoverActive] = useState<boolean>(false)
     return (
-        <StyledMemeCard to="/details">
-            <MemePreview src={memePath}/>
-            <MemeInfos {...props}/>
+        <StyledMemeCard voteHoverActive={voteHoverActive} to={voteHoverActive? "/" : "/details"}>
+            <MemePreview src={img.base64}/>
+            <MemeInfos setVoteHoverActive={setVoteHoverActive} img={img} {...props}/>
         </StyledMemeCard>
 
     );

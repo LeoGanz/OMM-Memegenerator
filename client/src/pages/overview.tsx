@@ -7,6 +7,9 @@ import {Link, useNavigate} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import LoginContext from "../login-context";
 import {MemeType} from "../util/typedef";
+import {TextInput} from "../components/text-input/input-field";
+import {StyledButton} from "./editor";
+import {useForm} from "react-hook-form";
 
 const ButtonLink = styled(Link)`
   background-color: ${colors.background.button};
@@ -19,7 +22,8 @@ const ButtonLink = styled(Link)`
   height: fit-content;
   cursor: pointer;
   transition: opacity 0.2s;
-  &:hover{
+
+  &:hover {
     opacity: 90%;
   }
 `
@@ -39,28 +43,68 @@ const HeadlineSection = styled.div`
   align-items: center;
 `
 
+const SortAndFilterWrapper = styled.div`
+  display: flex;
+  background-color: ${colors.background.memeCard.default};
+  margin-bottom: 20px;
+  border-radius: 4px;
+  padding: 10px;
+  justify-content: space-between;
+`
+
+const Filter = styled.form`
+    display: flex;
+    align-items: center;
+    gap: 50px;
+`
+
+const SortArea = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`
+
 
 export const Overview = () => {
     const {isLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
+    const {
+        handleSubmit,
+        control
+    } = useForm<{ username: string }>({
+        mode: 'onSubmit',
+    });
     const [memeCardData, setMemeCardData] = useState<MemeType[]>([])
+    const [range, setRange] = useState({start: 0, end: 40})
     let jwt
 
     useEffect(() => {
         if (isLoggedIn) {
-            jwt = localStorage.getItem('meme-token') || ""
-            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start: 0, end: 40, status: 2}), {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                // body: JSON.stringify({start:0, end:20})
-            }).then(r => r.json()).then(r => setMemeCardData(r))
+            loadMemes()
         } else {
             navigate('/login')
         }
     }, [])
 
+    const loadMemes = (filerByValue?: string, sortByValue?: string) => {
+        jwt = localStorage.getItem('meme-token') || ""
+        const filterBy = filerByValue ? {filterBy: filerByValue} : {}
+        const sortBy = sortByValue ? {sortBy: sortByValue} : {}
+        const options = {status: 2, ...range, ...filterBy, ...sortBy}
+        console.log(options)
+        // @ts-ignore
+        fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery(options), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // body: JSON.stringify({start:0, end:20})
+        }).then(r => r.json()).then(r => setMemeCardData(r))
+    }
+
+    const filterByUsername = ({username}: { username: string }) => {
+        loadMemes(username, undefined)
+    }
 
     return (
         <>
@@ -68,6 +112,23 @@ export const Overview = () => {
                 <Title>Overview</Title>
                 <ButtonLink to="/editor">+ Create your own meme</ButtonLink>
             </HeadlineSection>
+
+            <SortAndFilterWrapper onSubmit={handleSubmit(filterByUsername)}>
+                <Filter>
+                    <TextInput placeholder="Username" name={"username"} type={"text"} control={control}/>
+                    <StyledButton type="submit">Search</StyledButton>
+                </Filter>
+
+                <SortArea>
+                    <p>Sort by:</p>
+                    <p>UpVotes</p>
+                    <StyledButton onClick={() => loadMemes(undefined , "up asc")}>Asc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined , "up desc")}>Desc</StyledButton>
+                    <p>DownVotes</p>
+                    <StyledButton onClick={() => loadMemes(undefined , "down asc")}>Asc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined , "down desc")}>Desc</StyledButton>
+                </SortArea>
+            </SortAndFilterWrapper>
 
             <OverviewGrid>
                 {memeCardData.map((memeCardEntry) =>

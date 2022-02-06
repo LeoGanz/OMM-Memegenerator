@@ -6,8 +6,7 @@ const {
     respond,
     getCurrentDateString,
     calcMemeIdFor,
-    dbConnectionFailureHandler,
-    getDomain
+    dbConnectionFailureHandler
 } = require("./utils");
 
 /**
@@ -181,14 +180,10 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                     let memeRelativeUrl = "/image?memeId=" + meme.memeId
                     if (optionalResults === undefined) {
                         // Process single meme directly
-                        if (newStatus === 2) {
-                            res.redirect(memeRelativeUrl); // TODO fix auth
-                        } else {
-                            respond(res, 200, "Saving complete for meme " + meme.memeId);
-                        }
+                        respond(res, 200, "Saving complete for meme " + meme.memeId + "\n" + memeRelativeUrl);
                     } else {
                         // Process Memes as list
-                        optionalResults += getDomain() + memeRelativeUrl + "\n";
+                        optionalResults += memeRelativeUrl + "\n";
                         processMemeCreation(memeJsonArray, creator, res, optionalTemplate, optionalResults);
                     }
                     creator.lastEdited.push(meme);

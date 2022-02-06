@@ -142,8 +142,8 @@ router.post("/", (req, res) => {
 router.get("/", (req, res) => {
     const sortBy = req.query.sortBy;
     const filterBy = req.query.filterBy;
-    const start = req.query.start;
-    const end = req.query.end;
+    const start = parseInt(req.query.start);
+    const end = parseInt(req.query.end);
     const status = req.query.status;
 
     // Do not allow lookup of other users' drafts
@@ -174,7 +174,10 @@ router.get("/", (req, res) => {
             .populate('creator', 'username')
             .populate('upVoters.username')
             .populate('downVoters.username')
-            .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
+            .populate({
+                path: 'comments',
+                populate: [{path: 'dateOfCreation'}, {path: 'text'}, {path: 'creator', select: 'username'}]
+            })
             .exec((err, items) => {
                 if (err) {
                     respond(res, 500, 'No images found', err);
@@ -228,7 +231,7 @@ router.get("/", (req, res) => {
                             return 0;
                         });
                     }
-                    if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
+                    if (!isNaN(start)  && !isNaN(end)) {
                         items = items.slice(start, end);
                         getOrRenderMemes(
                             items.map(meme => meme.memeId),

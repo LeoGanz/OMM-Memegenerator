@@ -13,7 +13,10 @@ router.get('/', (req, res) => {
         .populate('creator', 'username')
         .populate('upVoters.username')
         .populate('downVoters.username')
-        .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
+        .populate({
+            path: 'comments',
+            populate: [{path: 'dateOfCreation'}, {path: 'text'}, {path: 'creator', select: 'username'}]
+        })
         .exec((err, memes) => {
             if (err) {
                 dbConnectionFailureHandler(res, err)

@@ -19,7 +19,6 @@ function renderMeme(meme) {
 
         // Draw text components
         for (const textComponent of meme.texts) {
-            console.log("drawing txt " + textComponent.text)
             // specifications like in HTML 5 Canvas API
             ctx.font = (textComponent.fontSize ?? 30) + 'px Impact';
             ctx.fillStyle = textComponent.color ?? "white";

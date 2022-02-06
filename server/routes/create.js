@@ -7,29 +7,30 @@ const {dbConnectionFailureHandler, respond} = require("../utils");
 
 router.post('/', (req, res) => {
     const memeIdTemplate = req.body.memeId;
-    memeSchema.find({memeId: memeIdTemplate, status: 0}, (err, lst) => {
-        if (err) {
-            dbConnectionFailureHandler(res, err)
-        } else {
-            if (lst.length === 0) {
-                respond(res, 400, "There is no template with this memeId")
-            }
-            const template = lst[0];
-            const {memes} = req.body;
-            //TODO consider which user created the meme instead of API
-            userSchema.find({username: "API"}, (err, lst) => {
-                if (err) {
-                    dbConnectionFailureHandler(res, err)
+    memeSchema
+        .findOne({memeId: memeIdTemplate, status: 0})
+        .exec((err, template) => {
+            if (err) {
+                dbConnectionFailureHandler(res, err)
+            } else {
+                if (!template) {
+                    respond(res, 400, "There is no template with this memeId")
                 } else {
-                    if (lst.length === 0) {
-                        respond(res, 400, "No API user found");
-                    }
-                    const userApi = lst[0];
-                    processMultipleMemeCreations(memes, userApi, res, template)
+                    const {memes} = req.body;
+
+                    userSchema.findOne({username: "API"}, (err, apiUser) => {
+                        if (err) {
+                            dbConnectionFailureHandler(res, err)
+                        } else {
+                            if (!apiUser) {
+                                respond(res, 400, "No API user found");
+                            }
+                            processMultipleMemeCreations(memes, apiUser, res, template)
+                        }
+                    });
                 }
-            });
-        }
-    });
+            }
+        });
 });
 
 module.exports = router;

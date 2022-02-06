@@ -26,11 +26,12 @@ function checkForAppropriateForm(memeJson, res) {
     const colors = memeJson.colors ?? [];
     const alphabeticData = [texts, colors]
     const numericData = [xCoordinates, yCoordinates, fontSizes];
+    const required = [texts, xCoordinates, yCoordinates];
     if (typeof name !== "string" || typeof desc !== "string") {
         respond(res, 400, "Name or Description is no string");
         return false;
     }
-    if (!checkForEqualLength([texts, ...numericData])) {
+    if (!checkForEqualLength(required)) {
         respond(res, 400, "Please provide lists of equal length " +
             "for texts, xCoordinates and yCoordinates")
     }
@@ -77,29 +78,33 @@ function processTextsInBody(memeJson, res, onSuccess) {
     const fontSizes = memeJson.fontSizes ?? [];
     const colors = memeJson.colors ?? [];
     let failureOccurred = false;
-    for (let i = 0; i < texts.length && !failureOccurred; i++) {
-        const text = texts[i];
-        const xCoordinate = xCoordinates[i];
-        const yCoordinate = yCoordinates[i];
-        const fontSize = fontSizes[i];
-        const color = colors[i];
+    if (texts.length === 0) {
+        onSuccess([]);
+    } else {
+        for (let i = 0; i < texts.length && !failureOccurred; i++) {
+            const text = texts[i];
+            const xCoordinate = xCoordinates[i];
+            const yCoordinate = yCoordinates[i];
+            const fontSize = fontSizes[i];
+            const color = colors[i];
 
-        const textSch = new textSchema({
-            text: text,
-            xCoordinate: xCoordinate,
-            yCoordinate: yCoordinate,
-            fontSize: fontSize,
-            color: color,
-        });
-        textSchema.create(textSch).then(_ => {
-            newTexts.push(textSch);
-            if (i === texts.length - 1 && !failureOccurred) {
-                onSuccess(newTexts);
-            }
-        }).catch(_ => {
-            failureOccurred = true;
-            respond(res, 503, "Error occurred during initialization of texts");
-        });
+            const textSch = new textSchema({
+                text: text,
+                xCoordinate: xCoordinate,
+                yCoordinate: yCoordinate,
+                fontSize: fontSize,
+                color: color,
+            });
+            textSchema.create(textSch).then(_ => {
+                newTexts.push(textSch);
+                if (i === texts.length - 1 && !failureOccurred) {
+                    onSuccess(newTexts);
+                }
+            }).catch(reason => {
+                failureOccurred = true;
+                respond(res, 503, "Error occurred during initialization of texts", reason);
+            });
+        }
     }
 }
 
@@ -170,14 +175,14 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                     // if the image is provided through the request instead of actually using the template.
                     // Old method did not handle multiple entries with the same backgroundImg anyway.
                     if (useTemplate) {
-                        memeSchema.findOneAndUpdate({memeId: optionalTemplate.memeId},
-                            {usages: optionalTemplate.usages + 1});
+                        optionalTemplate.usages += 1;
+                        optionalTemplate.save();
                     }
                     let memeRelativeUrl = "/image?memeId=" + meme.memeId
                     if (optionalResults === undefined) {
                         // Process single meme directly
                         if (newStatus === 2) {
-                            res.redirect(memeRelativeUrl);
+                            res.redirect(memeRelativeUrl); // TODO fix auth
                         } else {
                             respond(res, 200, "Saving complete for meme " + meme.memeId);
                         }

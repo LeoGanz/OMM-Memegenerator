@@ -144,10 +144,12 @@ router.get("/", (req, res) => {
     const filterBy = req.query.filterBy;
     const start = parseInt(req.query.start);
     const end = parseInt(req.query.end);
-    const status = req.query.status;
+    const status = parseInt(req.query.status);
 
     // Do not allow lookup of other users' drafts
-    if (status === 1) {
+    if (isNaN(status) || ![0, 1, 2].includes(status)) {
+        respond(res, 400, "Provide a the numbers 0, 1 or 2 for the status")
+    } else if (status === 1) {
         userSchema.findOne({currentToken: req.query.token}).exec(
             (err, user) => {
                 if (err) {
@@ -161,7 +163,7 @@ router.get("/", (req, res) => {
                     performRetrieval();
                 }
             }
-        )
+        );
     } else {
         performRetrieval();
     }
@@ -231,7 +233,7 @@ router.get("/", (req, res) => {
                             return 0;
                         });
                     }
-                    if (!isNaN(start)  && !isNaN(end)) {
+                    if (!isNaN(start) && !isNaN(end)) {
                         items = items.slice(start, end);
                         getOrRenderMemes(
                             items.map(meme => meme.memeId),

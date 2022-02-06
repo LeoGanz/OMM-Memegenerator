@@ -27,7 +27,7 @@ export const StyledErrorMessage = styled.span`
 `;
 
 export const TextInput = (
-    props: UseControllerProps<any> & { label?: string, type: string },
+    props: UseControllerProps<any> & { placeholder?: string, label?: string, type: string },
 ) => {
   const { field, fieldState, formState } = useController(props);
   const errorMessage = fieldState?.error?.message;
@@ -45,6 +45,7 @@ export const TextInput = (
             hasError={Boolean(errorMessage)}
             disabled={formState.isSubmitting}
             id={props.name}
+            placeholder={props?.placeholder}
             {...field}
             value={field?.value || ''}
             {...props}

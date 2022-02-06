@@ -1,9 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from "styled-components";
 import {Title} from "../components/layout/typography";
-import {MemeCard, MemeCardType} from "../components/meme-card/meme-card";
+import {MemeCard} from "../components/meme-card/meme-card";
 import {colors} from "../components/layout/colors";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {getJwt, objectToQuery} from "../util/jwt";
+import LoginContext from "../login-context";
+import {MemeType} from "../util/typedef";
+import {TextInput} from "../components/text-input/input-field";
+import {StyledButton} from "./editor";
+import {useForm} from "react-hook-form";
 
 export const ButtonLink = styled(Link)`
   background-color: ${colors.background.button};
@@ -16,12 +22,11 @@ export const ButtonLink = styled(Link)`
   height: fit-content;
   cursor: pointer;
   transition: opacity 0.2s;
-  &:hover{
+
+  &:hover {
     opacity: 90%;
   }
-  
 `
-
 
 const OverviewGrid = styled.div`
   display: grid;
@@ -38,24 +43,76 @@ export const HeadlineSection = styled.div`
   align-items: center;
 `
 
+const SortAndFilterWrapper = styled.div`
+  display: flex;
+  background-color: ${colors.background.memeCard.default};
+  margin-bottom: 20px;
+  border-radius: 4px;
+  padding: 10px;
+  justify-content: space-between;
+`
+
+const Filter = styled.form`
+    display: flex;
+    align-items: center;
+    gap: 50px;
+`
+
+const SortArea = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`
+
 
 export const Overview = () => {
-    const [memeCardData, setMemeCardData] = useState<MemeCardType[]>([])
+    const {isLoggedIn} = useContext(LoginContext)
+    let navigate = useNavigate()
+    const {
+        handleSubmit,
+        control
+    } = useForm<{ username: string }>({
+        mode: 'onSubmit',
+    });
+    const [memeCardData, setMemeCardData] = useState<MemeType[]>([])
+    const [range, setRange] = useState({start: 0, end: 40})
+    let jwt
 
     useEffect(() => {
-        //todo replace mock data with data from api
-        const mockData: MemeCardType[] = new Array(100).fill(null).map(() =>
-            ({
-                memePath: "https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png",
-                author: "SampleUser53",
-                formattedDate: "26.11.21",
-                upVotes: Math.floor(Math.random() * 1000),
-                downVotes: Math.floor(Math.random() * 1000),
-                amountOfComments: Math.floor(Math.random() * 1000),
-            })
-        )
-        setMemeCardData(mockData)
+        if (isLoggedIn) {
+            loadMemes()
+        } else {
+            navigate('/login')
+        }
     }, [])
+
+    const loadMemes = (filerByValue?: string, sortByValue?: string) => {
+        jwt = localStorage.getItem('meme-token') || ""
+        const filterBy = filerByValue ? {filterBy: filerByValue} : {}
+        const sortBy = sortByValue ? {sortBy: sortByValue} : {}
+        const options = {status: 2, ...range, ...filterBy, ...sortBy}
+
+        // @ts-ignore
+        fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery(options), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                return response.text().then(response => {
+                    throw new Error(response)
+                })
+            })
+            .then(r => setMemeCardData(r))
+            .catch(err => window.alert(err.message))
+    }
+
+    const filterByUsername = ({username}: { username: string }) => {
+        loadMemes(username, undefined)
+    }
 
     return (
         <>
@@ -66,6 +123,23 @@ export const Overview = () => {
                 <ButtonLink to="/single-graph">Show some statistics for single memes</ButtonLink>
                 <ButtonLink to="/template-graph">Show some template statistics</ButtonLink>
             </HeadlineSection>
+
+            <SortAndFilterWrapper onSubmit={handleSubmit(filterByUsername)}>
+                <Filter>
+                    <TextInput placeholder="Username" name={"username"} type={"text"} control={control}/>
+                    <StyledButton type="submit">Search</StyledButton>
+                </Filter>
+
+                <SortArea>
+                    <p>Sort by:</p>
+                    <p>UpVotes</p>
+                    <StyledButton onClick={() => loadMemes(undefined , "up asc")}>Asc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined , "up desc")}>Desc</StyledButton>
+                    <p>DownVotes</p>
+                    <StyledButton onClick={() => loadMemes(undefined , "down asc")}>Asc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined , "down desc")}>Desc</StyledButton>
+                </SortArea>
+            </SortAndFilterWrapper>
 
             <OverviewGrid>
                 {memeCardData.map((memeCardEntry) =>

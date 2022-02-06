@@ -1,9 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from "styled-components";
 import {Title} from "../components/layout/typography";
-import {MemeCard, MemeCardType} from "../components/meme-card/meme-card";
+import {MemeCard} from "../components/meme-card/meme-card";
 import {colors} from "../components/layout/colors";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {getJwt, objectToQuery} from "../util/jwt";
+import LoginContext from "../login-context";
+import {MemeType} from "../util/typedef";
 
 const ButtonLink = styled(Link)`
   background-color: ${colors.background.button};
@@ -19,9 +22,7 @@ const ButtonLink = styled(Link)`
   &:hover{
     opacity: 90%;
   }
-  
 `
-
 
 const OverviewGrid = styled.div`
   display: grid;
@@ -40,22 +41,26 @@ const HeadlineSection = styled.div`
 
 
 export const Overview = () => {
-    const [memeCardData, setMemeCardData] = useState<MemeCardType[]>([])
+    const {isLoggedIn} = useContext(LoginContext)
+    let navigate = useNavigate()
+    const [memeCardData, setMemeCardData] = useState<MemeType[]>([])
+    let jwt
 
     useEffect(() => {
-        //todo replace mock data with data from api
-        const mockData: MemeCardType[] = new Array(100).fill(null).map(() =>
-            ({
-                memePath: "https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png",
-                author: "SampleUser53",
-                formattedDate: "26.11.21",
-                upVotes: Math.floor(Math.random() * 1000),
-                downVotes: Math.floor(Math.random() * 1000),
-                amountOfComments: Math.floor(Math.random() * 1000),
-            })
-        )
-        setMemeCardData(mockData)
+        if (isLoggedIn) {
+            jwt = localStorage.getItem('meme-token') || ""
+            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start: 0, end: 40, status: 2}), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({start:0, end:20})
+            }).then(r => r.json()).then(r => setMemeCardData(r))
+        } else {
+            navigate('/login')
+        }
     }, [])
+
 
     return (
         <>

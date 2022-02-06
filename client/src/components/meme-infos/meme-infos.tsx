@@ -1,7 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {MetaData} from "../layout/typography";
+import {MemeType} from "../../util/typedef";
+import {getJwt} from "../../util/jwt";
 
 const MetaDataContainer = styled.div`
   display: flex;
@@ -23,30 +25,71 @@ const VoteContainer = styled.div`
   width: 100%;
 `
 
-const Votes = styled.p<{ isUpVote?: boolean }>`
+const Votes = styled.p<{ isUpVote?: boolean, isTouched: boolean, disabled: boolean }>`
+  z-index: 1;
   color: ${(props) => props.isUpVote ? colors.font.votes.up : colors.font.votes.down};
+  ${(props) => props.isTouched && "text-decoration: underline"};
+
+  &:hover {
+    ${(props) => props.disabled ? "cursor: default" : `color: ${colors.font.default}`};
+  }
 `
 
 export interface MemeInfoProps {
-    author: string;
-    formattedDate: string;
-    amountOfComments: number;
-    upVotes: number;
-    downVotes: number;
+    setVoteHoverActive: (b: boolean) => any
 }
 
-export const MemeInfos = ({formattedDate, author, amountOfComments, upVotes, downVotes}: MemeInfoProps) => {
+
+export const MemeInfos = ({
+                              dateOfCreation,
+                              creator,
+                              comments,
+                              upVoters,
+                              downVoters,
+                              setVoteHoverActive,
+                              memeId
+                          }: MemeType & MemeInfoProps) => {
+    const [isUpVoted, setIsUpVoted] = useState<boolean>(false)
+    const [isDownVoted, setIsDownVoted] = useState<boolean>(false)
+    const jwt = localStorage.getItem('meme-token') || ""
+
+    const handleVote = (isUpVote: boolean) => {
+        if (!isUpVoted && !isDownVoted) {
+            const body = isUpVote ? {memeId, up: true} : {memeId, down: true}
+            fetch('http://localhost:3000/images' + getJwt(jwt), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }).then(response => {
+                if (response.ok) {
+                    isUpVote ? setIsUpVoted(true) : setIsDownVoted(true)
+                    return
+                }
+                return response.text().then(response => {
+                    throw new Error(response)
+                })
+            }).catch(err => window.alert(err.message))
+        }
+    }
+
 
     return (
         <>
             <MetaDataContainer>
-                <StyledMetaData>{formattedDate}</StyledMetaData>
-                <StyledMetaData>by {author}</StyledMetaData>
+                <StyledMetaData>{dateOfCreation}</StyledMetaData>
+                <StyledMetaData>by {creator?.userName}</StyledMetaData>
             </MetaDataContainer>
             <VoteContainer>
-                <Votes>{downVotes} ▼</Votes>
-                <StyledMetaData>{amountOfComments} comments</StyledMetaData>
-                <Votes isUpVote>▲ {upVotes}</Votes>
+                <Votes disabled={isDownVoted || isUpVoted} isTouched={isDownVoted} onClick={() => handleVote(false)}
+                       onMouseEnter={() => setVoteHoverActive(true)}
+                       onMouseLeave={() => setVoteHoverActive(false)}>{isDownVoted ? downVoters?.length && (downVoters.length + 1) : downVoters?.length} ▼</Votes>
+                <StyledMetaData>{comments?.length} comments</StyledMetaData>
+                <Votes disabled={isDownVoted || isUpVoted} isTouched={isUpVoted} onClick={() => handleVote(true)}
+                       onMouseEnter={() => setVoteHoverActive(true)}
+                       onMouseLeave={() => setVoteHoverActive(false)}
+                       isUpVote>▲ {isUpVoted ? upVoters?.length && (upVoters.length + 1) : upVoters?.length}</Votes>
             </VoteContainer>
         </>
     )

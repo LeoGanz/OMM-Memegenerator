@@ -51,7 +51,7 @@ export const MemeContainer = ({
     return (
         <MemeContainerWrapper>
             <Meme src={memePath}/>
-            <StyledMemeInfos {...props}/>
+            {/*<StyledMemeInfos {...props}/>*/}
         </MemeContainerWrapper>
     )
 }

@@ -4,15 +4,17 @@ bzw. als Query Param angeben: token - THE-TOKEN
 
 Login required
 
-memeId (essential): the memeId of the picture you want to handle
+memeId (essential): the memeId of the meme you want to interact with
 
-up, down (optional): Something put here changes the up or down votes of the image given in
-memeId
+up, down (optional): Setting any of these fields inside the body will add up or down votes and remove the other type if set previously
+remove: will remove any votes by the requesting user
+
+Note: Fields up, down and remove are treated as flags. Their Values are ignored.
 
 comment (optional): A string you want to comment
 
-Note: Only "up","down" OR "comment" will have an effect, even if they are all part of the body.
-Priorities: "up" > "down" > "comment"
+Note: Only "remove","up","down" OR "comment" will have an effect, even if they are all part of the body.
+Priorities: "remove" > "up" > "down" > "comment"
 
 JSON-Body:
 {

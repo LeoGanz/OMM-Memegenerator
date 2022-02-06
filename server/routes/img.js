@@ -68,6 +68,23 @@ function handleDown(memeId, user, res) {
     });
 }
 
+function handleRemoveVotes(memeId, user, res) {
+    memeSchema.find({memeId: memeId}, (err, lst) => {
+        if (err) {
+            respond(res, 503, "Connection to db meme failed");
+        } else {
+            if (lst.length === 0) {
+                respond(res, 400, "No meme with this memeId found");
+            }
+            let pict = lst[0];
+            pict.upVoters = pict.upVoters.filter((elem) => !elem.equals(user._id));
+            pict.downVoters = pict.downVoters.filter((elem) => !elem.equals(user._id));
+            pict.save();
+            respond(res, 200, "Removal of votes succeeded");
+        }
+    });
+}
+
 /**
  * Handles posting a comment
  * @param comment The comment to be posted
@@ -117,6 +134,7 @@ router.post("/", (req, res) => {
     let userToken = req.query.token;
     let upVote = req.body.up;
     let downVote = req.body.down;
+    let removeVotes = req.body.remove;
     let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
@@ -126,7 +144,9 @@ router.post("/", (req, res) => {
                 respond(res, 400, "No user with this token found");
             }
             let user = lst[0];
-            if (upVote !== undefined) {
+            if (removeVotes !== undefined) {
+                handleRemoveVotes(memeId, user, res);
+            } else if (upVote !== undefined) {
                 handleUp(memeId, user, res);
             } else if (downVote !== undefined) {
                 handleDown(memeId, user, res);

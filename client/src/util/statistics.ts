@@ -43,7 +43,7 @@ export function useWidth() {
 
 export function useHeight() {
     const {height, width} = useWindowDimensions();
-    return height * (1 - 200 / 1080)
+    return height * (1 - 250 / 1080)
 }
 
 export function useRightMargin() {
@@ -53,15 +53,35 @@ export function useRightMargin() {
 
 export function useTopMargin() {
     const {height, width} = useWindowDimensions();
-    return height * 70 / 1080;
+    return height * 0 / 1080;
 }
 
 export function useBottomMargin() {
     const {height, width} = useWindowDimensions();
-    return height * 10 / 1080;
+    return height * 250 / 1080;
 }
 
 export function useLeftMargin() {
+    const {height, width} = useWindowDimensions();
+    return width * 0 / 1920;
+}
+
+export function useLegendBottomMargin() {
+    const {height, width} = useWindowDimensions();
+    return height * 36 / 1080;
+}
+
+export function useLegendTopMargin() {
+    const {height, width} = useWindowDimensions();
+    return height * 0 / 1080;
+}
+
+export function useLegendLeftMargin() {
+    const {height, width} = useWindowDimensions();
+    return width * 0 / 1920;
+}
+
+export function useLegendRightMargin() {
     const {height, width} = useWindowDimensions();
     return width * 0 / 1920;
 }

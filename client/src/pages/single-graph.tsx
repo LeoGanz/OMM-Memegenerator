@@ -2,10 +2,17 @@ import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {
-    useBottomMargin, useHeight, useRightMargin,
+    useBottomMargin,
+    useHeight,
+    useRightMargin,
     useTopMargin,
     useWidth,
-    useLeftMargin, SingleData
+    useLeftMargin,
+    SingleData,
+    useLegendTopMargin,
+    useLegendBottomMargin,
+    useLegendLeftMargin,
+    useLegendRightMargin
 } from "../util/statistics";
 import {
     BarChart,
@@ -73,10 +80,10 @@ export const SingleGraph = () => {
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="name"/>
+                <XAxis dataKey="name" angle={90} textAnchor="start"/>
                 <YAxis/>
                 <Tooltip/>
-                <Legend/>
+                <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Bar dataKey="down"
                      stackId="a"
                      fill="#8884d8"

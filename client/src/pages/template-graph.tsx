@@ -2,11 +2,17 @@ import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {
-    useBottomMargin, useHeight,
+    useBottomMargin,
+    useHeight,
     useRightMargin,
     useTopMargin,
     useWidth,
-    useLeftMargin, TemplateData
+    useLeftMargin,
+    TemplateData,
+    useLegendTopMargin,
+    useLegendBottomMargin,
+    useLegendRightMargin,
+    useLegendLeftMargin
 } from "../util/statistics";
 import {
     LineChart,
@@ -73,10 +79,10 @@ export const TemplateGraph = () => {
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="name"/>
+                <XAxis dataKey="name" angle={90} textAnchor="start"/>
                 <YAxis/>
                 <Tooltip/>
-                <Legend/>
+                <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Line
                     type="monotone"
                     dataKey="usages"

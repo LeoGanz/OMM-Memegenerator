@@ -91,15 +91,23 @@ export const Overview = () => {
         const filterBy = filerByValue ? {filterBy: filerByValue} : {}
         const sortBy = sortByValue ? {sortBy: sortByValue} : {}
         const options = {status: 2, ...range, ...filterBy, ...sortBy}
-        console.log(options)
+
         // @ts-ignore
         fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery(options), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
-            // body: JSON.stringify({start:0, end:20})
-        }).then(r => r.json()).then(r => setMemeCardData(r))
+        }).then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                return response.text().then(response => {
+                    throw new Error(response)
+                })
+            })
+            .then(r => setMemeCardData(r))
+            .catch(err => window.alert(err.message))
     }
 
     const filterByUsername = ({username}: { username: string }) => {

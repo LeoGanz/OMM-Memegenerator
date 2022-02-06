@@ -1,6 +1,7 @@
 import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
+import {HeadlineSection, ButtonLink} from "./overview";
 import {
     useBottomMargin,
     useHeight,
@@ -66,7 +67,10 @@ export const TemplateGraph = () => {
     }, [])
     return (
         <>
-            <Title>Usages of Templates</Title>
+            <HeadlineSection>
+                <Title>Usages of Templates</Title>
+                <ButtonLink to="/">Back to Overview Page</ButtonLink>
+            </HeadlineSection>
             <LineChart
                 width={useWidth()}
                 height={useHeight()}

@@ -125,7 +125,7 @@ export const APIDoc = () => {
                 localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=2022-2-2
             </Wrapper>
             <p>
-                If you click on the on the URL. You get to a new page giving back URLs to every meme
+                If you click on the URL. You get to a new page giving back URLs to every meme
                 found for these parameters given.
             </p>
 
@@ -143,7 +143,7 @@ export const APIDoc = () => {
                 out of the array is a meme being created.
                 This element has to have the same structure: It is a class with the "name" as the
                 name of the meme; the "desc", the
-                discription of the meme; the "texts" an array of String-texts being placed on the
+                description of the meme; the "texts" an array of String-texts being placed on the
                 meme; the "xCoordinates" mapping to
                 the texts and describing the xCoordinates of the texts; same for "yCoordinates",
                 "fontSizes" and "colors". These arrays

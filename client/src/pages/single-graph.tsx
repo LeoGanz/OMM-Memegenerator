@@ -1,6 +1,7 @@
 import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
+import {HeadlineSection, ButtonLink} from "./overview";
 import {
     useBottomMargin,
     useHeight,
@@ -67,7 +68,10 @@ export const SingleGraph = () => {
     }, [])
     return (
         <>
-            <Title>Up- and DownVotes of Memes</Title>
+            <HeadlineSection>
+                <Title>Up- and DownVotes of Memes</Title>
+                <ButtonLink to="/">Back to Overview Page</ButtonLink>
+            </HeadlineSection>
             <BarChart
                 width={useWidth()}
                 height={useHeight()}

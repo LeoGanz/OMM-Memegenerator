@@ -5,7 +5,7 @@ import {MemeCard, MemeCardType} from "../components/meme-card/meme-card";
 import {colors} from "../components/layout/colors";
 import {Link} from "react-router-dom";
 
-const ButtonLink = styled(Link)`
+export const ButtonLink = styled(Link)`
   background-color: ${colors.background.button};
   border: 1px solid ${colors.background.button};
   text-decoration: none;
@@ -32,7 +32,7 @@ const OverviewGrid = styled.div`
   align-items: start;
 `
 
-const HeadlineSection = styled.div`
+export const HeadlineSection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

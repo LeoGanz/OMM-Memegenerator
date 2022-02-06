@@ -20,28 +20,118 @@ request.
 
 ### API-creation
 
+For creating memes with the API there is a POST-request needed. There you need to specify everything
+about the meme in the JSON-body of the request. The first thing needed to be specified is the "
+memeId" of the Template you want to use for the meme. You can for example get this out of the URL
+given from the retrieve route above under the query-parameter
+"memeId". Then you need to give an array under the parameter "memes". Every element out of the array
+is a meme being created. This element has to have the same structure: It is a class with the "name"
+as the name of the meme; the "desc", the discription of the meme; the "texts" an array of
+String-texts being placed on the meme; the "xCoordinates" mapping to the texts and describing the
+xCoordinates of the texts; same for "yCoordinates", "fontSizes" and "colors". These arrays have to
+have the same length and "texts" and "colors" need to be Strings (colors need to be supported by
+HTML 5 Canvas API)
+as and "xCoordinates", "yCoordinates" and "fontSizes" need to be numbers.
+
+An example request would look like this:
+POST http://localhost:3000/create
+
+JSON-Body:
+
+```
+
+{
+   "memeId":"b717756bf5921681aa91b08feb1af324",
+   "memes":
+   [
+      {
+      "name":"nameOfMeme1",
+      "desc":"descriptionOfMeme1",
+      "texts":["text1OfMeme1","text2OfMeme1"],
+      "xCoordinates":[111, 222],
+      "yCoordinates":[111, 222],
+      "fontSizes":[11, 22],
+      "colors":["#000000", "#0000FF"]
+      }, 
+      {
+      "name":"nameOfMeme2",
+      "desc":"descriptionOfMeme2",
+      "texts":["text1OfMeme2","text2OfMeme2"],
+      "xCoordinates":[333, 444],
+      "yCoordinates":[333, 444],
+      "fontSizes":[33, 44],
+      "colors":["#32CD32", "#800000"]
+      }
+   ]
+}
+```
+
+If you clicked on the link, the request is executed. These images are always created by the API. If
+you want to create memes as a user, please log in and create a meme.
+
 ### API-retrieval
+
+For retrieving memes a machine needs to make a GET-request. There need to be certain parameters
+given within the query. An essential parameter needed to be given is the number of memes to retrieve
+as Integer-value. Sending every meme is too much for the API, so this is needed. The optional
+parameters are for searching memes. You can search for texts in memes. Therefore, give a String to
+the query-parameter "text". Another parameter is the username of the creator. Therefore, give a
+String to the query parameter
+"username". The last possible parameter is the creation date of the meme in String-format needed to
+be given to the parameter "creationDate". The format is JJJJ-MM-TT, but leave out the leading zeros.
+So the first of February 123 looks like this: 123-2-1.
+
+An example request would look like this:
+GET localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=2022-2-2
+
+If you clicked on the URL. You would get to a new page giving back URLs to every meme found for
+these parameters given.
 
 ### Editor-create
 
+If you want to create an image via the editor you need to send a request POST
+http://localhost:3000/editor?token=THE-TOKEN. The token is again needed for login as login is
+necessary to access the editor. You have to specify everything about the meme being created in the
+JSON-Body. This could look like this:
+
+```
+{
+  "name": "Just a test image",
+  "desc": "The server accepts requests upto 50 mb, which also enables larger images to be sent",
+  "image": "iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABa0lEQVR4nO3aPZLCMAyGYTFbUHKEPUqOFo7GUThCSooM2sj/JsmsYUigeL/OsZ50GjkGEULItum1yjXvdNPiVO+OEAjkaXLJVX1dZYsx7x4hEMheJFR5Ylt3EXWvMnKIHgKBvIGc9GZVcVZCIJD3ktCVEAjkkyQlNrLYrFRtP8FCIJBVUmU2K6tAIJAdyELCR6K6wdkWCASyQoquzItwHFUd5McWNlB//QyFQCAvkTTTwuBTVxVydjuPx1EIBLIZGaaV5tvRlKukdNOybGQIBNJGLKnqnBvRf/HJNCuLjBAIZC/ietQ/HsqPRHvZXRYCgUDaycy7q05xLTqWZ9OVq04IBLJKeq2Sfk2Ii9EXrVzdQCCQLchFUnp3Aj16YFVD+V4IBPIaefhXp0YiZVeWL4ZAIB8gueJg9zOd/t/IEAikiYQtqxpkIRAI5DlSLHxXzv/cou6gCoFAdiFVUiPHB61XNxAIZJEQQr4qf2MdUu3BEq/zAAAAAElFTkSuQmCC",
+  "texts":["Hello", "World"],
+  "xCoordinates":[150, 150],
+  "yCoordinates":[100, 650],
+  "fontSizes":[30, 25],
+  "colors": ["#000000", "#0000FF"],
+  "status": 0,
+  "width": 400,
+  "height": 700,
+  "pixels": 2073600
+}
+```
+
+The image is an image in base64, which can be transformed previously by various web pages. Sending
+the request with this JSON-Body results in a memeId of b717756bf5921681aa91b08feb1af324, which is
+the identifier of your uploaded meme.
+
 ### Editor-get
 
-Under the route GET http://localhost:3000/editor?token=THE-TOKEN&memeId=someId&start=0&end=5 the 
-clients gets back a class. In the class under `.wanted` there is one image which then can be 
-edited and
-under `.templates` all possible templates are given back. The parameter `memeId` in the query
-specifies which template is wanted. The parameters `start` and `end`in the JSON-Query to 
-determine which part of the possible templates he/she wants.
+Under the route GET http://localhost:3000/editor?token=THE-TOKEN&memeId=someId&start=0&end=5 the
+clients gets back a class. In the class under `.wanted` there is one image which then can be edited
+and under `.templates` all possible templates are given back. The parameter `memeId` in the query
+specifies which template is wanted. The parameters `start` and `end`in the JSON-Query to determine
+which part of the possible templates he/she wants.
 
 For this route the client has to be logged-in so he/she needs to pass an access token in the query,
 which was given after the log-in page.
 
 ### Images-get
 
-Under the route GET http://localhost:3000/images?token=THE-TOKEN&status=0&sortBy=up+asc&filterBy=Tester&start=0&end
-=4 the client gets back a list of images which were found for the parameters given in the 
+Under the route
+GET http://localhost:3000/images?token=THE-TOKEN&status=0&sortBy=up+asc&filterBy=Tester&start=0&end
+=4 the client gets back a list of images which were found for the parameters given in the
 JSON-Query.
-
 
 There are 4 possible parameters in the query:
 
@@ -88,8 +178,8 @@ No log-in or JSON-body is required previously.
 
 ### Profile-get
 
-Under the route GET http://localhost:3000/profile?token=THE-TOKEN&start=0&end=10 a client gets his/her profile
-page.
+Under the route GET http://localhost:3000/profile?token=THE-TOKEN&start=0&end=10 a client gets
+his/her profile page.
 
 A log-in is again required with the access token. The JSON-Query needs to include a
 `start`-number and an `end`-number to determine which memes of the profile history are displayed.

@@ -1,15 +1,54 @@
-GET http://localhost:3000/editor?token=THE-TOKEN&memeId=SOME-ID&start=0&end=5
+GET http://localhost:3000/editor?token=THE-TOKEN&memeId=SOME-ID
 
 bzw. als Query Param angeben:   token  - THE-TOKEN
                                 memeId - SOME-ID
-                                start - eine number als start der Liste von memes, die man will
-                                end - eine number als end der Liste von memes
 
 Login required
+Kein JSON-Body
 
-JSON-Body:
+The raw data of a template is returned as a JSON object. Only templates (status 0 memes) can be accessed.
+
+Example result:
+
 {
+    "name": "Test usages",
+    "desc": "The server accepts requests upto 50 mb, which also enables larger images to be sent",
+    "image": "iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABa0lEQVR4nO3aPZLCMAyGYTFbUHKEPUqOFo7GUThCSooM2sj/JsmsYUigeL/OsZ50GjkGEULItum1yjXvdNPiVO+OEAjkaXLJVX1dZYsx7x4hEMheJFR5Ylt3EXWvMnKIHgKBvIGc9GZVcVZCIJD3ktCVEAjkkyQlNrLYrFRtP8FCIJBVUmU2K6tAIJAdyELCR6K6wdkWCASyQoquzItwHFUd5McWNlB//QyFQCAvkTTTwuBTVxVydjuPx1EIBLIZGaaV5tvRlKukdNOybGQIBNJGLKnqnBvRf/HJNCuLjBAIZC/ietQ/HsqPRHvZXRYCgUDaycy7q05xLTqWZ9OVq04IBLJKeq2Sfk2Ii9EXrVzdQCCQLchFUnp3Aj16YFVD+V4IBPIaefhXp0YiZVeWL4ZAIB8gueJg9zOd/t/IEAikiYQtqxpkIRAI5DlSLHxXzv/cou6gCoFAdiFVUiPHB61XNxAIZJEQQr4qf2MdUu3BEq/zAAAAAElFTkSuQmCC",
+    "creator": "Tester",
+    "texts": [
+        {
+            "text": "Helloo",
+            "xCoordinate": 150,
+            "yCoordinate": 100,
+            "fontSize": 30,
+            "color": "white"
+        },
+        {
+            "text": "Woorld",
+            "xCoordinate": 150,
+            "yCoordinate": 650,
+            "fontSize": 30,
+            "color": "white"
+        }
+    ],
+    "dateOfCreation": "2022-2-6--14:16:23",
+    "upVoters": [
+        null
+    ],
+    "downVoters": [],
+    "comments": [
+        {
+            "dateOfCreation": "2022-2-6--18:59:46",
+            "text": "this picture is great!",
+            "creator": "Tester"
+        }
+    ],
+    "memeId": "f91b04d5ca3c7d89f6e6cec3b002edf6",
+    "status": 0,
+    "format": {
+        "width": 400,
+        "height": 700,
+        "pixels": 2073600
+    },
+    "usages": 5
 }
-
-Gives back a class with an image as ".wanted" and all the templates as ".templates" the
-templates from the list of templates specified in start and end

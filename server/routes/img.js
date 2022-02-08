@@ -28,10 +28,10 @@ function handleUp(memeId, user, res) {
             }
             let pict = lst[0];
             let upVoters = pict.upVoters;
-            if (user in upVoters) {
+            if (upVoters.includes(user._id)) {
                 respond(res, 400, "You have already up voted this");
             } else {
-                pict.downVoters = pict.downVoters.filter((elem) => elem !== user);
+                pict.downVoters = pict.downVoters.filter((elem) => !elem.equals(user._id));
                 pict.upVoters.push(user);
                 pict.save();
                 respond(res, 200, "Meme upvote succeeded");
@@ -56,14 +56,31 @@ function handleDown(memeId, user, res) {
             }
             let pict = lst[0];
             let downVoters = pict.downVoters;
-            if (user in downVoters) {
+            if (downVoters.includes(user._id)) {
                 respond(res, 400, "You have already down voted this");
             } else {
-                pict.upVoters = pict.upVoters.filter((elem) => elem !== user);
+                pict.upVoters = pict.upVoters.filter((elem) => !elem.equals(user._id));
                 pict.downVoters.push(user);
                 pict.save();
                 respond(res, 200, "Meme downvote succeeded");
             }
+        }
+    });
+}
+
+function handleRemoveVotes(memeId, user, res) {
+    memeSchema.find({memeId: memeId}, (err, lst) => {
+        if (err) {
+            respond(res, 503, "Connection to db meme failed");
+        } else {
+            if (lst.length === 0) {
+                respond(res, 400, "No meme with this memeId found");
+            }
+            let pict = lst[0];
+            pict.upVoters = pict.upVoters.filter((elem) => !elem.equals(user._id));
+            pict.downVoters = pict.downVoters.filter((elem) => !elem.equals(user._id));
+            pict.save();
+            respond(res, 200, "Removal of votes succeeded");
         }
     });
 }
@@ -118,6 +135,7 @@ router.post("/", (req, res) => {
     let userToken = req.query.token;
     let upVote = req.body.up;
     let downVote = req.body.down;
+    let removeVotes = req.body.remove;
     let comment = req.body.comment;
     userSchema.find({currentToken: userToken}, (err, lst) => {
         if (err) {
@@ -127,7 +145,9 @@ router.post("/", (req, res) => {
                 respond(res, 400, "No user with this token found");
             }
             let user = lst[0];
-            if (upVote !== undefined) {
+            if (removeVotes !== undefined) {
+                handleRemoveVotes(memeId, user, res);
+            } else if (upVote !== undefined) {
                 handleUp(memeId, user, res);
             } else if (downVote !== undefined) {
                 handleDown(memeId, user, res);
@@ -143,12 +163,14 @@ router.post("/", (req, res) => {
 router.get("/", (req, res) => {
     const sortBy = req.query.sortBy;
     const filterBy = req.query.filterBy;
-    const start = req.query.start;
-    const end = req.query.end;
-    const status = req.query.status;
+    const start = parseInt(req.query.start);
+    const end = parseInt(req.query.end);
+    const status = parseInt(req.query.status);
 
     // Do not allow lookup of other users' drafts
-    if (status === 1) {
+    if (isNaN(status) || ![0, 1, 2].includes(status)) {
+        respond(res, 400, "Provide a the numbers 0, 1 or 2 for the status")
+    } else if (status === 1) {
         userSchema.findOne({currentToken: req.query.token}).exec(
             (err, user) => {
                 if (err) {
@@ -162,7 +184,7 @@ router.get("/", (req, res) => {
                     performRetrieval();
                 }
             }
-        )
+        );
     } else {
         performRetrieval();
     }
@@ -173,9 +195,12 @@ router.get("/", (req, res) => {
             .populate('texts')
             // do not populate whole creator as this would leak private data
             .populate('creator', 'username')
-            .populate('upVoters.username')
-            .populate('downVoters.username')
-            .populate({path: 'comments', select: ['dateOfCreation', 'text', 'creator.username']})
+            .populate('upVoters', 'username')
+            .populate('downVoters', 'username')
+            .populate({
+                path: 'comments',
+                populate: [{path: 'dateOfCreation'}, {path: 'text'}, {path: 'creator', select: 'username'}]
+            })
             .exec((err, items) => {
                 if (err) {
                     respond(res, 500, 'No images found', err);
@@ -229,7 +254,7 @@ router.get("/", (req, res) => {
                             return 0;
                         });
                     }
-                    if (start !== undefined && typeof start === "number" && end !== undefined && typeof end === "number") {
+                    if (!isNaN(start) && !isNaN(end)) {
                         items = items.slice(start, end);
                         getOrRenderMemes(
                             items.map(meme => meme.memeId),

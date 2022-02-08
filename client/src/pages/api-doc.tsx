@@ -81,10 +81,16 @@ const openCreate = () => {
         },
         body: JSON.stringify(createBody),
     }).then(r => {
-        r.text().then(r => {
-            console.log(r);
-            window.open("", "", r)
-        });
+        if (r.ok) {
+            r.text().then(r => {
+                console.log(r);
+                window.open("", "", r)
+            });
+        } else {
+            return r.text().then(response => {
+                throw new Error(response)
+            })
+        }
     })
 }
 

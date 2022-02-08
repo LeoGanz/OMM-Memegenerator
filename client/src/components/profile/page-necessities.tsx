@@ -45,7 +45,6 @@ export const Image = styled.p`
 export const Date = styled.p`
   width: 98%;
   padding: 1%;
-  background: black;
 `
 
 export const CommentAndDate = styled.p`

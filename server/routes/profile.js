@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
             dbConnectionFailureHandler(res, err)
         } else {
             if (lst.length === 0) {
-                respond(res, 400, "Impossible Error: No meme with this memeId found");
+                respond(res, 400, "Impossible Error: No user with this token found");
             } else {
                 const user = lst[0];
                 console.log("User found:");
@@ -28,9 +28,10 @@ router.get('/', (req, res) => {
                     const email = user.email;
                     let history = user.lastEdited;
                     let comments = user.lastComments;
-                    const start = req.body.start ?? 0;
-                    const end = req.body.end ?? 10;
+                    const start = req.query.start ?? 0;
+                    const end = req.query.end ?? 1;
                     history = history.slice(start, end);
+                    comments = comments.slice(start,end);
                     let response = {
                         username: username,
                         fullName: fullName,

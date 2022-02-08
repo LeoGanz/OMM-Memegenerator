@@ -12,11 +12,12 @@ export interface MemeType {
     comments?: CommentType[],
     memeId?: string,
     status?: Number,
-    format: {width: Number, height: Number, pixels: Number},
+    format: { width: Number, height: Number, pixels: Number },
     usages?: Number,
 }
 
-export interface CommentType     {
+export interface CommentType {
+    memeId: string,
     dateOfCreation: string,
     creator: UserType,
     text: string,

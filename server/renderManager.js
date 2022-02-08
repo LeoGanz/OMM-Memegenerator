@@ -2,7 +2,7 @@ const {Canvas, Image} = require("canvas");
 const renderSchema = require("./models/renderSchema");
 const memeSchema = require("./models/memeSchema");
 
-function renderMeme(meme) {
+function renderMeme(meme, quality = 0.8) {
     const image = new Image();
     const canvas = new Canvas(meme.format.width, meme.format.height)
     const ctx = canvas.getContext('2d');
@@ -29,7 +29,31 @@ function renderMeme(meme) {
     image.src = "data:;base64," + meme.img.base64; // mime type omitted
 
 
-    return canvas.toDataURL('image/jpeg', 0.8); // data url with base64 encoding
+    return canvas.toDataURL('image/jpeg', quality); // data url with base64 encoding
+}
+
+function renderMemeToSize(meme, bytes) {
+    console.log("Rendering to size...")
+    const maxBelowTarget = 0.05;
+    const bytesBase64 = 1.37 * bytes; // base64 encodings are about 37% larger
+    let quality = 1;
+
+    for (let delta = 0.5; delta > 0.01; delta /= 2) {
+        const rendering = renderMeme(meme, quality)
+        const bytesCurrent = Buffer.byteLength(rendering);
+        console.log("Quality: " + quality + " - bytes in base64 string: " + bytesCurrent
+            + " - expected img size: " + Math.round(bytesCurrent / 1.37))
+        if (bytesCurrent > bytesBase64) {
+            quality -= delta;
+        } else if (bytesCurrent < (1 - maxBelowTarget) * bytesBase64 && quality < 1) {
+            quality += delta;
+            quality = Math.min(quality, 1);
+        } else {
+            return rendering;
+        }
+    }
+
+    return "Error. JPEG cannot compress the requested meme this far. Target Size too small!"
 }
 
 function renderAndStoreMeme(meme) {
@@ -41,11 +65,11 @@ function renderAndStoreMeme(meme) {
     }).catch(err => console.log("Could not render Meme " + meme.memeId + " Reason: " + err));
 }
 
-function getOrRenderMemeInternal(memeId, onSuccess, onNoMemeFound, onError, retry = true) {
+function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFound, onError, retry = true) {
     renderSchema
         .findOne({memeId: memeId})
         .exec((err, render) => {
-            if ((err || !render) && retry) {
+            if (targetFileSize || ((err || !render) && retry)) {
                 memeSchema
                     .findOne({memeId: memeId})
                     .populate('texts')
@@ -54,8 +78,12 @@ function getOrRenderMemeInternal(memeId, onSuccess, onNoMemeFound, onError, retr
                             onError(err);
                         } else {
                             if (meme) {
-                                renderAndStoreMeme(meme);
-                                return getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound, false);
+                                if (targetFileSize) {
+                                    onSuccess(renderMemeToSize(meme, targetFileSize));
+                                } else {
+                                    renderAndStoreMeme(meme);
+                                    return getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound, false);
+                                }
                             } else {
                                 onNoMemeFound();
                             }
@@ -70,7 +98,11 @@ function getOrRenderMemeInternal(memeId, onSuccess, onNoMemeFound, onError, retr
 }
 
 function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError) {
-    return getOrRenderMemeInternal(memeId, onSuccess, onNoMemeFound, onError);
+    return getOrRenderMemeInternal(memeId, undefined, onSuccess, onNoMemeFound, onError);
+}
+
+function getOrRenderMemeToSize(memeId, targetFileSize, onSuccess, onNoMemeFound, onError) {
+    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFound, onError);
 }
 
 function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {
@@ -85,8 +117,9 @@ function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {
             onError);
     }
 }
+
 function getOrRenderMemes(memeIdArray, onSuccess, onError) {
     return getOrRenderMemesRec(memeIdArray, onSuccess, onError);
 }
 
-module.exports = {renderMeme, renderAndStoreMeme, getOrRenderMeme, getOrRenderMemes}
+module.exports = {renderMeme, renderAndStoreMeme, getOrRenderMeme, getOrRenderMemeToSize, getOrRenderMemes}

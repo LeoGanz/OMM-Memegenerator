@@ -8,6 +8,7 @@ const Schema = mongoose.Schema;
  */
 const commentSchema = new Schema(
     {
+        memeId: String,
         dateOfCreation: String,
         creator: {type: Schema.Types.ObjectId, ref:'user'},
         text: String,

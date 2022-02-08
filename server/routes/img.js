@@ -78,6 +78,7 @@ function handleDown(memeId, user, res) {
 function handleComment(comment, memeId, user, res) {
     const currentDate = getCurrentDateString();
     const comm = {
+        memeId: memeId,
         dateOfCreation: currentDate,
         creator: user,
         text: comment

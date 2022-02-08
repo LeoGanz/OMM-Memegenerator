@@ -10,7 +10,7 @@ const {dbConnectionFailureHandler, respond} = require("../utils");
  */
 router.get('/', (req, res) => {
     const token = req.query.token;
-    userSchema.find({currentToken: token}).populate('lastEdited').exec((err, lst) => {
+    userSchema.find({currentToken: token}).populate('lastEdited').populate('lastComments').exec((err, lst) => {
         if (err) {
             dbConnectionFailureHandler(res, err)
         } else {
@@ -26,6 +26,7 @@ router.get('/', (req, res) => {
                     const fullName = user.fullName;
                     const email = user.email;
                     let history = user.lastEdited;
+                    let comments = user.lastComments;
                     const start = req.body.start ?? 0;
                     const end = req.body.end ?? 10;
                     history = history.slice(start, end);
@@ -33,7 +34,8 @@ router.get('/', (req, res) => {
                         username: username,
                         fullName: fullName,
                         email: email,
-                        memeHistory: history
+                        memeHistory: history,
+                        comments: comments
                     }
                     respond(res, 200, response);
                 }

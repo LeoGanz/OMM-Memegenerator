@@ -22,7 +22,7 @@ const ApiSubTitle = styled.h3`
 
 
 const openRetrieve = () => {
-    window.open("http://localhost:3000/retrieve?numberOfMemes=10");
+    window.open("http://localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=2022-2-2");
 }
 
 interface APIcreate {
@@ -71,7 +71,7 @@ const createBody: APIcreate = {
         ]
 }
 
-    console.log(JSON.stringify(createBody))
+console.log(JSON.stringify(createBody))
 
 const openCreate = () => {
     fetch('http://localhost:3000/create', {
@@ -80,14 +80,11 @@ const openCreate = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(createBody),
-    }).then(r => { //TODO: check if this is working like in editor
-        const status = r.status;
-        console.log(r);
-        if (status === 200) {
-            window.alert("Your memes were successfully uploaded");
-        } else {
-            window.alert("Something went wrong with the upload");
-        }
+    }).then(r => {
+        r.text().then(r => {
+            console.log(r);
+            window.open("", "", r)
+        });
     })
 }
 

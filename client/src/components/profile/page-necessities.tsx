@@ -1,13 +1,57 @@
 import React from 'react';
 import styled from "styled-components";
 import {CommentText, FormattedDate, CommentWrapper} from "../comment/comment";
+import {colors} from "../layout/colors";
 
-const CommentGroup = styled.div`
-  display: grid;
+export const DivGroup = styled.div`
   column-count: 2;
-  column-gap: 10px;
-  justify-items: stretch;
-  align-items: start;
+  width: 100%;
+  background: #00c400;
+  padding: 1%;
+`
+export const CommentGroup = styled.div`
+  width: 98%;
+  padding: 1%;
+  background: brown;
+`
+
+export const ImageGroup = styled.div`
+  width: 98%;
+  padding: 1%;
+  background: aqua;
+`
+
+export const WorkedImage = styled.div`
+  width: 98%;
+  padding: 1%;
+  background: coral;
+  margin-bottom: 3%;
+  column-count: 2;
+`
+
+export const WorkedComment = styled.div`
+  width: 98%;
+  padding: 1%;
+  background: fuchsia;
+  margin-bottom: 3%;
+  column-count: 2;
+`
+
+export const Image = styled.p`
+  width: 98%;
+  padding: 1%;
+`
+
+export const Date = styled.p`
+  width: 98%;
+  padding: 1%;
+  background: black;
+`
+
+export const CommentAndDate = styled.p`
+  width: 98%;
+  padding: 1%;
+  color: ${colors.font.secondary};
 `
 
 interface CommentCardProp {
@@ -16,22 +60,30 @@ interface CommentCardProp {
     children: React.ReactNode | React.ReactNode[]
 }
 
-const MemePreview = styled.img`
-  width: 50%;
-  height: 50%;
-`
+interface MemeCardProp {
+    date: string,
+    src: string,
+}
 
 
-export const CommentCard = ({date, src, children}: CommentCardProp) => {
+export const CommentCardProfile = ({date, src, children}: CommentCardProp) => {
     return (
-        <CommentGroup>
-            <MemePreview src={src}/>
-            <CommentWrapper>
-                <FormattedDate>{date}</FormattedDate>
-                <CommentText>{children}</CommentText>
-            </CommentWrapper>
-        </CommentGroup>
-
+        <>
+            <WorkedImage>
+                <Image>{src}</Image>
+                <CommentAndDate>Commented on:{date} "{children}"</CommentAndDate>
+            </WorkedImage>
+        </>
+    )
+}
+export const MemeCardProfile = ({date, src}: MemeCardProp) => {
+    return (
+        <>
+            <WorkedComment>
+                <Image>{src}</Image>
+                <Date>Edited on: {date}</Date>
+            </WorkedComment>
+        </>
     )
 }
 

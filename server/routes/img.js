@@ -161,6 +161,7 @@ router.post("/", (req, res) => {
 });
 
 router.get("/", (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     const sortBy = req.query.sortBy;
     const filterBy = req.query.filterBy;
     const start = parseInt(req.query.start);

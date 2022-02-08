@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {up} from "../../util/breakpoint";
 
-const CommentWrapper = styled.div`
+export const CommentWrapper = styled.div`
   margin: 30px 0;
 
   ${up('md')} {
@@ -17,13 +17,13 @@ const Author = styled.p`
   font-size: 14px;
 `
 
-const FormattedDate = styled.span`
+export const FormattedDate = styled.span`
   font-weight: normal;
   padding-left: 4px;
   color: ${colors.font.secondary};
 `
 
-const CommentText = styled.p`
+export const CommentText = styled.p`
 
 `
 

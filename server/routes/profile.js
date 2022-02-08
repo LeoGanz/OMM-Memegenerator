@@ -9,6 +9,7 @@ const {dbConnectionFailureHandler, respond} = require("../utils");
  * ProfileGetTemplate or the Readme for more information
  */
 router.get('/', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     const token = req.query.token;
     userSchema.find({currentToken: token}).populate('lastEdited').populate('lastComments').exec((err, lst) => {
         if (err) {

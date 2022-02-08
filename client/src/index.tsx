@@ -11,6 +11,7 @@ import {APIDoc} from "./pages/api-doc";
 import {SingleGraph} from "./pages/single-graph";
 import {TemplateGraph} from "./pages/template-graph";
 import {Profile} from "./pages/profile";
+import {APICreateResponse} from "./pages/api-create-response";
 
 ReactDOM.render(
     <BrowserRouter>
@@ -25,6 +26,7 @@ ReactDOM.render(
                 <Route path="single-graph" element={<SingleGraph/>}/>
                 <Route path="template-graph" element={<TemplateGraph/>}/>
                 <Route path="account" element={<Profile/>}/>
+                <Route path="create-response" element={<APICreateResponse/>}/>
             </Routes>
         </App>
     </BrowserRouter>,

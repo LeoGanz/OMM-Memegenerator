@@ -1,8 +1,9 @@
 GET http://localhost:3000/image?token=THE-TOKEN&memeId=SOME-IDENTIFIER
 
-bzw. als Query Param angeben: token - THE-TOKEN
-bzw. als Query Param angeben: memeId des Bildes, was man in der Single View sehen will
--> hier das Beispiel aus EditorCreateTemplate genommen
+or specify query params:    token - THE-TOKEN
+                            memeId - identifier of the requested meme
+                            targetFileSize - optional parameter that specifies the requested file size of the rendered meme.
+                                             The transmitted base64 encoding is about 37% larger, but the final image should be below this threshold.
 
 Login required
 

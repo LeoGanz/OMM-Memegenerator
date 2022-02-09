@@ -58,7 +58,13 @@ export const APICreateResponse = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(createBody)
-        }).then(r => r.text()).then(r => setResult(r));
+        }).then(r => {
+            if (r.ok) {
+                r.text().then(r => setResult(r));
+            } else {
+                window.alert("Connection to API failed");
+            }
+        })
     })
     return (
         <>

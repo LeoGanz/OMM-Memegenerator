@@ -3,11 +3,12 @@ import {
     CommentGroup, DivGroup, ImageGroup, MemeCardProfile
 } from "../components/profile/page-necessities";
 import {Title, SubTitle} from "../components/layout/typography"
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import LoginContext from "../login-context";
 import {useNavigate} from "react-router-dom";
 import {ProfileData} from "../util/profile-data";
 import {getJwt} from "../util/jwt";
+import {ButtonLink, HeadlineSection} from "./overview";
 
 
 export const Profile = () => {
@@ -33,9 +34,14 @@ export const Profile = () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                }).then(r => r.json()).then(r => {
-                setProfileData(r);
-                console.log(r);
+                }).then(r => {
+                if (r.ok) {
+                    r.json().then(r => {
+                        setProfileData(r);
+                    });
+                } else {
+                    window.alert("Connection to the server failed");
+                }
             });
         } else {
             navigate('/login')
@@ -43,7 +49,10 @@ export const Profile = () => {
     }, []);
     return (
         <>
-            <Title>{ProfileData.username}</Title>
+            <HeadlineSection>
+                <Title>{ProfileData.username}</Title>
+                <ButtonLink to="/">Back to Overview Page</ButtonLink>
+            </HeadlineSection>
             <SubTitle>{ProfileData.fullName}</SubTitle>
             <SubTitle>{ProfileData.email}</SubTitle>
             <DivGroup>

@@ -10,10 +10,7 @@ import {
     useWidth,
     useLeftMargin,
     SingleData,
-    useLegendTopMargin,
     useLegendBottomMargin,
-    useLegendLeftMargin,
-    useLegendRightMargin
 } from "../util/statistics";
 import {
     BarChart,
@@ -59,8 +56,14 @@ export const SingleGraph = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(r => r.json()).then(r => {
-                return setSingleData(transformToRechartSingle(r.memes, r.upVotes, r.downVotes));
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(r => {
+                        return setSingleData(transformToRechartSingle(r.memes, r.upVotes, r.downVotes));
+                    })
+                } else {
+                    window.alert("Connection to the server failed");
+                }
             })
         } else {
             navigate('/login');
@@ -84,8 +87,8 @@ export const SingleGraph = () => {
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="name" angle={90} textAnchor="start"/>
-                <YAxis/>
+                <XAxis dataKey="name" angle={90} textAnchor="start" label="memeIds"/>
+                <YAxis label="up/down votes"/>
                 <Tooltip/>
                 <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Bar dataKey="down"

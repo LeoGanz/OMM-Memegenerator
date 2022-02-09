@@ -10,10 +10,7 @@ import {
     useWidth,
     useLeftMargin,
     TemplateData,
-    useLegendTopMargin,
     useLegendBottomMargin,
-    useLegendRightMargin,
-    useLegendLeftMargin
 } from "../util/statistics";
 import {
     LineChart,
@@ -42,6 +39,7 @@ function transformToRechartTemplate(memeIds: string[], usages: number[]) {
     return result;
 }
 
+
 export const TemplateGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
@@ -58,13 +56,20 @@ export const TemplateGraph = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(r => r.json()).then(r => {
-                return setTemplateData(transformToRechartTemplate(r.templates, r.usages));
-            })
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(r => {
+                        return setTemplateData(transformToRechartTemplate(r.templates, r.usages));
+                    })
+                } else {
+                    window.alert("Connection to server failed");
+                }
+            });
         } else {
             navigate('/login');
         }
     }, [])
+
     return (
         <>
             <HeadlineSection>
@@ -83,8 +88,8 @@ export const TemplateGraph = () => {
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="name" angle={90} textAnchor="start"/>
-                <YAxis/>
+                <XAxis dataKey="name" angle={90} textAnchor="start" label="memeIds"/>
+                <YAxis label="usages"/>
                 <Tooltip/>
                 <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Line

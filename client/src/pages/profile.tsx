@@ -52,11 +52,11 @@ export const Profile = () => {
                     {
                         ProfileData.memeHistory?.map((meme) => {
                             console.log(meme.dateOfCreation);
-                            if (meme.dateOfCreation !== undefined) {
+                            if (meme.dateOfCreation !== undefined && meme.memeId!== undefined) {
                                 return <MemeCardProfile date={meme.dateOfCreation}
-                                                        src={meme.img.base64} />
+                                                        src={meme.img.base64}  memeId={meme.memeId}/>
                             } else {
-                                return <MemeCardProfile date="0000-11--22" src={meme.img.base64}/>
+                                return <MemeCardProfile date="0000-11--22" src={meme.img.base64} memeId={""}/>
                             }
                         })}
                 </ImageGroup>
@@ -68,10 +68,10 @@ export const Profile = () => {
                             if (comment.dateOfCreation !== undefined) {
                                 return <CommentCardProfile date={comment.dateOfCreation}
                                                            src={comment.base64}
-                                                           children={comment.text}/>
+                                                           children={comment.text} memeId={comment.memeId}/>
                             } else {
                                 return <CommentCardProfile date="0000-11--22" src={comment.base64}
-                                                           children={comment.text}/>
+                                                           children={comment.text} memeId={comment.memeId}/>
                             }
                         })}
                 </CommentGroup>

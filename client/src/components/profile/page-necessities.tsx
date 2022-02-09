@@ -2,6 +2,7 @@ import React from 'react';
 import styled from "styled-components";
 import {CommentText, FormattedDate, CommentWrapper} from "../comment/comment";
 import {colors} from "../layout/colors";
+import {useNavigate} from "react-router-dom";
 
 export const DivGroup = styled.div`
   column-count: 2;
@@ -56,26 +57,38 @@ export const CommentAndDate = styled.p`
 interface CommentCardProp {
     date: string,
     src: string,
+    memeId: string,
     children: React.ReactNode | React.ReactNode[]
 }
 
 interface MemeCardProp {
+    memeId: string,
     date: string,
     src: string,
 }
 
+function navigateComment(id: string) {
+    let navigate = useNavigate();
+    navigate("/details/" + id);
+}
 
-export const CommentCardProfile = ({date, src, children}: CommentCardProp) => {
+function navigateMeme(id: string) {
+    let navigate = useNavigate();
+    navigate("/editor/" + id);
+}
+
+export const CommentCardProfile = ({date, src, children, memeId}: CommentCardProp) => {
     return (
         <>
             <WorkedImage>
                 <Image src={src}/>
-                <CommentAndDate>Commented on:{date} "{children}"</CommentAndDate>
+                <CommentAndDate>Commented
+                    on:{date} "{children}"</CommentAndDate>
             </WorkedImage>
         </>
     )
 }
-export const MemeCardProfile = ({date, src}: MemeCardProp) => {
+export const MemeCardProfile = ({date, src, memeId}: MemeCardProp) => {
     return (
         <>
             <WorkedComment>

@@ -87,8 +87,8 @@ export const TemplateGraph = () => {
                 }}
             >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="name" angle={90} textAnchor="start"/>
-                <YAxis/>
+                <XAxis dataKey="name" angle={90} textAnchor="start" label="memeIds"/>
+                <YAxis label="usages"/>
                 <Tooltip/>
                 <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Line

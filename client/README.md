@@ -37,20 +37,32 @@ On this page you see a single meme in full size. There you can comment on the te
 
 ### Editor
 
-In this editor you can create your memes. You can place text boxes anywhere, set the font sizes and 
-colors. If you are finished click either on "save draft" or on "upload". Save draft lets you 
-edit the meme later, but it is not seen at the overview page. If you click on "upload" the meme 
-can be seen on the overview page, but you can not edit it anymore.
+In this editor you can create your memes. You can place text boxes anywhere, set the font sizes and
+colors. If you are finished click either on "save draft" or on "upload". Save draft lets you edit
+the meme later, but it is not seen at the overview page. If you click on "upload" the meme can be
+seen on the overview page, but you can not edit it anymore.
 
 //TODO: erweitern, wenn fertig und getestet
 
 ### Profile Page
-On this page you see your username, full name and email. Below you can see in two columns your 
-history. On the left are your created drafts, which you can click on and edit further (everybody 
-can have 20 drafts in storage to edit later) and on the right you see your last comments. When 
-you click on the boxes you get to the single view of this meme.
 
+On this page you see your username, full name and email. Below you can see in two columns your
+history. On the left are your created drafts, which you can click on and edit further (everybody can
+have 20 drafts in storage to edit later) and on the right you see your last comments. When you click
+on the boxes you get to the single view of this meme. Then you can get back by the button at the
+other horizontal side of your username.
 
+### Template Graph
+
+Here you can see statistics for the usage of templates. Every meme has its own memeId, which
+identifies it. This goes for templates as well. For each id of a template, there is one graph in the
+statistic. You can get back by the button at the other horizontal side of your username.
+
+### Single Graph
+Here you can see statistics for the up and down votes of memes. Each meme is again specified by 
+its memeId and has a bar for the down votes in light purple. The bar for the up votes is in 
+light green over the bar for the down votes. This gives an impression for how favored a meme is 
+or how bad one is. As in the template graph you can get back to the overview page.
 
 #
 

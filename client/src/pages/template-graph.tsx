@@ -50,7 +50,7 @@ export const TemplateGraph = () => {
     useEffect(() => {
         if (isLoggedIn) {
             jwt = localStorage.getItem('meme-token') || "";
-            fetch('http://localhost:3000/statistics/template' + getJwt(jwt), {
+            fetch('http://localhost:3000/statistics/template' + getJwt(), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

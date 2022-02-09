@@ -9,7 +9,7 @@ import {TextInput} from "../components/text-input/input-field";
 import {useForm} from "react-hook-form";
 import styled from "styled-components";
 import {up} from "../util/breakpoint";
-import {NavigationButton, StyledButton} from "./editor";
+import {StyledButton} from "./editor";
 import {REQUIRED_FIELD_ERROR} from "../constants";
 
 const StyledForm = styled.form`
@@ -33,20 +33,16 @@ export const MemeDetails = () => {
     });
     let [searchParams, setSearchParams] = useSearchParams();
     const [memeData, setMemeData] = useState<SingleMemeType>()
-    let jwt = ""
 
     useEffect(() => {
         if (!id || !isLoggedIn) {
             navigate('/')
         }
-        jwt = localStorage.getItem('meme-token') || ""
         console.log(id)
         getMeme()
-
-
         //get prev and next memeId
         //todo
-    }, [])
+    }, [id])
 
     const getMeme = () => {
         const filterBy = searchParams.get("filterBy")
@@ -57,7 +53,7 @@ export const MemeDetails = () => {
             options = objectToQuery({filterBy, sortBy})
         }
 
-        fetch('http://localhost:3000/image' + getJwt(jwt) + "&memeId=" + id + options, {
+        fetch('http://localhost:3000/image' + getJwt() + "&memeId=" + id + options, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,6 +67,7 @@ export const MemeDetails = () => {
             })
         })
             .then(r => {
+                console.log(r)
                 const {metadata, dataUrl, prev, next} = r;
                 setMemeData({
                     ...metadata, dataUrl, memeId: id, prev, next
@@ -80,7 +77,7 @@ export const MemeDetails = () => {
     }
 
     const handleComment = ({comment}: { comment: string }) => {
-        fetch('http://localhost:3000/images' + getJwt(jwt), {
+        fetch('http://localhost:3000/images' + getJwt(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

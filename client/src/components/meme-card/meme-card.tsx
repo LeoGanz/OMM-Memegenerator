@@ -4,7 +4,7 @@ import {colors} from "../layout/colors";
 import {up} from "../../util/breakpoint";
 import {MemeInfos} from "../meme-infos/meme-infos";
 import {Link} from "react-router-dom";
-import {MemeType} from "../../util/typedef";
+import {SingleMemeType} from "../../util/typedef";
 
 
 const StyledMemeCard = styled(Link)<{voteHoverActive: boolean}>`
@@ -42,12 +42,12 @@ const MemePreview = styled.img`
 `
 
 
-export const MemeCard = ({params ,img, memeId, creator, comments, upVoters, downVoters, dateOfCreation}: MemeType & {params: string}) => {
+export const MemeCard = ({params, memeId, dataUrl, comments, ...props}: SingleMemeType & {params: string}) => {
     const [voteHoverActive, setVoteHoverActive] = useState<boolean>(false)
     return (
         <StyledMemeCard voteHoverActive={voteHoverActive} to={voteHoverActive? "/" : "/details/" + memeId + params}>
-            <MemePreview src={img.base64}/>
-            <MemeInfos setVoteHoverActive={setVoteHoverActive} creator={creator?.username} comments={comments?.length || 0} upVotes={upVoters?.length || 0} downVotes={downVoters?.length || 0} memeId={memeId} dateOfCreation={dateOfCreation}/>
+            <MemePreview src={dataUrl}/>
+            <MemeInfos setVoteHoverActive={setVoteHoverActive} comments={comments.length} memeId={memeId} {...props}/>
         </StyledMemeCard>
 
     );

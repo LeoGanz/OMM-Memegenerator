@@ -51,7 +51,7 @@ export const SingleGraph = () => {
     useEffect(() => {
         if (isLoggedIn) {
             jwt = localStorage.getItem('meme-token') || "";
-            fetch('http://localhost:3000/statistics/single' + getJwt(jwt), {
+            fetch('http://localhost:3000/statistics/single' + getJwt(), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

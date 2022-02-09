@@ -50,12 +50,12 @@ export const MemeInfos = ({
                           }: MemeInfoProps) => {
     const [isUpVoted, setIsUpVoted] = useState<boolean>(false)
     const [isDownVoted, setIsDownVoted] = useState<boolean>(false)
-    const jwt = localStorage.getItem('meme-token') || ""
+
 
     const handleVote = (isUpVote: boolean) => {
         if (!isUpVoted && !isDownVoted) {
             const body = isUpVote ? {memeId, up: true} : {memeId, down: true}
-            fetch('http://localhost:3000/images' + getJwt(jwt), {
+            fetch('http://localhost:3000/images' + getJwt(), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,4 +1,4 @@
-export const getJwt = (jwt: string): string => "?token=" + jwt
+export const getJwt = (): string => "?token=" + localStorage.getItem('meme-token')
 export const objectToQuery = (obj: { [x: string]: string | number | null}): string => {
     let str = [];
     for (let p in obj)

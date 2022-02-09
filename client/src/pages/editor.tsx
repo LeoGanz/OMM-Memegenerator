@@ -12,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import {Carousel} from "../components/carousel/carousel";
 import {MemeTextType, MemeType} from "../util/typedef";
-import { MemeSaveArea } from "../components/meme-save-area/meme-save-area";
+import {MemeSaveArea} from "../components/meme-save-area/meme-save-area";
 
 const MAX_TEXT_FIELDS = 100
 
@@ -104,13 +104,13 @@ export const Editor = () => {
 
     const [usersCreation, setUsersCreations] = useState<MemeType[]>([])
     const [usersCreationIndex, setUsersCreationsIndex] = useState<number | undefined>(undefined)
-    let jwt = ""
+    const [jwt, setJwt] = useState<string>("")
 
 
     useEffect(() => {
         if (isLoggedIn) {
-            jwt = localStorage.getItem('meme-token') || ""
-            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start: 0, end: 20}), {
+            setJwt(localStorage.getItem('meme-token') || "")
+            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20}), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ export const Editor = () => {
                 // body: JSON.stringify({start:0, end:20})
             }).then(r => r.json()).then(r => setTemplates(r))
 
-            fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery({start: 0, end: 20, status: 1}), {
+            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 1}), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -192,19 +192,22 @@ export const Editor = () => {
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;
         const image = imageEditorInst.toDataURL();
-        const texts: MemeTextType[] = []
+        const texts = []
+        const xCoordinates = []
+        const yCoordinates = []
+        const fontSizes = []
+        const colors = []
+
 
         for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
             const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top", "fill", "fontSize"])
             if (properties?.type === "i-text") {
                 const {text, left, top, fill, fontSize} = properties
-                texts.push({
-                    text,
-                    xCoordinate: left,
-                    yCoordinate: top,
-                    color: fill,
-                    fontSize
-                })
+                texts.push(text)
+                xCoordinates.push(left)
+                yCoordinates.push(top)
+                colors.push(fill)
+                fontSizes.push(fontSize)
             }
         }
 
@@ -213,20 +216,21 @@ export const Editor = () => {
             //todo was ist status
             name: title,
             desc: description,
-            img: {
-                base64: image
-            },
+            image,
             texts,
-            format: {
-                width: 1,
-                height: 1,
-                pixels: 1
-            }
+            xCoordinates,
+            yCoordinates,
+            fontSizes,
+            colors,
+            status: 0,
+            width: 418,
+            height: 866,
+            pixels: 361.988
         }
 
-        console.log(finalMeme)
+        console.log(jwt)
 
-        fetch('http://localhost:3000/editor' + getJwt(jwt), {
+        fetch('http://localhost:3000/editor' + getJwt(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -58,7 +58,7 @@ const EditorWrapper = styled.div`
   align-items: center;
 `
 
-const NavigationButton = styled.button`
+export const NavigationButton = styled.button`
   background-color: ${colors.background.button};
   border: none;
   border-radius: 10px;

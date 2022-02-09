@@ -74,6 +74,8 @@ export interface SingleMemeType {
     comments: SingleCommentType[],
     dataUrl: string,
     memeId: string
+    prev:string,
+    next: string
 }
 
 

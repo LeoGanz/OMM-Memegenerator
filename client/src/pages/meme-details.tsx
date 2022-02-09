@@ -2,14 +2,14 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Comment} from "../components/comment/comment";
 import {MemeContainer} from "../components/meme-container/meme-container";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {getJwt} from "../util/jwt";
+import {getJwt, objectToQuery} from "../util/jwt";
 import LoginContext from "../login-context";
 import {SingleMemeType} from "../util/typedef";
 import {TextInput} from "../components/text-input/input-field";
 import {useForm} from "react-hook-form";
 import styled from "styled-components";
 import {up} from "../util/breakpoint";
-import {StyledButton} from "./editor";
+import {NavigationButton, StyledButton} from "./editor";
 import {REQUIRED_FIELD_ERROR} from "../constants";
 
 const StyledForm = styled.form`
@@ -19,6 +19,7 @@ const StyledForm = styled.form`
     margin: 30px 150px;
   }
 `
+
 
 export const MemeDetails = () => {
     let {id} = useParams();
@@ -48,7 +49,15 @@ export const MemeDetails = () => {
     }, [])
 
     const getMeme = () => {
-        fetch('http://localhost:3000/image' + getJwt(jwt) + "&memeId=" + id, {
+        const filterBy = searchParams.get("filterBy")
+        const sortBy = searchParams.get("sortBy")
+        let options = ""
+
+        if(filterBy || sortBy){
+            options = objectToQuery({filterBy, sortBy})
+        }
+
+        fetch('http://localhost:3000/image' + getJwt(jwt) + "&memeId=" + id + options, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -62,9 +71,9 @@ export const MemeDetails = () => {
             })
         })
             .then(r => {
-                const {metadata, dataUrl} = r;
+                const {metadata, dataUrl, prev, next} = r;
                 setMemeData({
-                    ...metadata, dataUrl, memeId: id
+                    ...metadata, dataUrl, memeId: id, prev, next
                 })
             })
             .catch(err => window.alert(err.message))
@@ -91,10 +100,11 @@ export const MemeDetails = () => {
 
     return (
         <>
-            {memeData && <MemeContainer {...memeData}/>}
+            {memeData && <MemeContainer searchParams={searchParams} {...memeData}/>}
             {memeData &&
                 <StyledForm onSubmit={handleSubmit(handleComment)}>
-                    <TextInput name={"comment"} type={"textarea"} control={control} rules={{required: REQUIRED_FIELD_ERROR}} />
+                    <TextInput name={"comment"} type={"textarea"} control={control}
+                               rules={{required: REQUIRED_FIELD_ERROR}}/>
                     <StyledButton type="submit">Add Comment</StyledButton>
                 </StyledForm>
             }

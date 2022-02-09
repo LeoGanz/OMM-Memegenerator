@@ -5,6 +5,9 @@ import {MemeInfos} from "../meme-infos/meme-infos";
 import {up} from "../../util/breakpoint";
 import {Title} from "../layout/typography";
 import {SingleMemeType} from "../../util/typedef";
+import {NavigationButton} from "../../pages/editor";
+import {useNavigate} from "react-router-dom";
+import {objectToQuery} from "../../util/jwt";
 
 const MemeContainerWrapper = styled.div`
 
@@ -44,20 +47,49 @@ const Description = styled.p`
   align-self: flex-start;
   margin-bottom: 20px;
 `
+const MemeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`
 
 
-export const MemeContainer = ({
+
+export const MemeContainer = ({searchParams,
                                   dataUrl,
-    comments, name, desc,
+                                  comments, name, desc, next, prev,
                                   ...props
-                              }: SingleMemeType) => {
+                              }: SingleMemeType & {searchParams: any}) => {
+    let navigate = useNavigate()
+    const handelNavigation = (isNext: boolean) => {
+        const status = searchParams.get("status")
+        const start = searchParams.get("start")
+        const end = searchParams.get("end")
+        const filterBy = searchParams.get("filterBy")
+        const sortBy = searchParams.get("sortBy")
+        let options = ""
+
+        if(status || start || end || filterBy || sortBy){
+            options = "?" + objectToQuery({status, start, end, filterBy, sortBy}).slice(1)
+        }
+
+        const memeId = isNext ? next : prev
+
+        navigate('/details/' + memeId + options)
+    }
 
     return (
         <MemeContainerWrapper>
             <StyledTitle>{name}</StyledTitle>
             <Description>{desc}</Description>
-            <Meme src={dataUrl}/>
-            <StyledMemeInfos setVoteHoverActive={(b => {})} comments={comments.length} {...props}/>
+            <MemeWrapper>
+                <NavigationButton onClick={() => handelNavigation(false)}>{"<"}</NavigationButton>
+                <Meme src={dataUrl}/>
+                <NavigationButton onClick={() => handelNavigation(true)}>{">"}</NavigationButton>
+            </MemeWrapper>
+
+            <StyledMemeInfos setVoteHoverActive={(b => {
+            })} comments={comments.length} {...props}/>
         </MemeContainerWrapper>
     )
 }

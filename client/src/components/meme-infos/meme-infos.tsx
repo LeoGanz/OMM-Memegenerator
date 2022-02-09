@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {MetaData} from "../layout/typography";
-import {MemeType} from "../../util/typedef";
 import {getJwt} from "../../util/jwt";
 
 const MetaDataContainer = styled.div`
@@ -27,6 +26,7 @@ const VoteContainer = styled.div`
 
 const Votes = styled.p<{ isUpVote?: boolean, isTouched: boolean, disabled: boolean }>`
   z-index: 1;
+  cursor: pointer;
   color: ${(props) => props.isUpVote ? colors.font.votes.up : colors.font.votes.down};
   ${(props) => props.isTouched && "text-decoration: underline"};
 
@@ -37,6 +37,12 @@ const Votes = styled.p<{ isUpVote?: boolean, isTouched: boolean, disabled: boole
 
 export interface MemeInfoProps {
     setVoteHoverActive: (b: boolean) => any
+    dateOfCreation: string,
+    creator: string,
+    comments: number,
+    upVotes: number,
+    downVotes: number,
+    memeId: string
 }
 
 
@@ -44,11 +50,11 @@ export const MemeInfos = ({
                               dateOfCreation,
                               creator,
                               comments,
-                              upVoters,
-                              downVoters,
+                              upVotes,
+                              downVotes,
                               setVoteHoverActive,
                               memeId
-                          }: MemeType & MemeInfoProps) => {
+                          }: MemeInfoProps) => {
     const [isUpVoted, setIsUpVoted] = useState<boolean>(false)
     const [isDownVoted, setIsDownVoted] = useState<boolean>(false)
     const jwt = localStorage.getItem('meme-token') || ""
@@ -79,17 +85,17 @@ export const MemeInfos = ({
         <>
             <MetaDataContainer>
                 <StyledMetaData>{dateOfCreation}</StyledMetaData>
-                <StyledMetaData>by {creator?.userName}</StyledMetaData>
+                <StyledMetaData>by {creator}</StyledMetaData>
             </MetaDataContainer>
             <VoteContainer>
                 <Votes disabled={isDownVoted || isUpVoted} isTouched={isDownVoted} onClick={() => handleVote(false)}
                        onMouseEnter={() => setVoteHoverActive(true)}
-                       onMouseLeave={() => setVoteHoverActive(false)}>{isDownVoted ? downVoters?.length && (downVoters.length + 1) : downVoters?.length} ▼</Votes>
-                <StyledMetaData>{comments?.length} comments</StyledMetaData>
+                       onMouseLeave={() => setVoteHoverActive(false)}>{isDownVoted ? (downVotes + 1) : downVotes} ▼</Votes>
+                <StyledMetaData>{comments} comments</StyledMetaData>
                 <Votes disabled={isDownVoted || isUpVoted} isTouched={isUpVoted} onClick={() => handleVote(true)}
                        onMouseEnter={() => setVoteHoverActive(true)}
                        onMouseLeave={() => setVoteHoverActive(false)}
-                       isUpVote>▲ {isUpVoted ? upVoters?.length && (upVoters.length + 1) : upVoters?.length}</Votes>
+                       isUpVote>▲ {isUpVoted ? (upVotes + 1) : upVotes}</Votes>
             </VoteContainer>
         </>
     )

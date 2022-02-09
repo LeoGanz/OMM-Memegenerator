@@ -208,7 +208,7 @@ export const Editor = () => {
             }
         }
 
-        const finalMeme: MemeType = {
+        const finalMeme = {
             //todo add missing fields
             //todo was ist status
             name: title,

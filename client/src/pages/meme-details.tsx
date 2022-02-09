@@ -1,28 +1,105 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Comment} from "../components/comment/comment";
 import {MemeContainer} from "../components/meme-container/meme-container";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {getJwt} from "../util/jwt";
+import LoginContext from "../login-context";
+import {SingleMemeType} from "../util/typedef";
+import {TextInput} from "../components/text-input/input-field";
+import {useForm} from "react-hook-form";
+import styled from "styled-components";
+import {up} from "../util/breakpoint";
+import {StyledButton} from "./editor";
+import {REQUIRED_FIELD_ERROR} from "../constants";
 
-const MockMeme = {
-    memePath: "https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png",
-    author: "SampleUser53",
-    formattedDate: "26.11.21",
-    upVotes: Math.floor(Math.random() * 1000),
-    downVotes: Math.floor(Math.random() * 1000),
-    amountOfComments: Math.floor(Math.random() * 1000),
-}
+const StyledForm = styled.form`
+  margin: 30px 0;
 
-const MockComment = {
-    author: "SampleAuthorOfComment43",
-    date: "12.11.21",
-    comment: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-}
+  ${up('md')} {
+    margin: 30px 150px;
+  }
+`
 
 export const MemeDetails = () => {
+    let {id} = useParams();
+    let navigate = useNavigate()
+    let isLoggedIn = useContext(LoginContext)
+    const {
+        handleSubmit,
+        control, reset
+    } = useForm<{ comment: string }>({
+        mode: 'onSubmit',
+    });
+    let [searchParams, setSearchParams] = useSearchParams();
+    const [memeData, setMemeData] = useState<SingleMemeType>()
+    let jwt = ""
+
+    useEffect(() => {
+        if (!id || !isLoggedIn) {
+            navigate('/')
+        }
+        jwt = localStorage.getItem('meme-token') || ""
+        console.log(id)
+        getMeme()
+
+
+        //get prev and next memeId
+        //todo
+    }, [])
+
+    const getMeme = () => {
+        fetch('http://localhost:3000/image' + getJwt(jwt) + "&memeId=" + id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+            if (response.ok) {
+                return response.json()
+            }
+            return response.text().then(response => {
+                throw new Error(response)
+            })
+        })
+            .then(r => {
+                const {metadata, dataUrl} = r;
+                setMemeData({
+                    ...metadata, dataUrl, memeId: id
+                })
+            })
+            .catch(err => window.alert(err.message))
+    }
+
+    const handleComment = ({comment}: { comment: string }) => {
+        fetch('http://localhost:3000/images' + getJwt(jwt), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({memeId: id, comment})
+        }).then(response => {
+            if (response.ok) {
+                getMeme()
+                reset({comment: ""})
+                return
+            }
+            return response.text().then(response => {
+                throw new Error(response)
+            })
+        }).catch(err => window.alert(err.message))
+    }
+
     return (
         <>
-            <MemeContainer {...MockMeme}/>
-            {new Array(100).fill(MockComment).map(comment => (
-                <Comment author={comment.author} date={comment.date}>{comment.comment}</Comment>))}
+            {memeData && <MemeContainer {...memeData}/>}
+            {memeData &&
+                <StyledForm onSubmit={handleSubmit(handleComment)}>
+                    <TextInput name={"comment"} type={"textarea"} control={control} rules={{required: REQUIRED_FIELD_ERROR}} />
+                    <StyledButton type="submit">Add Comment</StyledButton>
+                </StyledForm>
+            }
+            {memeData?.comments.map(({text, dateOfCreation, username}) => (
+                <Comment author={username} date={dateOfCreation}>{text}</Comment>))}
         </>
     );
 }

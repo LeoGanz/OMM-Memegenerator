@@ -75,6 +75,7 @@ export const Overview = () => {
         mode: 'onSubmit',
     });
     const [memeCardData, setMemeCardData] = useState<MemeType[]>([])
+    const [activeParams, setActiveParams] = useState<string>("")
     const [range, setRange] = useState({start: 0, end: 40})
     let jwt
 
@@ -91,6 +92,9 @@ export const Overview = () => {
         const filterBy = filerByValue ? {filterBy: filerByValue} : {}
         const sortBy = sortByValue ? {sortBy: sortByValue} : {}
         const options = {status: 2, ...range, ...filterBy, ...sortBy}
+        // @ts-ignore
+        setActiveParams("?" + objectToQuery(options).slice(1))
+
 
         // @ts-ignore
         fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery(options), {
@@ -143,7 +147,7 @@ export const Overview = () => {
 
             <OverviewGrid>
                 {memeCardData.map((memeCardEntry) =>
-                    <MemeCard {...memeCardEntry}/>
+                    <MemeCard params={activeParams} {...memeCardEntry}/>
                 )}
             </OverviewGrid>
 

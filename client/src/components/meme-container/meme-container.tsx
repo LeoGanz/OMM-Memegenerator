@@ -3,6 +3,8 @@ import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {MemeInfos} from "../meme-infos/meme-infos";
 import {up} from "../../util/breakpoint";
+import {Title} from "../layout/typography";
+import {SingleMemeType} from "../../util/typedef";
 
 const MemeContainerWrapper = styled.div`
 
@@ -33,25 +35,29 @@ const StyledMemeInfos = styled(MemeInfos)`
   margin-bottom: 30px;
 `
 
+const StyledTitle = styled(Title)`
+  align-self: flex-start;
+  margin-bottom: 4px;
+`
 
-interface MemeContainerProps {
-    memePath: string;
-    author: string;
-    formattedDate: string;
-    amountOfComments: number;
-    upVotes: number;
-    downVotes: number;
-}
+const Description = styled.p`
+  align-self: flex-start;
+  margin-bottom: 20px;
+`
+
 
 export const MemeContainer = ({
-                                  memePath,
+                                  dataUrl,
+    comments, name, desc,
                                   ...props
-                              }: MemeContainerProps) => {
+                              }: SingleMemeType) => {
 
     return (
         <MemeContainerWrapper>
-            <Meme src={memePath}/>
-            {/*<StyledMemeInfos {...props}/>*/}
+            <StyledTitle>{name}</StyledTitle>
+            <Description>{desc}</Description>
+            <Meme src={dataUrl}/>
+            <StyledMemeInfos setVoteHoverActive={(b => {})} comments={comments.length} {...props}/>
         </MemeContainerWrapper>
     )
 }

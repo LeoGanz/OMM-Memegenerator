@@ -53,7 +53,7 @@ export const APICreateResponse = () => {
 
     useEffect(() => {
         fetch('http://localhost:3000/create', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },

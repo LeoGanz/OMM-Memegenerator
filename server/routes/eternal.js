@@ -8,10 +8,10 @@ const {jwtVerify, respond} = require("../utils");
  */
 
 router.use((req, res, next) => {
-    // console.log(typeof token === "string");
     jwtVerify(req, _ => {
         next();
     }, _ => {
+        // alternative auth using username and password instead of token
         const credentials = req.headers.authorization;
         if (credentials !== undefined) {
             let namePW = credentials.split(" ");

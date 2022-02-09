@@ -6,7 +6,6 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
 let indexRouter = require('./routes/index');
-let usersRouter = require('./routes/users');
 let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
@@ -66,7 +65,6 @@ app.use('/profile',profileRouter); //Profile overview
 app.use('/images', imgRouter); //showing images
 app.use('/image', singleRouter); // Single view of an Image
 app.use('/statistics',statisticRouter); // Showing of graphs
-app.use('/users', usersRouter); //displaying all users
 
 app.use(indexRouter);
 

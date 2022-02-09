@@ -130,6 +130,7 @@ function handleComment(comment, memeId, user, res) {
     });
 }
 
+// Social interactions with a meme
 router.post("/", (req, res) => {
     let memeId = req.body.memeId;
     let userToken = req.query.token;
@@ -145,6 +146,9 @@ router.post("/", (req, res) => {
                 respond(res, 400, "No user with this token found");
             }
             let user = lst[0];
+
+            // Only one of the possible social actions can take effect within one request.
+            // Priorities are: remove > upvote > downvote > comment
             if (removeVotes !== undefined) {
                 handleRemoveVotes(memeId, user, res);
             } else if (upVote !== undefined) {
@@ -160,10 +164,11 @@ router.post("/", (req, res) => {
     });
 });
 
+// Retrieving multiple memes / drafts or templates
 router.get("/", (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     const sortBy = req.query.sortBy;
-    const filterBy = req.query.filterBy;
+    const filterBy = req.query.filterBy; // filter by username
     const start = parseInt(req.query.start);
     const end = parseInt(req.query.end);
     const status = parseInt(req.query.status);
@@ -194,7 +199,7 @@ router.get("/", (req, res) => {
         memeSchema
             .find({status: status}) // published only
             .populate('texts')
-            // do not populate whole creator as this would leak private data
+            // do not populate all fields of users as this would leak private data
             .populate('creator', 'username')
             .populate('upVoters', 'username')
             .populate('downVoters', 'username')

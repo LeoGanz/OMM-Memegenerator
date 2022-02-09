@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const memeSchema = require("../models/memeSchema");
-const userSchema = require("../models/userSchema");
-const textSchema = require("../models/textSchema");
 const {respond, getDomain, dbConnectionFailureHandler} = require("../utils");
 
 function textInText(text, texts) {

@@ -6,7 +6,7 @@ import {colors} from "../components/layout/colors";
 import {Link, useNavigate} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import LoginContext from "../login-context";
-import {MemeType} from "../util/typedef";
+import {SingleMemeType} from "../util/typedef";
 import {TextInput} from "../components/text-input/input-field";
 import {StyledButton} from "./editor";
 import {useForm} from "react-hook-form";
@@ -74,26 +74,32 @@ export const Overview = () => {
     } = useForm<{ username: string }>({
         mode: 'onSubmit',
     });
-    const [memeCardData, setMemeCardData] = useState<MemeType[]>([])
+    const [memeCardData, setMemeCardData] = useState<SingleMemeType[]>([])
+    const [activeParams, setActiveParams] = useState<string>("")
     const [range, setRange] = useState({start: 0, end: 40})
-    let jwt
+    const [jwt, setJwt] = useState("")
 
     useEffect(() => {
         if (isLoggedIn) {
+            setJwt(localStorage.getItem('meme-token') || "")
             loadMemes()
+
         } else {
             navigate('/login')
         }
     }, [])
 
     const loadMemes = (filerByValue?: string, sortByValue?: string) => {
-        jwt = localStorage.getItem('meme-token') || ""
+
         const filterBy = filerByValue ? {filterBy: filerByValue} : {}
         const sortBy = sortByValue ? {sortBy: sortByValue} : {}
-        const options = {status: 2, ...range, ...filterBy, ...sortBy}
+        const options = {status: 0, ...range, ...filterBy, ...sortBy}
+        // @ts-ignore
+        setActiveParams("?" + objectToQuery(options).slice(1))
+
 
         // @ts-ignore
-        fetch('http://localhost:3000/images' + getJwt(jwt) + objectToQuery(options), {
+        fetch('http://localhost:3000/images' + getJwt() + objectToQuery(options), {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -106,9 +112,18 @@ export const Overview = () => {
                     throw new Error(response)
                 })
             })
-            .then(r => setMemeCardData(r))
+            .then(r => {
+
+                const data = r.map((meme: { metadata: any; dataUrl: any; }) => {
+                    const {metadata, dataUrl} = meme;
+                    return {...metadata, dataUrl}
+                })
+                setMemeCardData(data)
+
+            })
             .catch(err => window.alert(err.message))
     }
+
 
     const filterByUsername = ({username}: { username: string }) => {
         loadMemes(username, undefined)
@@ -143,7 +158,7 @@ export const Overview = () => {
 
             <OverviewGrid>
                 {memeCardData.map((memeCardEntry) =>
-                    <MemeCard {...memeCardEntry}/>
+                    <MemeCard params={activeParams} {...memeCardEntry}/>
                 )}
             </OverviewGrid>
 

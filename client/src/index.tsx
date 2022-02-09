@@ -18,7 +18,7 @@ ReactDOM.render(
         <App>
             <Routes>
                 <Route path="/" element={<Overview/>}/>
-                <Route path="details" element={<MemeDetails/>}/>
+                <Route path="details/:id" element={<MemeDetails/>}/>
                 <Route path="login" element={<Login/>}/>
                 <Route path="sign-up" element={<SignUp/>}/>
                 <Route path="editor" element={<Editor/>}/>

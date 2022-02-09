@@ -29,6 +29,7 @@ function getCurrentDateString() {
  * the client
  */
 function respond(res, code, message, additionalInfo) {
+    res.set('Access-Control-Allow-Origin', '*');
     let logEntry = code + ": " + message;
     if (additionalInfo !== undefined) {
         logEntry += "; Additional info: " + additionalInfo;
@@ -59,6 +60,7 @@ function jwtVerify(request, onSuccess, onFailure) {
  * Same functionality as respond but without logging.
  */
 function respondSilently(res, code, message) {
+    res.set('Access-Control-Allow-Origin', '*');
     if (!res.headersSent) {
         res.status(code).send(message);
     }

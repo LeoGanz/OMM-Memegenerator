@@ -3,6 +3,11 @@ import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {MemeInfos} from "../meme-infos/meme-infos";
 import {up} from "../../util/breakpoint";
+import {Title} from "../layout/typography";
+import {SingleMemeType} from "../../util/typedef";
+import {NavigationButton} from "../../pages/editor";
+import {useNavigate} from "react-router-dom";
+import {objectToQuery} from "../../util/jwt";
 
 const MemeContainerWrapper = styled.div`
 
@@ -33,25 +38,58 @@ const StyledMemeInfos = styled(MemeInfos)`
   margin-bottom: 30px;
 `
 
+const StyledTitle = styled(Title)`
+  align-self: flex-start;
+  margin-bottom: 4px;
+`
 
-interface MemeContainerProps {
-    memePath: string;
-    author: string;
-    formattedDate: string;
-    amountOfComments: number;
-    upVotes: number;
-    downVotes: number;
-}
+const Description = styled.p`
+  align-self: flex-start;
+  margin-bottom: 20px;
+`
+const MemeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`
 
-export const MemeContainer = ({
-                                  memePath,
+
+
+export const MemeContainer = ({searchParams,
+                                  dataUrl,
+                                  comments, name, desc, next, prev,
                                   ...props
-                              }: MemeContainerProps) => {
+                              }: SingleMemeType & {searchParams: any}) => {
+    let navigate = useNavigate()
+    const handelNavigation = (isNext: boolean) => {
+        const status = searchParams.get("status")
+        const start = searchParams.get("start")
+        const end = searchParams.get("end")
+        const filterBy = searchParams.get("filterBy")
+        const sortBy = searchParams.get("sortBy")
+        let options = ""
+
+        if(status || start || end || filterBy || sortBy){
+            options = "?" + objectToQuery({status, start, end, filterBy, sortBy}).slice(1)
+        }
+
+        const memeId = isNext ? next : prev
+
+        navigate('/details/' + memeId + options)
+    }
 
     return (
         <MemeContainerWrapper>
-            <Meme src={memePath}/>
-            {/*<StyledMemeInfos {...props}/>*/}
+            <StyledTitle>{name}</StyledTitle>
+            <Description>{desc}</Description>
+            <MemeWrapper>
+                <NavigationButton onClick={() => handelNavigation(false)}>{"<"}</NavigationButton>
+                <Meme src={dataUrl}/>
+                <NavigationButton onClick={() => handelNavigation(true)}>{">"}</NavigationButton>
+            </MemeWrapper>
+
+            <StyledMemeInfos setVoteHoverActive={(b => {
+            })} comments={comments.length} {...props}/>
         </MemeContainerWrapper>
     )
 }

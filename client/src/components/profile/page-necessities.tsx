@@ -39,8 +39,8 @@ export const WorkedComment = styled.div`
   column-count: 2;
 `
 
-export const Image = styled.p`
-  width: 98%;
+export const Image = styled.img`
+  width: 40%;
   padding: 1%;
 `
 
@@ -50,8 +50,7 @@ export const Date = styled.p`
 `
 
 export const CommentAndDate = styled.p`
-  padding: 98%;
-  color: ${colors.font.secondary};
+  padding: 1%;
 `
 
 interface CommentCardProp {
@@ -70,7 +69,7 @@ export const CommentCardProfile = ({date, src, children}: CommentCardProp) => {
     return (
         <>
             <WorkedImage>
-                <Image>{src}</Image>
+                <Image src={src}/>
                 <CommentAndDate>Commented on:{date} "{children}"</CommentAndDate>
             </WorkedImage>
         </>
@@ -80,7 +79,7 @@ export const MemeCardProfile = ({date, src}: MemeCardProp) => {
     return (
         <>
             <WorkedComment>
-                <Image>{src}</Image>
+                <Image src={src}/>
                 <Date>Edited on: {date}</Date>
             </WorkedComment>
         </>

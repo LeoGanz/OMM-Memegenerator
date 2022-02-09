@@ -54,7 +54,7 @@ export const Profile = () => {
                             console.log(meme.dateOfCreation);
                             if (meme.dateOfCreation !== undefined) {
                                 return <MemeCardProfile date={meme.dateOfCreation}
-                                                        src={meme.img.base64}/>
+                                                        src={meme.img.base64} />
                             } else {
                                 return <MemeCardProfile date="0000-11--22" src={meme.img.base64}/>
                             }

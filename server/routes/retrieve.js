@@ -17,6 +17,7 @@ function textInText(text, texts) {
     return inside;
 }
 
+// Allows for retrieval of memes. API accessible without frontend
 router.get('/', (req, res) => {
     let result = "List of URLs leading to a by you specified meme: \n"
     const {numberOfMemes} = req.query ?? 5;

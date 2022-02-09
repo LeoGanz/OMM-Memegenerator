@@ -3,6 +3,7 @@ const router = express.Router();
 const memeSchema = require("../models/memeSchema");
 const {dbConnectionFailureHandler, respond, respondSilently} = require("../utils");
 
+// Retrieve statistics for single memes that include up and down votes
 router.get('/single', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     let memes = [];
@@ -30,6 +31,7 @@ router.get('/single', (req, res) => {
     });
 });
 
+// Retrieve statistics for template usages
 router.get('/template', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     let templates = [];

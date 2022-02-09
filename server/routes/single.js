@@ -4,6 +4,7 @@ const {getOrRenderMemeToSize} = require("../renderManager");
 const {collectMetadata, respondSilently, noMemeFoundHandler, dbConnectionFailureHandler, respond} = require("../utils");
 const {getMatchingItems} = require("./img");
 
+// Retrieve a single meme, draft or template. Includes rendering, metadata and references to next and previous memes
 router.get("/", (req, res) => {
     const memeId = req.query.memeId;
     const targetFileSize = req.query.targetFileSize; // optional

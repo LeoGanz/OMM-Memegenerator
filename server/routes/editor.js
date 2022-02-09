@@ -5,6 +5,7 @@ const userSchema = require("../models/userSchema");
 const {processSingleMemeCreation} = require("../memeUploadHandler");
 const {dbConnectionFailureHandler, cleanMeme, respondSilently, respond} = require("../utils");
 
+// Retrieve raw data for single meme (intended for templates)
 router.get('/', (req, res) => {
     memeSchema
         .findOne({memeId: req.query.memeId})
@@ -33,6 +34,7 @@ router.get('/', (req, res) => {
         });
 });
 
+// upload single meme as a user, optionally using a template
 router.post('/', (req, res) => {
     userSchema
         .findOne({currentToken: req.query.token})

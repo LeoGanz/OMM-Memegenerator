@@ -165,6 +165,17 @@ router.post("/", (req, res) => {
     });
 });
 
+/**
+ * Retrieve, filter and sort memes from the database. If accessing drafts, the user has to filter by his/her own name.
+ * @param status 0 for templates, 1 for drafts, 2 for published memes
+ * @param filterBy a username
+ * @param sortBy sort by up or down votes, either ascending or descending -> "up asc", "up desc", "down asc" or "down desc"
+ * @param userToken token of the current user
+ * @param onSuccess callback for retrieved, filtered and sorted memes
+ * @param onError callback for errors
+ * @param onNothingFound callback for when no memes match
+ * @param onNameMismatch callback if drafts are accessed but the username in filterBy mismatches
+ */
 function getMatchingItems(status, filterBy, sortBy, userToken, onSuccess, onError, onNothingFound, onNameMismatch) {
     if (status === 1) {
         userSchema.findOne({currentToken: userToken}).exec(
@@ -255,7 +266,7 @@ function getMatchingItems(status, filterBy, sortBy, userToken, onSuccess, onErro
     }
 }
 
-// Retrieving multiple memes / drafts or templates
+// Retrieving multiple memes / drafts or templates. Includes renderings and metadata.
 router.get("/", (req, res) => {
     const sortBy = req.query.sortBy;
     const filterBy = req.query.filterBy; // filter by username

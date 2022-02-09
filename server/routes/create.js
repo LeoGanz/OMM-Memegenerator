@@ -5,6 +5,7 @@ const userSchema = require("../models/userSchema");
 const {processMultipleMemeCreations} = require("../memeUploadHandler");
 const {dbConnectionFailureHandler, respond} = require("../utils");
 
+// Allows creation of memes. API accessible without frontend
 router.post('/', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
     const memeIdTemplate = req.body.memeId;

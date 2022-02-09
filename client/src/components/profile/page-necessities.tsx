@@ -5,27 +5,23 @@ import {Link} from "react-router-dom";
 export const DivGroup = styled.div`
   column-count: 2;
   width: 100%;
-  background: #00c400;
   padding: 1%;
 `
 export const CommentGroup = styled.div`
   width: 98%;
   padding: 1%;
-  background: brown;
   display: inline-table;
 `
 
 export const ImageGroup = styled.div`
   width: 98%;
   padding: 1%;
-  background: aqua;
   display: inline-table;
 `
 
 const WorkedImage = styled.div`
   width: 98%;
   padding: 1%;
-  background: coral;
   margin-bottom: 3%;
   column-count: 2;
 `
@@ -33,7 +29,6 @@ const WorkedImage = styled.div`
 const WorkedComment = styled.div`
   width: 98%;
   padding: 1%;
-  background: fuchsia;
   margin-bottom: 3%;
   column-count: 2;
 `
@@ -55,6 +50,12 @@ const CommentAndDate = styled.p`
 const CardButton = styled(Link)`
   width: 98%;
   padding: 1%;
+  color: #efefef;
+
+  &:hover {
+    color: #dcdcdc;
+    cursor: pointer;
+  }
 `
 
 interface CommentCardProp {

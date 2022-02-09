@@ -13,12 +13,14 @@ export const CommentGroup = styled.div`
   width: 98%;
   padding: 1%;
   background: brown;
+  display: inline-table;
 `
 
 export const ImageGroup = styled.div`
   width: 98%;
   padding: 1%;
   background: aqua;
+  display: inline-table;
 `
 
 export const WorkedImage = styled.div`
@@ -48,8 +50,7 @@ export const Date = styled.p`
 `
 
 export const CommentAndDate = styled.p`
-  width: 98%;
-  padding: 1%;
+  padding: 98%;
   color: ${colors.font.secondary};
 `
 

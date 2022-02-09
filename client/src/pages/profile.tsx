@@ -26,7 +26,7 @@ export const Profile = () => {
     }
     useEffect(() => {
         jwt = localStorage.getItem('meme-token') || "";
-        fetch('http://localhost:3000/profile' + "?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRkY2QuY3J1aXNlQGdteC5kZSIsImp0aSI6IjRiZGY1MWFmLTVjOTctNDE5Ni05YzhlLTIwMDA2ZjgxMTlkNiIsImlhdCI6MTY0NDMzODY3MywiZXhwIjoxNjQ0MzQyMjczfQ.OCCNCzTULibZxYheBXtqm9hZxkz-le9HZ1mXGMCrCpM", {
+        fetch('http://localhost:3000/profile' + "?" + "end=4&" + "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRkY2QuY3J1aXNlQGdteC5kZSIsImp0aSI6Ijk1NWQwMzhjLWMxMjktNGM3YS04YTJhLWY1NGU5NDAxOGMzOCIsImlhdCI6MTY0NDM5ODI0MCwiZXhwIjoxNjQ0NDAxODQwfQ.zamQrinrT29qMAwVv96JUkGe0G97YwTUHfon7-ogIcU", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -47,7 +47,8 @@ export const Profile = () => {
             <SubTitle>{ProfileData.fullName}</SubTitle>
             <SubTitle>{ProfileData.email}</SubTitle>
             <DivGroup>
-                <ImageGroup>
+
+                <ImageGroup><SubTitle>History of Pictures</SubTitle>
                     {
                         ProfileData.memeHistory?.map((meme) => {
                             console.log(meme.dateOfCreation);
@@ -59,7 +60,8 @@ export const Profile = () => {
                             }
                         })}
                 </ImageGroup>
-                <CommentGroup>
+
+                <CommentGroup><SubTitle>History of Comments</SubTitle>
                     {
                         ProfileData.comments?.map((comment) => {
                             console.log(comment.dateOfCreation);

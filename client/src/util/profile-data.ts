@@ -4,6 +4,7 @@ interface ProfileCommentType {
     dateOfCreation: string,
     text: string,
     base64: string,
+    memeId: string,
 }
 
 export interface ProfileData {

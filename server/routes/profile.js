@@ -19,6 +19,7 @@ function findMemeBasesAndRespond(comments, memeComments, res, response) {
                 console.log(lst[0]);
                 const base = lst[0].img.base64;
                 const newComm = {
+                    memeId: comm.memeId,
                     dateOfCreation: comm.dateOfCreation,
                     text: comm.text,
                     base64: base
@@ -53,8 +54,8 @@ router.get('/', (req, res) => {
                 let comments = user.lastComments;
                 const start = req.query.start ?? 0;
                 const end = req.query.end ?? 5;
-                history = history.slice(start, end);
-                comments = comments.slice(start, end);
+                history = history.reverse().slice(start, end);
+                comments = comments.reverse().slice(start, end);
                 let response = {
                     username: username,
                     fullName: fullName,

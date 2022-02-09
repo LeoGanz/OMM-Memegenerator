@@ -68,14 +68,14 @@ function respondSilently(res, code, message) {
  * Utility handler for connection problems with the database.
  */
 function dbConnectionFailureHandler(res, err) {
-    return respond(res, 503, "Connection to db failed", err);
+    return respond(res, 503, "Database access failed", err);
 }
 
 /**
  * Utility handler for instances where no meme is found.
  */
-function noMemeFoundHandler(res) {
-    return respond(res, 400, "No meme found");
+function noMemeFoundHandler(res, err) {
+    return respond(res, 400, "No meme found", err);
 }
 
 /**
@@ -129,6 +129,7 @@ function calcMemeIdFor(memeSchema) {
  */
 function parseMetadata(meme) {
     return {
+        memeId: meme.memeId,
         name: meme.name,
         desc: meme.desc,
         creator: meme.creator.username,

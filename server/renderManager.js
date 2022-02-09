@@ -66,7 +66,7 @@ function renderAndStoreMeme(meme) {
     }).catch(err => console.log("Could not render Meme " + meme.memeId + " Reason: " + err));
 }
 
-function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFound, onError, retry = true) {
+function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, retry = true) {
     // use stored rendering if possible and no specific target size is requested.
     // otherwise, perform rendering
     renderSchema
@@ -85,7 +85,7 @@ function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFoun
                                     onSuccess(renderMemeToSize(meme, targetFileSize));
                                 } else {
                                     renderAndStoreMeme(meme);
-                                    return getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound, false);
+                                    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, false);
                                 }
                             } else {
                                 onNoMemeFound();
@@ -100,12 +100,12 @@ function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFoun
         });
 }
 
-function getOrRenderMeme(memeId, onSuccess, onNoMemeFound, onError) {
-    return getOrRenderMemeInternal(memeId, undefined, onSuccess, onNoMemeFound, onError);
+function getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound) {
+    return getOrRenderMemeInternal(memeId, undefined, onSuccess, onError, onNoMemeFound);
 }
 
-function getOrRenderMemeToSize(memeId, targetFileSize, onSuccess, onNoMemeFound, onError) {
-    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFound, onError);
+function getOrRenderMemeToSize(memeId, targetFileSize, onSuccess, onError, onNoMemeFound) {
+    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound);
 }
 
 function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {
@@ -114,10 +114,9 @@ function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {
     } else {
         const memeId = memeIdArray.shift();
         getOrRenderMeme(memeId, dataUrl => {
-                result.push(dataUrl);
-                getOrRenderMemesRec(memeIdArray, onSuccess, onError, result);
-            }, _ => undefined,
-            onError);
+            result.push(dataUrl);
+            getOrRenderMemesRec(memeIdArray, onSuccess, onError, result);
+        }, onError, _ => undefined);
     }
 }
 

@@ -9,7 +9,8 @@ const {
     getCurrentDateString,
     dbConnectionFailureHandler,
     respondSilently,
-    parseMetadata
+    parseMetadata,
+    noMemeFoundHandler
 } = require("../utils");
 
 /**
@@ -164,28 +165,17 @@ router.post("/", (req, res) => {
     });
 });
 
-// Retrieving multiple memes / drafts or templates
-router.get("/", (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    const sortBy = req.query.sortBy;
-    const filterBy = req.query.filterBy; // filter by username
-    const start = parseInt(req.query.start);
-    const end = parseInt(req.query.end);
-    const status = parseInt(req.query.status);
-
-    // Do not allow lookup of other users' drafts
-    if (isNaN(status) || ![0, 1, 2].includes(status)) {
-        respond(res, 400, "Provide a the numbers 0, 1 or 2 for the status")
-    } else if (status === 1) {
-        userSchema.findOne({currentToken: req.query.token}).exec(
+function getMatchingItems(status, filterBy, sortBy, userToken, onSuccess, onError, onNothingFound, onNameMismatch) {
+    if (status === 1) {
+        userSchema.findOne({currentToken: userToken}).exec(
             (err, user) => {
                 if (err) {
-                    dbConnectionFailureHandler(res, err);
+                    onError(err);
                 } else if (!user) {
                     // should never occur as login is checked by eternal route
-                    respond(res, 400, "Could not find user with the current token");
+                    onError("Could not find user with the current token");
                 } else if (user.username !== filterBy) {
-                    respond(res, 400, "You may only lookup your own drafts")
+                    onNameMismatch("You may only lookup your own drafts");
                 } else {
                     performRetrieval();
                 }
@@ -209,7 +199,9 @@ router.get("/", (req, res) => {
             })
             .exec((err, items) => {
                 if (err) {
-                    respond(res, 500, 'No images found', err);
+                    onError(err);
+                } else if (!items) {
+                    onNothingFound();
                 } else {
                     if (filterBy) {
                         items = items.filter(item => {
@@ -226,8 +218,7 @@ router.get("/", (req, res) => {
                             }
                             return 0;
                         });
-                    }
-                    if (sortBy === "up asc") {
+                    } else if (sortBy === "up asc") {
                         items = items.sort((a, b) => {
                             if (a.upVoters.length > b.upVoters.length) {
                                 return 1;
@@ -237,8 +228,7 @@ router.get("/", (req, res) => {
                             }
                             return 0;
                         });
-                    }
-                    if (sortBy === "down desc") {
+                    } else if (sortBy === "down desc") {
                         items = items.sort((a, b) => {
                             if (a.downVoters.length > b.downVoters.length) {
                                 return -1;
@@ -248,8 +238,7 @@ router.get("/", (req, res) => {
                             }
                             return 0;
                         });
-                    }
-                    if (sortBy === "down asc") {
+                    } else if (sortBy === "down asc") {
                         items = items.sort((a, b) => {
                             if (a.downVoters.length > b.downVoters.length) {
                                 return 1;
@@ -260,28 +249,53 @@ router.get("/", (req, res) => {
                             return 0;
                         });
                     }
-                    if (!isNaN(start) && !isNaN(end)) {
-                        items = items.slice(start, end);
-                        getOrRenderMemes(
-                            items.map(meme => meme.memeId),
-                            renderingArray => {
-                                const dataMetadataCombinations = [];
-                                for (let i = 0; i < items.length; i++) {
-                                    dataMetadataCombinations.push({
-                                        dataUrl: renderingArray[i],
-                                        metadata: parseMetadata(items[i])
-                                    })
-                                }
-                                respondSilently(res, 200, dataMetadataCombinations)
-                            },
-                            err => dbConnectionFailureHandler(res, err))
-                    } else {
-                        respond(res, 400, "You have to give a number as start and a number as end," +
-                            " which part of the items you want");
-                    }
+                    onSuccess(items);
                 }
             });
     }
+}
+
+// Retrieving multiple memes / drafts or templates
+router.get("/", (req, res) => {
+    const sortBy = req.query.sortBy;
+    const filterBy = req.query.filterBy; // filter by username
+    const start = parseInt(req.query.start);
+    const end = parseInt(req.query.end);
+    const status = parseInt(req.query.status);
+    const userToken = req.query.token;
+
+    // Do not allow lookup of other users' drafts
+    if (isNaN(status) || ![0, 1, 2].includes(status)) {
+        respond(res, 400, "Provide a the numbers 0, 1 or 2 for the status")
+    } else {
+        getMatchingItems(status, filterBy, sortBy, userToken,
+            items => {
+                if (!isNaN(start) && !isNaN(end)) {
+                    items = items.slice(start, end);
+                    getOrRenderMemes(
+                        items.map(meme => meme.memeId),
+                        renderingArray => {
+                            const dataMetadataCombinations = [];
+                            for (let i = 0; i < items.length; i++) {
+                                dataMetadataCombinations.push({
+                                    dataUrl: renderingArray[i],
+                                    metadata: parseMetadata(items[i])
+                                })
+                            }
+                            respondSilently(res, 200, dataMetadataCombinations)
+                        },
+                        err => dbConnectionFailureHandler(res, err))
+                } else {
+                    respond(res, 400, "You have to give a number as start and a number as end," +
+                        " which part of the items you want");
+                }
+            },
+            err => dbConnectionFailureHandler(res, err),
+            () => noMemeFoundHandler(res),
+            msg => respond(res, 400, msg));
+    }
 })
 
-module.exports = router;
+module.exports = {
+    imgRouter: router, getMatchingItems
+};

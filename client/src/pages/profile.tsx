@@ -60,16 +60,18 @@ export const Profile = () => {
                         })}
                 </ImageGroup>
                 <CommentGroup>
-                    {/*{*/}
-                    {/*    ProfileData.comments?.map((comment) => {*/}
-                    {/*        console.log(comment.dateOfCreation);*/}
-                    {/*        if (comment.dateOfCreation !== undefined) {*/}
-                    {/*            return <CommentCardProfile date={comment.dateOfCreation}*/}
-                    {/*                                    src={comment.img.base64} children={comment.text}/>*/}
-                    {/*        } else {*/}
-                    {/*            return <MemeCardProfile date="0000-11--22" src={comment.img.base64}/>*/}
-                    {/*        }*/}
-                    {/*    })}*/}
+                    {
+                        ProfileData.comments?.map((comment) => {
+                            console.log(comment.dateOfCreation);
+                            if (comment.dateOfCreation !== undefined) {
+                                return <CommentCardProfile date={comment.dateOfCreation}
+                                                           src={comment.base64}
+                                                           children={comment.text}/>
+                            } else {
+                                return <CommentCardProfile date="0000-11--22" src={comment.base64}
+                                                           children={comment.text}/>
+                            }
+                        })}
                 </CommentGroup>
             </DivGroup>
         </>

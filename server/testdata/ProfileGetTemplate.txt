@@ -10,4 +10,5 @@ JSON-body:
 {
 }
 
-Gives back a class with .username, .fullName, .email and .memeHistory to display the profile page
+Gives back a class with .username, .fullName, .email, .comments and .memeHistory to display the
+profile page

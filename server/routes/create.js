@@ -6,6 +6,7 @@ const {processMultipleMemeCreations} = require("../memeUploadHandler");
 const {dbConnectionFailureHandler, respond} = require("../utils");
 
 router.post('/', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
     const memeIdTemplate = req.body.memeId;
     memeSchema
         .findOne({memeId: memeIdTemplate, status: 0})

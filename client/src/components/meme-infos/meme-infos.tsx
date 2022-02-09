@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {colors} from "../layout/colors";
 import {MetaData} from "../layout/typography";
 import {getJwt} from "../../util/jwt";
+import {MemeInfoProps} from "../../util/typedef";
 
 const MetaDataContainer = styled.div`
   display: flex;
@@ -35,15 +36,7 @@ const Votes = styled.p<{ isUpVote?: boolean, isTouched: boolean, disabled: boole
   }
 `
 
-export interface MemeInfoProps {
-    setVoteHoverActive: (b: boolean) => any
-    dateOfCreation: string,
-    creator: string,
-    comments: number,
-    upVotes: number,
-    downVotes: number,
-    memeId: string
-}
+
 
 
 export const MemeInfos = ({

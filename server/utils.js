@@ -74,8 +74,8 @@ function dbConnectionFailureHandler(res, err) {
 /**
  * Utility handler for instances where no meme is found.
  */
-function noMemeFoundHandler(res) {
-    return respond(res, 400, "No meme found");
+function noMemeFoundHandler(res, err) {
+    return respond(res, 400, "No meme found", err);
 }
 
 /**

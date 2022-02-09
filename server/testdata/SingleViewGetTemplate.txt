@@ -48,6 +48,8 @@ Result in JSON-Format:
 
 Returns metadata and a data url with a base64 encoded rendered meme specified by memeId.
 MemeIds for previous and next memes matching sort and filter criteria and with the same status as the main meme are included.
+If no memes match the criteria info strings like "No previous meme found" are returned instead.
+A wrap around functionality for prev and next is introduced for easier cycling of all possible memes.
 The criteria are not checked for the main returned meme.
 
 For test purposes the result can be looked at with tools like https://base64.guru/converter/decode/image

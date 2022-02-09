@@ -26,7 +26,8 @@ export const Profile = () => {
     }
     useEffect(() => {
         jwt = localStorage.getItem('meme-token') || "";
-        fetch('http://localhost:3000/profile' + "?" + "end=4&" + "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRkY2QuY3J1aXNlQGdteC5kZSIsImp0aSI6Ijk1NWQwMzhjLWMxMjktNGM3YS04YTJhLWY1NGU5NDAxOGMzOCIsImlhdCI6MTY0NDM5ODI0MCwiZXhwIjoxNjQ0NDAxODQwfQ.zamQrinrT29qMAwVv96JUkGe0G97YwTUHfon7-ogIcU", {
+        fetch('http://localhost:3000/profile' + "?" + "end=4&" +
+            "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRkY2QuY3J1aXNlQGdteC5kZSIsImp0aSI6ImY3NmU5YTQwLTkyMTctNDgzZC1iYjJkLTkyNGE1MTdkM2RlNiIsImlhdCI6MTY0NDQwMjQ4MiwiZXhwIjoxNjQ0NDA2MDgyfQ.yCAByQ6HnrdHV4Dpd6U9gwP8uaVydTGB3ulpy7Clczs", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,11 +37,6 @@ export const Profile = () => {
             console.log(r);
         });
     }, []);
-    if (ProfileData.memeHistory !== undefined) {
-        console.log(ProfileData.memeHistory[0]);
-    } else {
-        console.log("undefined history")
-    }
     return (
         <>
             <Title>{ProfileData.username}</Title>
@@ -52,11 +48,12 @@ export const Profile = () => {
                     {
                         ProfileData.memeHistory?.map((meme) => {
                             console.log(meme.dateOfCreation);
-                            if (meme.dateOfCreation !== undefined && meme.memeId!== undefined) {
+                            if (meme.dateOfCreation !== undefined && meme.memeId !== undefined) {
                                 return <MemeCardProfile date={meme.dateOfCreation}
-                                                        src={meme.img.base64}  memeId={meme.memeId}/>
+                                                        src={meme.img.base64} memeId={meme.memeId}/>
                             } else {
-                                return <MemeCardProfile date="0000-11--22" src={meme.img.base64} memeId={""}/>
+                                return <MemeCardProfile date="0000-11--22" src={meme.img.base64}
+                                                        memeId={""}/>
                             }
                         })}
                 </ImageGroup>
@@ -64,14 +61,15 @@ export const Profile = () => {
                 <CommentGroup><SubTitle>History of Comments</SubTitle>
                     {
                         ProfileData.comments?.map((comment) => {
-                            console.log(comment.dateOfCreation);
                             if (comment.dateOfCreation !== undefined) {
                                 return <CommentCardProfile date={comment.dateOfCreation}
                                                            src={comment.base64}
-                                                           children={comment.text} memeId={comment.memeId}/>
+                                                           children={comment.text}
+                                                           memeId={comment.memeId}/>
                             } else {
                                 return <CommentCardProfile date="0000-11--22" src={comment.base64}
-                                                           children={comment.text} memeId={comment.memeId}/>
+                                                           children={comment.text}
+                                                           memeId={comment.memeId}/>
                             }
                         })}
                 </CommentGroup>

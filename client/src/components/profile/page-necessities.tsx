@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
-import {CommentText, FormattedDate, CommentWrapper} from "../comment/comment";
-import {colors} from "../layout/colors";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {Button} from "../button/button";
 
 export const DivGroup = styled.div`
   column-count: 2;
@@ -24,7 +23,7 @@ export const ImageGroup = styled.div`
   display: inline-table;
 `
 
-export const WorkedImage = styled.div`
+const WorkedImage = styled.div`
   width: 98%;
   padding: 1%;
   background: coral;
@@ -32,7 +31,7 @@ export const WorkedImage = styled.div`
   column-count: 2;
 `
 
-export const WorkedComment = styled.div`
+const WorkedComment = styled.div`
   width: 98%;
   padding: 1%;
   background: fuchsia;
@@ -40,17 +39,22 @@ export const WorkedComment = styled.div`
   column-count: 2;
 `
 
-export const Image = styled.img`
+const Image = styled.img`
   width: 40%;
   padding: 1%;
 `
 
-export const Date = styled.p`
+const Date = styled.p`
   width: 98%;
   padding: 1%;
 `
 
-export const CommentAndDate = styled.p`
+const CommentAndDate = styled.p`
+  padding: 1%;
+`
+
+const CardButton = styled(Link)`
+  width: 98%;
   padding: 1%;
 `
 
@@ -67,34 +71,28 @@ interface MemeCardProp {
     src: string,
 }
 
-function navigateComment(id: string) {
-    let navigate = useNavigate();
-    navigate("/details/" + id);
-}
-
-function navigateMeme(id: string) {
-    let navigate = useNavigate();
-    navigate("/editor/" + id);
-}
-
 export const CommentCardProfile = ({date, src, children, memeId}: CommentCardProp) => {
     return (
         <>
-            <WorkedImage>
-                <Image src={src}/>
-                <CommentAndDate>Commented
-                    on:{date} "{children}"</CommentAndDate>
-            </WorkedImage>
+            <CardButton to={"/details/" + memeId}>
+                <WorkedImage>
+                    <Image src={src}/>
+                    <CommentAndDate>Commented
+                        on:{date} "{children}"</CommentAndDate>
+                </WorkedImage>
+            </CardButton>
         </>
     )
 }
 export const MemeCardProfile = ({date, src, memeId}: MemeCardProp) => {
     return (
         <>
-            <WorkedComment>
-                <Image src={src}/>
-                <Date>Edited on: {date}</Date>
-            </WorkedComment>
+            <CardButton to={"/editor/" + memeId}>
+                <WorkedComment>
+                    <Image src={src}/>
+                    <Date>Edited on: {date}</Date>
+                </WorkedComment>
+            </CardButton>
         </>
     )
 }

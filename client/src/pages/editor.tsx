@@ -107,30 +107,30 @@ export const Editor = () => {
     const [jwt, setJwt] = useState<string>("")
 
 
-    useEffect(() => {
-        if (isLoggedIn) {
-            setJwt(localStorage.getItem('meme-token') || "")
-            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20}), {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                // body: JSON.stringify({start:0, end:20})
-            }).then(r => r.json()).then(r => setTemplates(r))
-
-            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 1}), {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                // body: JSON.stringify({start:0, end:20})
-            }).then(r => r.json()).then(r => setUsersCreations(r))
-            console.log(usersCreation)
-
-        } else {
-            navigate('/login')
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (isLoggedIn) {
+    //         setJwt(localStorage.getItem('meme-token') || "")
+    //         fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 0}), {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             // body: JSON.stringify({start:0, end:20})
+    //         }).then(r => r.json()).then(r => setTemplates(r))
+    //
+    //         fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 1}), {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             // body: JSON.stringify({start:0, end:20})
+    //         }).then(r => r.json()).then(r => setUsersCreations(r))
+    //         console.log(usersCreation)
+    //
+    //     } else {
+    //         navigate('/login')
+    //     }
+    // }, [])
 
 
     useEffect(() => {
@@ -192,53 +192,65 @@ export const Editor = () => {
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;
         const image = imageEditorInst.toDataURL();
-        const texts = []
-        const xCoordinates = []
-        const yCoordinates = []
-        const fontSizes = []
-        const colors = []
 
 
-        for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
-            const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top", "fill", "fontSize"])
-            if (properties?.type === "i-text") {
-                const {text, left, top, fill, fontSize} = properties
-                texts.push(text)
-                xCoordinates.push(left)
-                yCoordinates.push(top)
-                colors.push(fill)
-                fontSizes.push(fontSize)
+        const imageForData = new Image()
+        imageForData.onload = () => {
+            const texts = []
+            const xCoordinates = []
+            const yCoordinates = []
+            const fontSizes = []
+            const colors = []
+            let width = 0;
+            let height = 0;
+            let pixels = 0;
+
+            width = imageForData.width
+            height = imageForData.height
+            pixels = width * height
+
+            for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
+                const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top", "fill", "fontSize"])
+                if (properties?.type === "i-text") {
+                    const {text, left, top, fill, fontSize} = properties
+                    texts.push(text)
+                    xCoordinates.push(left)
+                    yCoordinates.push(top)
+                    colors.push(fill)
+                    fontSizes.push(fontSize)
+                }
             }
+
+            const finalMeme = {
+                //todo add missing fields
+                //todo was ist status
+                name: title,
+                desc: description,
+                image,
+                texts,
+                xCoordinates,
+                yCoordinates,
+                fontSizes,
+                colors,
+                status: 0,
+                width,
+                height,
+                pixels,
+            }
+
+            console.log(jwt)
+
+            fetch('http://localhost:3000/editor' + getJwt(), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(finalMeme)
+            }).then(() => {
+                window.alert("Your meme was successfully uploaded")
+            })
         }
-
-        const finalMeme = {
-            //todo add missing fields
-            //todo was ist status
-            name: title,
-            desc: description,
-            image,
-            texts,
-            xCoordinates,
-            yCoordinates,
-            fontSizes,
-            colors,
-            status: 0,
-            width: 418,
-            height: 866,
-            pixels: 361.988
-        }
-
-        console.log(jwt)
-
-        fetch('http://localhost:3000/editor' + getJwt(), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(finalMeme)
-        }).then(() => {
-            window.alert("Your meme was successfully uploaded")
-        })
+        imageForData.src = image
     }
 
     const handleFileUpload = (event: React.FormEvent) => {

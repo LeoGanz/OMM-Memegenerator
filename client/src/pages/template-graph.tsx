@@ -10,10 +10,7 @@ import {
     useWidth,
     useLeftMargin,
     TemplateData,
-    useLegendTopMargin,
     useLegendBottomMargin,
-    useLegendRightMargin,
-    useLegendLeftMargin
 } from "../util/statistics";
 import {
     LineChart,
@@ -58,9 +55,16 @@ export const TemplateGraph = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(r => r.json()).then(r => {
-                return setTemplateData(transformToRechartTemplate(r.templates, r.usages));
-            })
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(r => {
+                        return setTemplateData(transformToRechartTemplate(r.templates, r.usages));
+                    })}
+                else
+                    {
+                        window.alert("Connection to server failed");
+                    }
+            });
         } else {
             navigate('/login');
         }

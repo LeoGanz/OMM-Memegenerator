@@ -10,10 +10,7 @@ import {
     useWidth,
     useLeftMargin,
     SingleData,
-    useLegendTopMargin,
     useLegendBottomMargin,
-    useLegendLeftMargin,
-    useLegendRightMargin
 } from "../util/statistics";
 import {
     BarChart,
@@ -59,8 +56,14 @@ export const SingleGraph = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(r => r.json()).then(r => {
-                return setSingleData(transformToRechartSingle(r.memes, r.upVotes, r.downVotes));
+            }).then(r => {
+                if (r.ok) {
+                    r.json().then(r => {
+                        return setSingleData(transformToRechartSingle(r.memes, r.upVotes, r.downVotes));
+                    })
+                } else {
+                    window.alert("Connection to the server failed");
+                }
             })
         } else {
             navigate('/login');

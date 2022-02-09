@@ -33,9 +33,14 @@ export const Profile = () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                }).then(r => r.json()).then(r => {
-                setProfileData(r);
-                console.log(r);
+                }).then(r => {
+                if (r.ok) {
+                    r.json().then(r => {
+                        setProfileData(r);
+                    });
+                } else {
+                    window.alert("Connection to the server failed");
+                }
             });
         } else {
             navigate('/login')

@@ -41,6 +41,9 @@ function respond(res, code, message, additionalInfo) {
     }
 }
 
+/**
+ * Verification of a token with callbacks for success an failure.
+ */
 function jwtVerify(request, onSuccess, onFailure) {
     const adjustedToken = adjustToken(request);
     jwt.verify(adjustedToken, 'top-secret', (err) => {
@@ -61,10 +64,16 @@ function respondSilently(res, code, message) {
     }
 }
 
+/**
+ * Utility handler for connection problems with the database.
+ */
 function dbConnectionFailureHandler(res, err) {
     return respond(res, 503, "Connection to db failed", err);
 }
 
+/**
+ * Utility handler for instances where no meme is found.
+ */
 function noMemeFoundHandler(res) {
     return respond(res, 400, "No meme found");
 }
@@ -90,6 +99,9 @@ function checkForEqualLength(arrayOfArrays) {
     return true;
 }
 
+/**
+ * Calculate an unique identifier for a meme using MD5 hashes.
+ */
 function calcMemeIdFor(memeSchema) {
     const keyData =
         memeSchema.name
@@ -112,6 +124,9 @@ function calcMemeIdFor(memeSchema) {
     return md5(keyData);
 }
 
+/**
+ * Extract the metadata from a meme.
+ */
 function parseMetadata(meme) {
     return {
         name: meme.name,
@@ -128,6 +143,14 @@ function parseMetadata(meme) {
     }
 }
 
+/**
+ * Try to retrieve a meme from the database and then parse its metadata.
+ *
+ * @param memeId identifier of the meme
+ * @param onSuccess callback that processes metadata
+ * @param onError callback that processes errors
+ * @param onNoMemeAvailable callback for when no meme with the specified ID can be found
+ */
 function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
     memeSchema
         .findOne({memeId: memeId})
@@ -149,15 +172,24 @@ function collectMetadata(memeId, onSuccess, onError, onNoMemeAvailable) {
         });
 }
 
+/**
+ * Strip sensitive user information from a comment component.
+ */
 function cleanCommentComponent({dateOfCreation, creator, text}) {
     const username = creator.username;
     return ({dateOfCreation, username, text})
 }
 
+/**
+ * Select important elements of text components. By default, all that are specified in the schema.
+ */
 function cleanTextComponent({text, xCoordinate, yCoordinate, fontSize, color}) {
     return ({text, xCoordinate, yCoordinate, fontSize, color});
 }
 
+/**
+ * Strip sensitive user information from a meme and clean up data.
+ */
 function cleanMeme(meme) {
     const {
         name,
@@ -244,7 +276,6 @@ function createToken(email) {
 function adjustToken(request) {
     let token = request.query.token;
     if (token === undefined) {
-        // console.log("token undefined");
         token = ""
     }
     return token;

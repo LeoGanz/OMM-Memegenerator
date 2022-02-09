@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
     jwtVerify(req, _ => {
         respond(res, 401, "You are already logged in");
     }, _ => {
+        // alternative auth using username and password instead of token
         let email;
         let pw;
         let inputCredentials = req.headers.authorization;

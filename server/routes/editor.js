@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
     memeSchema
         .findOne({memeId: req.query.memeId})
         .populate('texts')
-        // do not populate whole creator as this would leak private data
+        // do not populate all fields of users as this would leak private data
         .populate('creator', 'username')
         .populate('upVoters', 'username')
         .populate('downVoters', 'username')

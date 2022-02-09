@@ -18,18 +18,11 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
         } else {
             if (lst.length === 0) {
 
-                // console.log(req.body)
-                // console.log(username, fullName, password, email);
-
-
                 //Main code
                 let creationDate = getCurrentDateString();
                 let hashedPw = password;
                 let tokenString = createToken(email);
 
-
-                // console.log("everything defined");
-                // const users = mongoose.model('users', userSchema);
                 const user = new userSchema({
                     username: username,
                     fullName: fullName,
@@ -40,7 +33,6 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
                     lastEdited: [],
                     lastComments: [],
                 });
-                // console.log(creationDate);
                 userSchema.create(user).then(_ => {
                     console.log("registration succeeded");
                     respond(res, 200, tokenString);
@@ -58,7 +50,6 @@ function addUserIfEmailDoesNotExist(email, password, username, fullName, res) {
  * RegisterTestUser.txt or the Readme.
  */
 router.post("/", (req, res) => {
-    // console.log("route reached");
     res.set('Access-Control-Allow-Origin', '*');
     jwtVerify(req, _ => {
         respond(res, 503, "No logged-in user can register a user");

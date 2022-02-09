@@ -38,6 +38,7 @@ function renderMemeToSize(meme, bytes) {
     const bytesBase64 = 1.37 * bytes; // base64 encodings are about 37% larger
     let quality = 1;
 
+    // Perform binary search to find suitable quality for jpeg compression
     for (let delta = 0.5; delta > 0.01; delta /= 2) {
         const rendering = renderMeme(meme, quality)
         const bytesCurrent = Buffer.byteLength(rendering);
@@ -66,6 +67,8 @@ function renderAndStoreMeme(meme) {
 }
 
 function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onNoMemeFound, onError, retry = true) {
+    // use stored rendering if possible and no specific target size is requested.
+    // otherwise, perform rendering
     renderSchema
         .findOne({memeId: memeId})
         .exec((err, render) => {

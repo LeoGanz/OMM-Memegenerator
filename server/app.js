@@ -1,4 +1,3 @@
-
 let express = require('express');
 let path = require('path');
 let cors = require('cors');
@@ -9,7 +8,7 @@ let indexRouter = require('./routes/index');
 let loginRouter = require('./routes/login');
 let registerRouter = require('./routes/register');
 let eternalRouter = require('./routes/eternal');
-let imgRouter = require('./routes/img');
+let {imgRouter} = require('./routes/img');
 let editorRouter = require('./routes/editor');
 let singleRouter = require('./routes/single');
 let profileRouter = require('./routes/profile');
@@ -26,7 +25,7 @@ let app = express();
 
 const corsOptions = {origin: true, credentials: true}
 app.options('*', cors(corsOptions));
-app.listen(8000, function(){
+app.listen(8000, function () {
     console.log('CORS-enabled web server listening on port 8000');
 });
 
@@ -61,10 +60,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 //constant checking if someone is logged in
 app.use(eternalRouter);
 app.use('/editor', editorRouter); //Editor
-app.use('/profile',profileRouter); //Profile overview
+app.use('/profile', profileRouter); //Profile overview
 app.use('/images', imgRouter); //showing images
 app.use('/image', singleRouter); // Single view of an Image
-app.use('/statistics',statisticRouter); // Showing of graphs
+app.use('/statistics', statisticRouter); // Showing of graphs
 
 app.use(indexRouter);
 

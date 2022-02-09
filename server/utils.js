@@ -68,7 +68,7 @@ function respondSilently(res, code, message) {
  * Utility handler for connection problems with the database.
  */
 function dbConnectionFailureHandler(res, err) {
-    return respond(res, 503, "Connection to db failed", err);
+    return respond(res, 503, "Database access failed", err);
 }
 
 /**
@@ -129,6 +129,7 @@ function calcMemeIdFor(memeSchema) {
  */
 function parseMetadata(meme) {
     return {
+        memeId: meme.memeId,
         name: meme.name,
         desc: meme.desc,
         creator: meme.creator.username,

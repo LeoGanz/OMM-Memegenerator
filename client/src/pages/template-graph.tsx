@@ -39,6 +39,7 @@ function transformToRechartTemplate(memeIds: string[], usages: number[]) {
     return result;
 }
 
+
 export const TemplateGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
     let navigate = useNavigate()
@@ -59,16 +60,16 @@ export const TemplateGraph = () => {
                 if (r.ok) {
                     r.json().then(r => {
                         return setTemplateData(transformToRechartTemplate(r.templates, r.usages));
-                    })}
-                else
-                    {
-                        window.alert("Connection to server failed");
-                    }
+                    })
+                } else {
+                    window.alert("Connection to server failed");
+                }
             });
         } else {
             navigate('/login');
         }
     }, [])
+
     return (
         <>
             <HeadlineSection>

@@ -40,7 +40,8 @@ On this page you see a single meme in full size. There you can comment on the te
 In this editor you can create your memes. You can place text boxes anywhere, set the font sizes and
 colors. If you are finished click either on "save draft" or on "upload". Save draft lets you edit
 the meme later, but it is not seen at the overview page. If you click on "upload" the meme can be
-seen on the overview page, but you can not edit it anymore.
+seen on the overview page, but you can not edit it anymore. Here you can also upload templates 
+via an url or from your file system. If you are a good painter that is also possible.
 
 //TODO: erweitern, wenn fertig und getestet
 
@@ -59,10 +60,18 @@ identifies it. This goes for templates as well. For each id of a template, there
 statistic. You can get back by the button at the other horizontal side of your username.
 
 ### Single Graph
+
 Here you can see statistics for the up and down votes of memes. Each meme is again specified by 
 its memeId and has a bar for the down votes in light purple. The bar for the up votes is in 
 light green over the bar for the down votes. This gives an impression for how favored a meme is 
 or how bad one is. As in the template graph you can get back to the overview page.
+
+### API Documentation
+
+On this page there is just documented, which calls for the API are possible. Just read a bit and 
+make yourself familiar with it. The back to overview button is at the usual position.
+
+//TODO: Alles vergessene hinzufügen
 
 #
 

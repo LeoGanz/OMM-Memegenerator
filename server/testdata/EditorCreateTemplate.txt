@@ -20,7 +20,7 @@ JSON-Body:
 
 Optionally provide "memeId":"someId" in body instead of "image", to specify a template.
 
-Should result in memeId 55db426ebe9d5ca39ccb28f263355f75
+Should result in memeId 7279cccbdb13373a31994f293f863a6f
 
 xSizes and ySizes are no longer in use as they can result in distorted text.
 Colors can be provided in a format supported by HTML 5 Canvas API.

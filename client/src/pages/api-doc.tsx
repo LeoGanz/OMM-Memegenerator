@@ -22,72 +22,12 @@ const ApiSubTitle = styled.h3`
 
 
 const openRetrieve = () => {
-    window.open("http://localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=2022-2-2");
+    window.open("http://localhost:3000/retrieve?numberOfMemes=10&text=text1Of&creatorName=API");
 }
-
-interface APIcreate {
-    memeId: string,
-    memes: [{
-        name: string,
-        desc: string,
-        texts: [string, string],
-        xCoordinates: [number, number],
-        yCoordinates: [number, number],
-        fontSizes: [number, number],
-        colors: [string, string],
-    }, {
-        name: string,
-        desc: string,
-        texts: [string, string],
-        xCoordinates: [number, number],
-        yCoordinates: [number, number],
-        fontSizes: [number, number],
-        colors: [string, string],
-    }]
-}
-
-const createBody: APIcreate = {
-    memeId: "b717756bf5921681aa91b08feb1af324",
-    memes:
-        [
-            {
-                name: "nameOfMeme1",
-                desc: "descriptionOfMeme1",
-                texts: ["text1OfMeme1", "text2OfMeme1"],
-                xCoordinates: [111, 222],
-                yCoordinates: [111, 222],
-                fontSizes: [11, 22],
-                colors: ["#000000", "#0000FF"]
-            },
-            {
-                name: "nameOfMeme2",
-                desc: "descriptionOfMeme2",
-                texts: ["text1OfMeme2", "text2OfMeme2"],
-                xCoordinates: [333, 444],
-                yCoordinates: [333, 444],
-                fontSizes: [33, 44],
-                colors: ["#32CD32", "#800000"]
-            }
-        ]
-}
-
-console.log(JSON.stringify(createBody))
 
 const openCreate = () => {
-    fetch('http://localhost:3000/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(createBody),
-    }).then(r => {
-        r.text().then(r => {
-            console.log(r);
-            window.open("", "", r)
-        });
-    })
+    window.open("http://localhost:8888/create-response");
 }
-
 
 export const APIDoc = () => {
     return (
@@ -119,11 +59,14 @@ export const APIDoc = () => {
             </p>
             <Wrapper onClick={openRetrieve}>
                 GET
-                localhost:3000/retrieve?numberOfMemes=10&text=Hello&creatorName=someName&creationDate=2022-2-2
+                localhost:3000/retrieve?numberOfMemes=10&text=someText&creatorName=someName&creationDate=someDate
             </Wrapper>
             <p>
-                If you click on the URL. You get to a new page giving back URLs to every meme
-                found for these parameters given.
+                If you click on the URL, you get to a new page giving back URLs to every meme
+                found for these parameters given. For this case the name is set to the "API" user
+                and
+                the text is set to "text1" to retrieve some of the memes created from the create
+                request at the bottom.
             </p>
 
             <ApiSubTitle>
@@ -159,7 +102,7 @@ export const APIDoc = () => {
             <p>JSON-Body:</p>
 
             <p>{"{\n" +
-            "    \"memeId\":\"b717756bf5921681aa91b08feb1af324\",\n" +
+            "    \"memeId\":\"some memeID\",\n" +
             "    \"memes\":\n" +
             "    [\n" +
             "        {\n" +
@@ -184,7 +127,9 @@ export const APIDoc = () => {
             "}"}</p>
 
             <p>
-                If you click on the link, the request is executed. These images are always created
+                If you click on the link, the request is executed with a sample memeId that is
+                created when you execute the editorCreate as in the README of the server. These
+                images are always created
                 by the API. If you want to create memes
                 as a user, please log in and create a meme.
             </p>

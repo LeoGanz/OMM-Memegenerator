@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
-import {Link, useNavigate} from "react-router-dom";
-import {Button} from "../button/button";
+import {Link} from "react-router-dom";
 
 export const DivGroup = styled.div`
   column-count: 2;

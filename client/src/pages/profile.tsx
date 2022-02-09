@@ -25,17 +25,21 @@ export const Profile = () => {
         jwt = localStorage.getItem('meme-token') || "";
     }
     useEffect(() => {
-        jwt = localStorage.getItem('meme-token') || "";
-        fetch('http://localhost:3000/profile' + "?" + "end=4&" +
-            "token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRkY2QuY3J1aXNlQGdteC5kZSIsImp0aSI6ImY3NmU5YTQwLTkyMTctNDgzZC1iYjJkLTkyNGE1MTdkM2RlNiIsImlhdCI6MTY0NDQwMjQ4MiwiZXhwIjoxNjQ0NDA2MDgyfQ.yCAByQ6HnrdHV4Dpd6U9gwP8uaVydTGB3ulpy7Clczs", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(r => r.json()).then(r => {
-            setProfileData(r);
-            console.log(r);
-        });
+        if (isLoggedIn) {
+            jwt = localStorage.getItem('meme-token') || "";
+            fetch('http://localhost:3000/profile' + getJwt(jwt) + "&end=20" +
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(r => r.json()).then(r => {
+                setProfileData(r);
+                console.log(r);
+            });
+        } else {
+            navigate('/login')
+        }
     }, []);
     return (
         <>

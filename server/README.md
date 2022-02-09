@@ -26,7 +26,7 @@ memeId" of the Template you want to use for the meme. You can for example get th
 given from the retrieve route above under the query-parameter
 "memeId". Then you need to give an array under the parameter "memes". Every element out of the array
 is a meme being created. This element has to have the same structure: It is a class with the "name"
-as the name of the meme; the "desc", the discription of the meme; the "texts" an array of
+as the name of the meme; the "desc", the description of the meme; the "texts" an array of
 String-texts being placed on the meme; the "xCoordinates" mapping to the texts and describing the
 xCoordinates of the texts; same for "yCoordinates", "fontSizes" and "colors". These arrays have to
 have the same length and "texts" and "colors" need to be Strings (colors need to be supported by

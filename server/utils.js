@@ -42,7 +42,7 @@ function respond(res, code, message, additionalInfo) {
 }
 
 /**
- * Verification of a token with callbacks for success an failure.
+ * Verification of a token with callbacks for success and failure.
  */
 function jwtVerify(request, onSuccess, onFailure) {
     const adjustedToken = adjustToken(request);

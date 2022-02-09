@@ -29,13 +29,13 @@ function getCurrentDateString() {
  * the client
  */
 function respond(res, code, message, additionalInfo) {
-    res.set('Access-Control-Allow-Origin', '*');
     let logEntry = code + ": " + message;
     if (additionalInfo !== undefined) {
         logEntry += "; Additional info: " + additionalInfo;
     }
     if (!res.headersSent) {
         console.log(logEntry);
+        res.set('Access-Control-Allow-Origin', '*');
         res.status(code).send(message);
     } else {
         console.log("Tried to respond, but response was already sent. Message was:\n" + logEntry)
@@ -60,8 +60,8 @@ function jwtVerify(request, onSuccess, onFailure) {
  * Same functionality as respond but without logging.
  */
 function respondSilently(res, code, message) {
-    res.set('Access-Control-Allow-Origin', '*');
     if (!res.headersSent) {
+        res.set('Access-Control-Allow-Origin', '*');
         res.status(code).send(message);
     }
 }

@@ -26,8 +26,8 @@ function renderMeme(meme, quality = 0.8) {
             ctx.fillText(textComponent.text, textComponent.xCoordinate, textComponent.yCoordinate);
         }
     };
-    image.src = "data:;base64," + meme.img.base64; // mime type omitted
-
+    const prefix = meme.img.base64.startsWith("data:") ? "" : "data:;base64,"; // mime type omitted
+    image.src = prefix + meme.img.base64;
 
     return canvas.toDataURL('image/jpeg', quality); // data url with base64 encoding
 }

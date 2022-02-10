@@ -28,7 +28,7 @@ export const Profile = () => {
     useEffect(() => {
         if (isLoggedIn) {
             jwt = localStorage.getItem('meme-token') || "";
-            fetch('http://localhost:3000/profile' + getJwt() + "&end=20" +
+            fetch('http://localhost:3000/profile' + getJwt() + "&end=20",
                 {
                     method: 'GET',
                     headers: {

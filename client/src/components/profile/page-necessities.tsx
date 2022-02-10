@@ -41,10 +41,12 @@ const Image = styled.img`
 const Date = styled.p`
   width: 98%;
   padding: 1%;
+  color: black;
 `
 
 const CommentAndDate = styled.p`
   padding: 1%;
+  color: black;
 `
 
 const CardButton = styled(Link)`
@@ -53,7 +55,7 @@ const CardButton = styled(Link)`
   color: #efefef;
 
   &:hover {
-    color: #dcdcdc;
+    color: #007900;
     cursor: pointer;
   }
 `

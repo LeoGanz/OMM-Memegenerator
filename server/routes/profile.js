@@ -25,7 +25,7 @@ function findMemeBasesAndRespond(comments, memeComments, res, response) {
                     base64: base
                 }
                 memeComments.push(newComm);
-                findMemeBasesAndRespond(comments,memeComments, res, response);
+                findMemeBasesAndRespond(comments, memeComments, res, response);
             }
         });
     }
@@ -54,8 +54,10 @@ router.get('/', (req, res) => {
                 let comments = user.lastComments;
                 const start = req.query.start ?? 0;
                 const end = req.query.end ?? 5;
-                history = history.reverse().slice(start, end);
-                comments = comments.reverse().slice(start, end);
+                comments = comments.reverse();
+                history = history.reverse()
+                history = history.slice(start, end);
+                comments = comments.slice(start, end);
                 let response = {
                     username: username,
                     fullName: fullName,

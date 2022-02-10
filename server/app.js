@@ -20,7 +20,7 @@ let verifyRouter = require('./routes/verify');
 const mongoose = require("mongoose");
 require('body-parser');
 require('dotenv/config');
-const {userAPI} = require("./utils");
+const {userAPI, respond} = require("./utils");
 let app = express();
 
 const corsOptions = {origin: true, credentials: true}
@@ -71,7 +71,7 @@ app.use(indexRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res) {
     console.log("somehow landed here");
-    res.status(404).send("Page not found");
+    respond(res, 404, "Page not found")
 });
 
 // error handler

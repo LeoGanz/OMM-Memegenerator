@@ -16,8 +16,9 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
-describe('Displayed properly', () => {
+test('Displayed properly', () => {
     const {getByRole} = render(<Login/>);
     console.log(getByRole);
-    expect(true).toBe(true);
+    let real = true;
+    expect(real).toBe(true);
 });

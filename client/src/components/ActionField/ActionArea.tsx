@@ -13,16 +13,25 @@ interface memeSingle {
     memeId: string,
     autoplay: boolean,
     gap: number,
+    currentAddress: string,
 }
 
 
-export const ActionArea = ({memeId, autoplay, gap}: memeSingle) => {
+export const ActionArea = ({memeId, currentAddress, autoplay, gap}: memeSingle) => {
     const useCopyMemeId = () => {
-
+        navigator.clipboard.writeText(memeId).then(() => {
+            window.alert("Copying successful");
+        }, f => {
+            window.alert("Copying to clipboard not possible: " + f);
+        });
     }
 
     const useCopyURL = () => {
-
+        navigator.clipboard.writeText(currentAddress + "&memeId=" + memeId).then(() => {
+            window.alert("Copying successful");
+        }, f => {
+            window.alert("Copying to clipboard not possible: " + f);
+        });
     }
 
     const useDownload = () => {

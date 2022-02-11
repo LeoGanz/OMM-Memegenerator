@@ -11,15 +11,22 @@ interface memeSingle {
 }
 
 const AutoplayDiv = styled.div`
-  columns: 2;
-  width:100%;
-  padding:1%;
+  columns: 3;
+  width: 100%;
+  padding: 1%;
   display: inline-table;
 `
 
 const FormTextInput = styled(TextInput)`
-  width:48%;
+  width: 48%;
   padding: 1%;
+`
+
+const ToggleDiv = styled.div`
+  columns:2;
+  width:100%;
+  padding: 1%;
+  display: inline-table;
 `
 
 export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) => {
@@ -40,7 +47,13 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) =>
                     <FormTextInput name={'gap'} type={'number'} label={'Gap between Switches' +
                     ' in' +
                     ' Seconds'} control={control}/>
-                    <input type="submit" value="Autoplay"/>
+                    <ToggleDiv id="result">
+                        <div><span id="status">No </span>Autoplay</div>
+                        <label className="toggle">
+                            <input type="checkbox" id="toggleswitch" />
+                            <span className="roundbutton"/>
+                        </label>
+                    </ToggleDiv>
                 </AutoplayDiv>
             </form>
         </>

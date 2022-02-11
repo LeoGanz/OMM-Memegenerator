@@ -38,8 +38,8 @@ export const ActionArea = ({memeId, currentAddress, gap, next}: memeSingle) => {
     return (
         <>
             <ActionAreaDiv>
-                <StyledButton onClick={useCopyMemeId}>Copy memeId</StyledButton>
-                <StyledButton onClick={useCopyURL}>Share</StyledButton>
+                <StyledButton onClick={useCopyMemeId}>COPY MEMEID</StyledButton>
+                <StyledButton onClick={useCopyURL}>SHARE</StyledButton>
                 <DownloadForm currentAddress={currentAddress} memeId={memeId}/>
                 <AutoPlayForm memeId={memeId} gap={gap}
                               currentAddress={currentAddress} next={next}/>

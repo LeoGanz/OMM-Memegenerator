@@ -5,9 +5,10 @@ input[type="submit"] {
     border: none;
     margin-top: 40px;
     padding: 20px;
+
 }
 
 input[type="submit"]:hover {
-    background: #00ac00;
+    opacity: 90%;
     cursor: pointer;
 }

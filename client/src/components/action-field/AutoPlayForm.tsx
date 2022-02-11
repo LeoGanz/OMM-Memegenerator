@@ -12,11 +12,14 @@ interface memeSingle {
 
 const AutoplayDiv = styled.div`
   columns: 2;
-  width: 100%
+  width:100%;
+  padding:1%;
+  display: inline-table;
 `
 
 const FormTextInput = styled(TextInput)`
-  width:50%;
+  width:48%;
+  padding: 1%;
 `
 
 export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) => {
@@ -38,7 +41,7 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) =>
                     <FormTextInput name={'gap'} type={'text'} label={'gap between switches' +
                     ' in' +
                     ' seconds'} control={control}/>
-                    <input type="submit"/>
+                    <input type="submit" value="autoplay"/>
                 </AutoplayDiv>
             </form>
         </>

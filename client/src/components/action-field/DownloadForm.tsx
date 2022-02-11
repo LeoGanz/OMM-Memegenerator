@@ -9,7 +9,15 @@ interface downloadForm {
 }
 
 const FormTextInput = styled(TextInput)`
-  width:50%;
+  width: 48%;
+  padding: 1%;
+`
+
+const DownloadDiv = styled.div`
+  columns: 2;
+  width: 100%;
+  padding: 1%;
+  display: inline-table;
 `
 
 export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
@@ -50,9 +58,12 @@ export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
     return (
         <>
             <form name="download" onSubmit={handleSubmit(useDownload)}>
-                <FormTextInput control={control} name={'fileSize'} type={'text'} label={'download' +
-                ' file size in MB'}/>
-                <input type="submit"/>
+                <DownloadDiv>
+                    <FormTextInput control={control} name={'fileSize'} type={'text'}
+                                   label={'download' +
+                                   ' file size in MB'}/>
+                    <input type="submit" value="Download"/>
+                </DownloadDiv>
             </form>
         </>
     );

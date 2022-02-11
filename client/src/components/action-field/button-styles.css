@@ -1,10 +1,14 @@
 input[type="submit"] {
-    background: #007900;
+    background-color: #007900;
+    border: 1px solid #007900;
+    border-radius: 10px;
+    padding: 8px 16px;
+    display: flex;
+    height: fit-content;
+    cursor: pointer;
+    transition: opacity 0.2s;
     color: white;
-    text-transform: uppercase;
-    border: none;
-    margin-top: 40px;
-    padding: 20px;
+    font-size: 14px;
 
 }
 

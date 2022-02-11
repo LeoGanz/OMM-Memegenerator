@@ -41,7 +41,7 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) =>
                     <FormTextInput name={'gap'} type={'text'} label={'gap between switches' +
                     ' in' +
                     ' seconds'} control={control}/>
-                    <input type="submit" value="autoplay"/>
+                    <input type="submit" value="Autoplay"/>
                 </AutoplayDiv>
             </form>
         </>

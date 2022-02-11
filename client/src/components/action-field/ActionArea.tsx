@@ -6,8 +6,12 @@ import {AutoPlayForm} from "./AutoPlayForm";
 
 const ActionAreaDiv = styled.div`
   width: 100%;
-  columns: 4;
-  
+  columns: 5;
+  display: inline;
+`
+
+const AutoplayStyledButton = styled(StyledButton)`
+  margin-top: 50%;
 `
 
 interface memeSingle {
@@ -38,8 +42,8 @@ export const ActionArea = ({memeId, currentAddress, gap, next}: memeSingle) => {
     return (
         <>
             <ActionAreaDiv>
-                <StyledButton onClick={useCopyMemeId}>COPY MEMEID</StyledButton>
-                <StyledButton onClick={useCopyURL}>SHARE</StyledButton>
+                <StyledButton onClick={useCopyMemeId}>Copy MemeId</StyledButton>
+                <AutoplayStyledButton onClick={useCopyURL}>Share</AutoplayStyledButton>
                 <DownloadForm currentAddress={currentAddress} memeId={memeId}/>
                 <AutoPlayForm memeId={memeId} gap={gap}
                               currentAddress={currentAddress} next={next}/>

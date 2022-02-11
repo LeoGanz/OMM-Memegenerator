@@ -1,13 +1,8 @@
 import React from 'react';
-import ReactDOM from "react-dom";
-import style from 'styled-components';
-import renderer from 'react-test-renderer';
 import 'jest-styled-components';
 import {Login} from '../pages/login';
-import {Title} from "../components/layout/typography";
-import {render, act, fireEvent} from '@testing-library/react';
-import {Router, useNavigate} from "react-router-dom";
-import {useContext, useState} from "react";
+import {render} from '@testing-library/react';
+
 
 let mockedNavigate = jest.fn();
 
@@ -16,9 +11,11 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
-test('Displayed properly', () => {
-    const {getByRole} = render(<Login/>);
-    console.log(getByRole);
-    let real = true;
-    expect(real).toBe(true);
+test('Displayed properly except Submit', () => {
+    const {getByText, getAllByText} = render(<Login/>);
+    const title = getByText("Log In");
+    expect(title).toBeDefined();
+    const textInputs = getAllByText("");
+    expect(textInputs[0]).toBeDefined();
+    expect(textInputs[1]).toBeDefined();
 });

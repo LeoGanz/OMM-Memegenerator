@@ -59,7 +59,7 @@ export const Login = () => {
                 }}/>
                 <TextInput name={'password'} type={'password'} control={control} label={"Password"}
                            rules={{required: REQUIRED_FIELD_ERROR}}/>
-                <input type="submit"/>
+                <input type="submit" />
                 {apiError && <StyledErrorMessage>{apiError}</StyledErrorMessage>}
             </form>
         </>

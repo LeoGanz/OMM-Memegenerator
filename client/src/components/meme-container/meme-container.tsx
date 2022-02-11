@@ -30,8 +30,6 @@ const Meme = styled.img`
   width: 100%;
   max-width: 1000px;
   margin-bottom: 15px;
-
-
 `
 
 const StyledMemeInfos = styled(MemeInfos)`
@@ -52,7 +50,6 @@ const MemeWrapper = styled.div`
   align-items: center;
   width: 100%;
 `
-
 
 
 export const MemeContainer = ({searchParams,

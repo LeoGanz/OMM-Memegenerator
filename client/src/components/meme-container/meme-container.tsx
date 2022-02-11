@@ -8,6 +8,7 @@ import {SingleMemeType} from "../../util/typedef";
 import {NavigationButton} from "../../pages/editor";
 import {useNavigate} from "react-router-dom";
 import {objectToQuery} from "../../util/jwt";
+import {ActionArea} from "../action-field/ActionArea";
 
 const MemeContainerWrapper = styled.div`
 
@@ -58,7 +59,7 @@ export const MemeContainer = ({searchParams,
                                   ...props
                               }: SingleMemeType & {searchParams: any}) => {
     let navigate = useNavigate()
-    const handelNavigation = (isNext: boolean) => {
+    const handleNavigation = (isNext: boolean) => {
         const status = searchParams.get("status")
         const start = searchParams.get("start")
         const end = searchParams.get("end")
@@ -80,11 +81,12 @@ export const MemeContainer = ({searchParams,
             <StyledTitle>{name}</StyledTitle>
             <Description>{desc}</Description>
             <MemeWrapper>
-                <NavigationButton onClick={() => handelNavigation(false)}>{"<"}</NavigationButton>
+                <NavigationButton onClick={() => handleNavigation(false)}>{"<"}</NavigationButton>
                 <Meme src={dataUrl}/>
-                <NavigationButton onClick={() => handelNavigation(true)}>{">"}</NavigationButton>
+                <NavigationButton onClick={() => handleNavigation(true)}>{">"}</NavigationButton>
             </MemeWrapper>
-
+            <ActionArea memeId={props.memeId} gap={searchParams.get("autoplay")}
+                 currentAddress={window.location.href} next={handleNavigation}/>
             <StyledMemeInfos setVoteHoverActive={(b => {
             })} comments={comments.length} {...props}/>
         </MemeContainerWrapper>

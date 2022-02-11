@@ -1,11 +1,16 @@
 import {useForm} from "react-hook-form";
 import {TextInput} from "../text-input/input-field";
-import {StyledButton} from "../../pages/editor";
+import "./button-styles.css";
+import styled from "styled-components";
 
 interface downloadForm {
     currentAddress: string,
     memeId: string,
 }
+
+const FormTextInput = styled(TextInput)`
+  width:50%;
+`
 
 export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
     interface fileSize {
@@ -45,9 +50,8 @@ export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
     return (
         <>
             <form name="download" onSubmit={handleSubmit(useDownload)}>
-                <TextInput control={control} name={'fileSize'} type={'text'} label={'download' +
+                <FormTextInput control={control} name={'fileSize'} type={'text'} label={'download' +
                 ' file size in MB'}/>
-                <StyledButton>Download</StyledButton>
                 <input type="submit"/>
             </form>
         </>

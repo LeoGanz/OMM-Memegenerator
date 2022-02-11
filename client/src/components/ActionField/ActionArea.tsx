@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import {StyledButton} from "../../pages/editor";
 import {TextInput} from "../text-input/input-field";
+import {useForm} from "react-hook-form";
+import {DownloadForm} from "./DownloadForm";
+import {AutoPlayForm} from "./AutoPlayForm";
 
 const ActionAreaDiv = styled.div`
   display: flex;
@@ -18,6 +21,7 @@ interface memeSingle {
 }
 
 export const ActionArea = ({memeId, currentAddress, autoplay, gap, next}: memeSingle) => {
+
     const useCopyMemeId = () => {
         navigator.clipboard.writeText(memeId).then(() => {
             window.alert("Copying successful");
@@ -34,25 +38,14 @@ export const ActionArea = ({memeId, currentAddress, autoplay, gap, next}: memeSi
         });
     }
 
-    const useDownload = () => {
-        let fileSize = document.getElementsByName("fileSize")[0];
-        let value = fileSize.
-
-        const downloadURL = currentAddress + "&memeId=" + memeId + "&targetFileSize=" + size;
-        fetch()
-    }
-
-    const useAutoplay = () => {
-
-    }
-
     return (
         <>
             <ActionAreaDiv>
                 <StyledButton onClick={useCopyMemeId}>Copy memeId</StyledButton>
                 <StyledButton onClick={useCopyURL}>Share</StyledButton>
-                <TextInput name={'fileSize'} type={'text'} label={'download file size in MB'}/>
-                <StyledButton onClick={useDownload}/>
+                <DownloadForm currentAddress={currentAddress} memeId={memeId}/>
+                <AutoPlayForm memeId={memeId} autoplay={autoplay} gap={gap}
+                              currentAddress={currentAddress} next={next}/>
             </ActionAreaDiv>
         </>
     )

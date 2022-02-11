@@ -11,7 +11,7 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate,
 }));
 
-test('Displayed properly except Submit', () => {
+test('Displayed login properly except Submit', () => {
     const {getByText, getAllByText} = render(<Login/>);
     const title = getByText("Log In");
     expect(title).toBeDefined();

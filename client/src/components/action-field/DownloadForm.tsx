@@ -22,7 +22,7 @@ const DownloadDiv = styled.div`
 
 export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
     interface fileSize {
-        size: string,
+        fileSize: string,
     }
 
     const {
@@ -32,9 +32,11 @@ export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
         mode: 'onSubmit',
     });
 
-    const useDownload = async ({size}: fileSize) => {
-        if (size !== "" && size !== undefined) {
-            const downloadURL = currentAddress + "&memeId=" + memeId + "&targetFileSize=" + size;
+    const useDownload = async ({fileSize}: fileSize) => {
+        if (fileSize !== "" && fileSize !== undefined) {
+            const downloadURL = currentAddress + "&targetFileSize=" + fileSize;
+
+            console.log("&memeId=" + memeId + "&targetFileSize=" + fileSize);
             fetch(downloadURL, {
                 method: 'GET',
                 headers: {
@@ -42,9 +44,11 @@ export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
                 },
             }).then(r => {
                 if (r.ok) {
-                    console.log(r.text());
-                    r.text().then(r => {
-                        return r;
+                    r.json().then(r => {
+                        let a = document.createElement("a");
+                        a.href = r.dataUrl;
+                        a.download = "Meme.jpeg";
+                        a.click();
                     });
                 } else {
                     window.alert("Something with downloading did not work out");
@@ -59,9 +63,9 @@ export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
         <>
             <form name="download" onSubmit={handleSubmit(useDownload)}>
                 <DownloadDiv>
-                    <FormTextInput control={control} name={'fileSize'} type={'text'}
-                                   label={'download' +
-                                   ' file size in MB'}/>
+                    <FormTextInput control={control} name={'fileSize'} type={'number'}
+                                   label={'Download' +
+                                   ' File Size in Byte'}/>
                     <input type="submit" value="Download"/>
                 </DownloadDiv>
             </form>

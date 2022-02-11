@@ -29,7 +29,6 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) =>
     } = useForm<memeSingle>({
         mode: 'onSubmit',
     });
-    console.log(currentAddress);
     const useAutoplay = () => {
 
     }
@@ -38,9 +37,9 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) =>
         <>
             <form name="autoplay" onSubmit={handleSubmit(useAutoplay)}>
                 <AutoplayDiv>
-                    <FormTextInput name={'gap'} type={'text'} label={'gap between switches' +
+                    <FormTextInput name={'gap'} type={'number'} label={'Gap between Switches' +
                     ' in' +
-                    ' seconds'} control={control}/>
+                    ' Seconds'} control={control}/>
                     <input type="submit" value="Autoplay"/>
                 </AutoplayDiv>
             </form>

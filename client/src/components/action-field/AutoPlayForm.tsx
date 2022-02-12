@@ -2,6 +2,7 @@ import {TextInput} from "../text-input/input-field";
 import styled from "styled-components";
 import "./button-styles.css";
 import {MyTimer} from "../timer/timer";
+import {useNavigate} from "react-router-dom";
 
 interface memeSingle {
     memeId: string,
@@ -32,42 +33,74 @@ const ToggleDiv = styled.div`
 
 export const AutoPlayForm = ({memeId, currentAddress, gap, timer}: memeSingle) => {
 
-    const doChange = () => {
-        let checkBox: HTMLInputElement = document.getElementById("toggleswitch") as HTMLInputElement;
-        if (checkBox.checked) {
-
-        } else {
-
-        }
-    }
-    let checked = "unchecked";
     let value = false;
     let time;
-    console.log(gap);
     if (gap !== undefined && gap !== null) {
-        checked = "checked";
         value = true;
         time = gap as unknown as number;
-    }else{
-        time = 0;
+    } else {
+        time = 60;
     }
-    const end = new Date();
-    end.setSeconds(end.getSeconds() + time);
-    console.log(end);
+    const navigate = useNavigate();
+
+    const useChange = () => {
+        let checkBox: HTMLInputElement = document.getElementById("toggleswitch") as HTMLInputElement;
+        if (checkBox.checked) {
+            let newUrl;
+            if (!currentAddress.includes("gap")) {
+                newUrl = currentAddress + "&gap=" + "20";
+            } else {
+                let newUrlArray = currentAddress.split("&");
+                let newUrlArrayWithoutGap = newUrlArray.filter((elem) => {
+                    return !elem.includes("gap");
+                });
+                newUrl = newUrlArrayWithoutGap.reduce((a, b) => {
+                    return a + "&" + b;
+                })
+                newUrl = newUrl + "&gap=" + "30";
+            }
+            //TODO change numbers here
+            const to = newUrl.split("/");
+            const finalUrl = "/details/" + to[to.length - 1];
+            navigate(finalUrl);
+            const status = document.getElementById("status")
+            if (status !== null) {
+                status.innerHTML = "";
+            }
+            const restart = document.getElementById("restart");
+            if (restart !== null) {
+                restart.click();
+            }
+        } else {
+            const status = document.getElementById("status")
+            if (status !== null) {
+                status.innerHTML = "No ";
+                const restart = document.getElementById("restart");
+                const pause = document.getElementById("pause");
+                if (restart !== null) {
+                    restart.click();
+                    if (pause !== null) {
+                        pause.click();
+                    }
+                }
+            }
+        }
+    }
+
     return (
         <>
-            <AutoplayDiv>
-
+            <AutoplayDiv id="autoDiv">
                 <ToggleDiv>
                     <div><span id="status">No </span>Autoplay</div>
                     <label className="toggle">
                         <input type="checkbox" name="checkbox" id="toggleswitch"
-                               onChange={doChange} checked={value} value={checked}
-                               defaultChecked={value}/>
+                               onChange={useChange} defaultChecked={value}/>
                         <span className="roundbutton"/>
+
                     </label>
                 </ToggleDiv>
-                <MyTimer expiryTimestamp={time} onExpire={timer} id="timer"/>
+                <MyTimer add={time}
+                         expireFunction={timer} aStart={value} newTime={30} id="timer"/>
             </AutoplayDiv>
         </>
     )

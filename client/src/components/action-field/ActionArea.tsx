@@ -60,7 +60,7 @@ export const ActionArea = ({memeId, currentAddress, searchParams, timer}: memeSi
                 <StyledButton onClick={useCopyMemeId}>Copy MemeId</StyledButton>
                 <AutoplayStyledButton onClick={useCopyURL}>Share</AutoplayStyledButton>
                 <DownloadForm currentAddress={comp} memeId={memeId}/>
-                <AutoPlayForm memeId={memeId} gap={searchParams.get("gap")}
+                <AutoPlayForm gap={searchParams.get("gap")}
                               currentAddress={currentAddress} timer={timer}/>
             </ActionAreaDiv>
         </>

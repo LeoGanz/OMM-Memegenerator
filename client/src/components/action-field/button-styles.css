@@ -18,8 +18,10 @@ input[type="submit"]:hover {
 }
 
 input[type="checkbox"] {
-    opacity: 0%;
+    opacity: 0;
     margin-left: 10%;
+    width: 0;
+    height: 0;
 }
 
 .ergebnis {
@@ -69,4 +71,25 @@ input:checked + .roundbutton {
 input:checked + .roundbutton:before {
     transform: translate(260%, 0);
     background-color: white;
+}
+
+button[id="start"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
+}
+
+button[id="restart"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
+}
+
+button[id="pause"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
 }

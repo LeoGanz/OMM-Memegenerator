@@ -1,11 +1,9 @@
-import {TextInput} from "../text-input/input-field";
 import styled from "styled-components";
 import "./button-styles.css";
 import {MyTimer} from "../timer/timer";
 import {useNavigate} from "react-router-dom";
 
 interface memeSingle {
-    memeId: string,
     gap: string,
     currentAddress: string,
     timer: Function,
@@ -19,11 +17,6 @@ const AutoplayDiv = styled.div`
   display: grid;
 `
 
-const FormTextInput = styled(TextInput)`
-  width: 48%;
-  padding: 1%;
-`
-
 const ToggleDiv = styled.div`
   columns: 3;
   width: 100%;
@@ -31,7 +24,7 @@ const ToggleDiv = styled.div`
   display: inline-table;
 `
 
-export const AutoPlayForm = ({memeId, currentAddress, gap, timer}: memeSingle) => {
+export const AutoPlayForm = ({currentAddress, gap, timer}: memeSingle) => {
 
     let value = false;
     let time;
@@ -48,7 +41,7 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, timer}: memeSingle) =
         if (checkBox.checked) {
             let newUrl;
             if (!currentAddress.includes("gap")) {
-                newUrl = currentAddress + "&gap=" + "20";
+                newUrl = currentAddress + "&gap=" + "30";
             } else {
                 let newUrlArray = currentAddress.split("&");
                 let newUrlArrayWithoutGap = newUrlArray.filter((elem) => {
@@ -59,7 +52,7 @@ export const AutoPlayForm = ({memeId, currentAddress, gap, timer}: memeSingle) =
                 })
                 newUrl = newUrl + "&gap=" + "30";
             }
-            //TODO change numbers here
+            //possibly insert here the number the user can add here
             const to = newUrl.split("/");
             const finalUrl = "/details/" + to[to.length - 1];
             navigate(finalUrl);

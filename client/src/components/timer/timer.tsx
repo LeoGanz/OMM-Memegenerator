@@ -1,4 +1,5 @@
 import {useTimer} from "react-timer-hook";
+import "../action-field/button-styles.css";
 
 export function MyTimer({add, expireFunction, aStart, newTime}: any) {
     let exTS = new Date();

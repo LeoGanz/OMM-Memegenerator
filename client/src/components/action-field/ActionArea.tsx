@@ -19,10 +19,10 @@ interface memeSingle {
     memeId: string,
     searchParams: any,
     currentAddress: string,
-    next: Function,
+    timer: Function,
 }
 
-export const ActionArea = ({memeId, currentAddress, searchParams, next}: memeSingle) => {
+export const ActionArea = ({memeId, currentAddress, searchParams, timer}: memeSingle) => {
     const filterBy = searchParams.get("filterBy");
     const sortBy = searchParams.get("sortBy");
     let options = ""
@@ -62,7 +62,7 @@ export const ActionArea = ({memeId, currentAddress, searchParams, next}: memeSin
                 <AutoplayStyledButton onClick={useCopyURL}>Share</AutoplayStyledButton>
                 <DownloadForm currentAddress={comp} memeId={memeId}/>
                 <AutoPlayForm memeId={memeId} gap={searchParams.get("gap")}
-                              currentAddress={currentAddress} next={next}/>
+                              currentAddress={currentAddress} timer={timer}/>
             </ActionAreaDiv>
         </>
     )

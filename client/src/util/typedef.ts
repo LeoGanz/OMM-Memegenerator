@@ -75,7 +75,8 @@ export interface SingleMemeType {
     dataUrl: string,
     memeId: string
     prev:string,
-    next: string
+    next: string,
+    texts: MemeTextType[]
 }
 
 

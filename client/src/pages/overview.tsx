@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {Title} from "../components/layout/typography";
 import {MemeCard} from "../components/meme-card/meme-card";
 import {colors} from "../components/layout/colors";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import LoginContext from "../login-context";
 import {SingleMemeType} from "../util/typedef";
@@ -153,7 +153,7 @@ export const Overview = () => {
 
             <OverviewGrid>
                 {memeCardData.map((memeCardEntry) =>
-                    <MemeCard params={activeParams} {...memeCardEntry}/>
+                    <MemeCard key={memeCardEntry.memeId} params={activeParams} {...memeCardEntry}/>
                 )}
             </OverviewGrid>
 

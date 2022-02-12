@@ -1,5 +1,4 @@
-// @ts-ignore
-import {MemeType} from "../../util/typedef";
+import {SingleMemeType} from "../../util/typedef";
 import styled from "styled-components";
 import {colors} from "../layout/colors";
 
@@ -29,7 +28,7 @@ const StyledImage = styled.img<{selected: boolean}>`
 `
 
 interface CarouselProps {
-    memes: MemeType[],
+    memes: SingleMemeType[],
     onCarouselSelect: (index: number) => any
     currentSelection: number |undefined
 }
@@ -39,7 +38,7 @@ export const Carousel = ({memes, onCarouselSelect, currentSelection}: CarouselPr
 
     return (
         <CarouselWrapper>
-            {memes.map((meme, index) => <StyledImage selected={index === currentSelection} onClick={() => onCarouselSelect(index)} src={meme.img.base64}/>)}
+            {memes.map((meme, index) => <StyledImage key={meme.memeId} selected={index === currentSelection} onClick={() => onCarouselSelect(index)} src={meme.dataUrl}/>)}
         </CarouselWrapper>
     )
 }

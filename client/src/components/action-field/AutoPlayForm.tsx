@@ -1,5 +1,4 @@
 import {TextInput} from "../text-input/input-field";
-import {useForm} from "react-hook-form";
 import styled from "styled-components";
 import "./button-styles.css";
 
@@ -7,7 +6,11 @@ interface memeSingle {
     memeId: string,
     gap: string,
     currentAddress: string,
-    next: Function,
+    timer: any,
+}
+
+interface time {
+    time: string,
 }
 
 const AutoplayDiv = styled.div`
@@ -23,39 +26,35 @@ const FormTextInput = styled(TextInput)`
 `
 
 const ToggleDiv = styled.div`
-  columns:2;
-  width:100%;
+  columns: 2;
+  width: 100%;
   padding: 1%;
   display: inline-table;
 `
 
-export const AutoPlayForm = ({memeId, currentAddress, gap, next}: memeSingle) => {
-    const {
-        handleSubmit,
-        control
-    } = useForm<memeSingle>({
-        mode: 'onSubmit',
-    });
-    const useAutoplay = () => {
+export const AutoPlayForm = ({memeId, currentAddress, gap, timer}: memeSingle) => {
 
+    const doChange = () => {
+        let checkBox: HTMLInputElement = document.getElementById("toggleswitch") as HTMLInputElement;
+        if (checkBox.checked) {
+
+        } else {
+
+        }
     }
 
     return (
         <>
-            <form name="autoplay" onSubmit={handleSubmit(useAutoplay)}>
-                <AutoplayDiv>
-                    <FormTextInput name={'gap'} type={'number'} label={'Gap between Switches' +
-                    ' in' +
-                    ' Seconds'} control={control}/>
-                    <ToggleDiv id="result">
-                        <div><span id="status">No </span>Autoplay</div>
-                        <label className="toggle">
-                            <input type="checkbox" id="toggleswitch" />
-                            <span className="roundbutton"/>
-                        </label>
-                    </ToggleDiv>
-                </AutoplayDiv>
-            </form>
+            <AutoplayDiv>
+                <ToggleDiv>
+                    <div><span id="status">No </span>Autoplay</div>
+                    <label className="toggle">
+                        <input type="checkbox" name="checkbox" id="toggleswitch"
+                               onChange={doChange}/>
+                        <span className="roundbutton"/>
+                    </label>
+                </ToggleDiv>
+            </AutoplayDiv>
         </>
     )
 }

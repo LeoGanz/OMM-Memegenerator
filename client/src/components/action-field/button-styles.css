@@ -17,6 +17,11 @@ input[type="submit"]:hover {
     cursor: pointer;
 }
 
+input[type="checkbox"] {
+    opacity: 0%;
+    margin-left: 10%;
+}
+
 .ergebnis {
     font-size: 2rem;
     font-family: sans-serif;
@@ -58,10 +63,10 @@ input[type="submit"]:hover {
 
 input:checked + .roundbutton {
     background-color: #007900;
-    color:white;
+    color: white;
 }
 
-input:checked + .roundbutton:before  {
+input:checked + .roundbutton:before {
     transform: translate(260%, 0);
     background-color: white;
 }

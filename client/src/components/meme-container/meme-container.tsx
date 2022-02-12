@@ -86,7 +86,7 @@ export const MemeContainer = ({searchParams,
                 <NavigationButton onClick={() => handleNavigation(true)}>{">"}</NavigationButton>
             </MemeWrapper>
             <ActionArea memeId={props.memeId} searchParams={searchParams}
-                 currentAddress={window.location.href} next={handleNavigation}/>
+                 currentAddress={window.location.href} timer={handleNavigation}/>
             <StyledMemeInfos setVoteHoverActive={(b => {
             })} comments={comments.length} {...props}/>
         </MemeContainerWrapper>

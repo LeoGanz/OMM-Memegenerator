@@ -24,7 +24,7 @@ const SuccessMode = styled.div`
   button {
     width: fit-content;
     display: inline-block;
-    margin-left: 8px;
+    margin: 0 8px;
     
   }
   
@@ -121,6 +121,7 @@ export const Editor = () => {
     const [finishedMeme, setFinishedMeme] = useState<string>("")
     const [hasImage, setHasImage] = useState<boolean>(false)
     const [drawModeActive, setDrawModeActive] = useState<boolean>(false)
+    const [memeId, setMemeId] = useState<string | undefined>(undefined)
 
 
     const [templates, setTemplates] = useState<SingleMemeType[]>([])
@@ -307,8 +308,14 @@ export const Editor = () => {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(finalMeme)
-                }).then(() => {
-                    setFinishedMeme(image)
+                }).then((r) => {
+                    if(r.ok){
+                        setFinishedMeme(image)
+                        return r.text()
+                    }
+                    return r.text().then(r => {throw new Error(r)})
+                }).then(r => setMemeId(r.split("=")[1])).catch(err => {
+                    window.alert(err.message)
                 })
             }, 1000)
 
@@ -385,6 +392,7 @@ export const Editor = () => {
                         a.click();
                     }
                     }>Download your Meme</StyledButton>
+                    {memeId && <ButtonLink to={'/details/' + memeId}>Open Details (More Download Options)</ButtonLink>}
                 <PreviewImage src={finishedMeme}/>
             </SuccessMode>}
             <EditMode show={!Boolean(finishedMeme)}>

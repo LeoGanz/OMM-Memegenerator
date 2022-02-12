@@ -53,9 +53,9 @@ const SortAndFilterWrapper = styled.div`
 `
 
 const Filter = styled.form`
-    display: flex;
-    align-items: center;
-    gap: 50px;
+  display: flex;
+  align-items: center;
+  gap: 50px;
 `
 
 const SortArea = styled.div`
@@ -76,7 +76,13 @@ export const Overview = () => {
     });
     const [memeCardData, setMemeCardData] = useState<SingleMemeType[]>([])
     const [activeParams, setActiveParams] = useState<string>("")
-    const [range, setRange] = useState({start: 0, end: 40})
+    const [sortValue, setSortValue] = useState<string>("")
+    const [searchValue, setSearchValue] = useState<string>("")
+
+
+    useEffect(() => {
+        return (() => window.removeEventListener('scroll', scrollListener))
+    })
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -84,14 +90,34 @@ export const Overview = () => {
         }
     }, [isLoggedIn])
 
-    const loadMemes = (filerByValue?: string, sortByValue?: string) => {
+    useEffect(() => {
+        if (memeCardData.length !== 0) {
+            console.log("hook")
+            window.addEventListener('scroll', scrollListener)
+        }
+    }, [memeCardData])
 
-        const filterBy = filerByValue ? {filterBy: filerByValue} : {}
-        const sortBy = sortByValue ? {sortBy: sortByValue} : {}
-        const options = {status: 2, ...range, ...filterBy, ...sortBy}
+    const scrollListener = () => {
+        if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight) {
+            if (memeCardData.length % 40 === 0) {
+                window.removeEventListener('scroll', scrollListener)
+                loadMemes(undefined, undefined, true)
+
+            }
+        }
+    }
+
+
+    const loadMemes = (filterByValue?: string, sortByValue?: string, fromScroll?: boolean) => {
+        filterByValue && setSearchValue(filterByValue)
+        sortByValue && setSortValue(sortByValue)
+        const end = (fromScroll ? memeCardData.length + 40 : memeCardData.length) || 40
+        const filterBy = filterByValue ? {filterBy: filterByValue || searchValue} : {}
+        const sortBy = sortByValue ? {sortBy: sortByValue || sortValue} : {}
+        const options = {status: 2, end: end, start: 0, ...filterBy, ...sortBy}
         // @ts-ignore
         setActiveParams("?" + objectToQuery(options).slice(1))
-
+        console.log(activeParams)
 
         // @ts-ignore
         fetch('http://localhost:3000/images' + getJwt() + objectToQuery(options), {
@@ -100,13 +126,13 @@ export const Overview = () => {
                 'Content-Type': 'application/json'
             },
         }).then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                return response.text().then(response => {
-                    throw new Error(response)
-                })
+            if (response.ok) {
+                return response.json()
+            }
+            return response.text().then(response => {
+                throw new Error(response)
             })
+        })
             .then(r => {
 
                 const data = r.map((meme: { metadata: any; dataUrl: any; }) => {
@@ -114,7 +140,6 @@ export const Overview = () => {
                     return {...metadata, dataUrl}
                 })
                 setMemeCardData(data)
-
             })
             .catch(err => window.alert(err.message))
     }
@@ -143,11 +168,11 @@ export const Overview = () => {
                 <SortArea>
                     <p>Sort by:</p>
                     <p>UpVotes</p>
-                    <StyledButton onClick={() => loadMemes(undefined , "up asc")}>Asc</StyledButton>
-                    <StyledButton onClick={() => loadMemes(undefined , "up desc")}>Desc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined, "up asc")}>Asc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined, "up desc")}>Desc</StyledButton>
                     <p>DownVotes</p>
-                    <StyledButton onClick={() => loadMemes(undefined , "down asc")}>Asc</StyledButton>
-                    <StyledButton onClick={() => loadMemes(undefined , "down desc")}>Desc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined, "down asc")}>Asc</StyledButton>
+                    <StyledButton onClick={() => loadMemes(undefined, "down desc")}>Desc</StyledButton>
                 </SortArea>
             </SortAndFilterWrapper>
 

@@ -13,7 +13,7 @@ import {ButtonLink, HeadlineSection} from "./overview";
 
 export const Profile = () => {
     const {isLoggedIn} = useContext(LoginContext)
-    let navigate = useNavigate()
+
     let jwt = "";
     const [ProfileData, setProfileData] = useState<ProfileData>({
         comments: [],
@@ -43,10 +43,8 @@ export const Profile = () => {
                     window.alert("Connection to the server failed");
                 }
             });
-        } else {
-            navigate('/login')
         }
-    }, []);
+    }, [isLoggedIn]);
     return (
         <>
             <HeadlineSection>

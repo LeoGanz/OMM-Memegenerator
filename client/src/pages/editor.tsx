@@ -232,7 +232,7 @@ export const Editor = () => {
                 yCoordinates,
                 fontSizes,
                 colors,
-                status: 0,
+                status: 2,
                 width,
                 height,
                 pixels,

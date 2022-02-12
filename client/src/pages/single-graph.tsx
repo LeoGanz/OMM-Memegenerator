@@ -42,7 +42,7 @@ function transformToRechartSingle(memeIds: string[], ups: number[], downs: numbe
 
 export const SingleGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
-    let navigate = useNavigate()
+
     let jwt = "";
     const [singleData, setSingleData] = useState<SingleData[]>();
     if (isLoggedIn) {
@@ -65,10 +65,8 @@ export const SingleGraph = () => {
                     window.alert("Connection to the server failed");
                 }
             })
-        } else {
-            navigate('/login');
         }
-    }, [])
+    }, [isLoggedIn])
     return (
         <>
             <HeadlineSection>

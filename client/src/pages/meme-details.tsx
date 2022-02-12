@@ -38,11 +38,8 @@ export const MemeDetails = () => {
         if (!id || !isLoggedIn) {
             navigate('/')
         }
-        console.log(id)
         getMeme()
-        //get prev and next memeId
-        //todo
-    }, [id])
+    }, [id, isLoggedIn])
 
     const getMeme = () => {
         const filterBy = searchParams.get("filterBy")

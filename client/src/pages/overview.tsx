@@ -67,7 +67,7 @@ const SortArea = styled.div`
 
 export const Overview = () => {
     const {isLoggedIn} = useContext(LoginContext)
-    let navigate = useNavigate()
+
     const {
         handleSubmit,
         control
@@ -77,23 +77,18 @@ export const Overview = () => {
     const [memeCardData, setMemeCardData] = useState<SingleMemeType[]>([])
     const [activeParams, setActiveParams] = useState<string>("")
     const [range, setRange] = useState({start: 0, end: 40})
-    const [jwt, setJwt] = useState("")
 
     useEffect(() => {
         if (isLoggedIn) {
-            setJwt(localStorage.getItem('meme-token') || "")
             loadMemes()
-
-        } else {
-            navigate('/login')
         }
-    }, [])
+    }, [isLoggedIn])
 
     const loadMemes = (filerByValue?: string, sortByValue?: string) => {
 
         const filterBy = filerByValue ? {filterBy: filerByValue} : {}
         const sortBy = sortByValue ? {sortBy: sortByValue} : {}
-        const options = {status: 0, ...range, ...filterBy, ...sortBy}
+        const options = {status: 2, ...range, ...filterBy, ...sortBy}
         // @ts-ignore
         setActiveParams("?" + objectToQuery(options).slice(1))
 

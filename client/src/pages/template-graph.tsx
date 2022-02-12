@@ -42,7 +42,6 @@ function transformToRechartTemplate(memeIds: string[], usages: number[]) {
 
 export const TemplateGraph = () => {
     const {isLoggedIn} = useContext(LoginContext)
-    let navigate = useNavigate()
     let jwt = "";
     const [templateData, setTemplateData] = useState<TemplateData[]>();
     if (isLoggedIn) {
@@ -65,10 +64,8 @@ export const TemplateGraph = () => {
                     window.alert("Connection to server failed");
                 }
             });
-        } else {
-            navigate('/login');
         }
-    }, [])
+    }, [isLoggedIn])
 
     return (
         <>

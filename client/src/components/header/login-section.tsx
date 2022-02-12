@@ -45,9 +45,9 @@ export const LoginSection = () => {
     let navigate = useNavigate()
 
     const handleLogOut = () => {
-        //todo send logout to server
         setIsLoggedIn(false)
-        navigate('/')
+        localStorage.setItem('meme-token', "")
+        navigate('/login')
     }
     return (
         <LoginSectionContainer>

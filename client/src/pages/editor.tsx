@@ -8,10 +8,9 @@ import {useForm} from "react-hook-form";
 import {DRAW_IMAGE_TEMPLATE, REQUIRED_FIELD_ERROR, URL_ERROR, URL_PATTERN} from "../constants";
 import {ImageEditor} from "../components/image-editor/image-editor";
 import LoginContext from "../login-context";
-import {useNavigate} from "react-router-dom";
 import {getJwt, objectToQuery} from "../util/jwt";
 import {Carousel} from "../components/carousel/carousel";
-import {MemeTextType, MemeType} from "../util/typedef";
+import {MemeTextType, SingleMemeType} from "../util/typedef";
 import {MemeSaveArea} from "../components/meme-save-area/meme-save-area";
 
 const MAX_TEXT_FIELDS = 100
@@ -83,7 +82,7 @@ export const NavigationButton = styled.button`
 
 export const Editor = () => {
     const {isLoggedIn} = useContext(LoginContext)
-    let navigate = useNavigate()
+
     const {
         handleSubmit,
         control
@@ -96,42 +95,84 @@ export const Editor = () => {
 
     const [uploadFromUrlActive, setUploadFromUrlActive] = useState<boolean>(false)
     const [base64, setBase64] = useState<string | undefined>(undefined)
+    const [finishedMeme, setFinishedMeme] = useState<string>("")
     const [hasImage, setHasImage] = useState<boolean>(false)
     const [drawModeActive, setDrawModeActive] = useState<boolean>(false)
 
-    const [templates, setTemplates] = useState<MemeType[]>([])
+    const [templates, setTemplates] = useState<SingleMemeType[]>([])
     const [templateIndex, setTemplateIndex] = useState<number | undefined>(undefined)
 
-    const [usersCreation, setUsersCreations] = useState<MemeType[]>([])
+    const [usersCreation, setUsersCreations] = useState<SingleMemeType[]>([])
     const [usersCreationIndex, setUsersCreationsIndex] = useState<number | undefined>(undefined)
-    const [jwt, setJwt] = useState<string>("")
 
+    useEffect(() => {
+        if (isLoggedIn) {
+            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 0}), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({start:0, end:20})
+            }).then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                return response.text().then(response => {
+                    throw new Error(response)
+                })
+            }).then(r => {
+                const data = r.map((meme: { metadata: any; dataUrl: any; }) => {
+                    const {metadata, dataUrl} = meme;
+                    if (dataUrl) {
+                        return {...metadata, dataUrl}
+                    }
+                })
+                console.log(r)
+                setTemplates(data)
 
-    // useEffect(() => {
-    //     if (isLoggedIn) {
-    //         setJwt(localStorage.getItem('meme-token') || "")
-    //         fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 0}), {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             // body: JSON.stringify({start:0, end:20})
-    //         }).then(r => r.json()).then(r => setTemplates(r))
-    //
-    //         fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 1}), {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             // body: JSON.stringify({start:0, end:20})
-    //         }).then(r => r.json()).then(r => setUsersCreations(r))
-    //         console.log(usersCreation)
-    //
-    //     } else {
-    //         navigate('/login')
-    //     }
-    // }, [])
+            }).catch(err => {
+                console.log(err.message)
+            })
 
+            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 1, end: 20, status: 1}), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({start:0, end:20})
+            }).then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                return response.text().then(response => {
+                    throw new Error(response)
+                })
+            }).then(r => {
+                const data = r.map((meme: { metadata: any; dataUrl: any; }) => {
+                    const {metadata, dataUrl} = meme;
+                    if (dataUrl) {
+                        return {...metadata, dataUrl}
+                    }
+                })
+                setUsersCreations(data)
+            }).catch(err => {
+                console.log(err.message)
+            })
+        }
+    }, [isLoggedIn])
+
+    useEffect(() => {
+        const func = async () => {
+            if (usersCreationIndex !== undefined) {
+                setHasImage(true)
+
+                setDrawModeActive(false)
+                await setBase64(undefined)
+                await setBase64(usersCreation[usersCreationIndex].dataUrl)
+            }
+        }
+        func()
+    }, [usersCreationIndex])
 
     useEffect(() => {
         const func = async () => {
@@ -139,31 +180,17 @@ export const Editor = () => {
                 setHasImage(true)
                 setDrawModeActive(false)
                 await setBase64(undefined)
-                await setBase64(templates[templateIndex].img.base64)
+                await setBase64(templates[templateIndex].dataUrl)
             }
         }
         func()
     }, [templateIndex])
 
-    useEffect(() => {
-        const func = async () => {
-            if (usersCreationIndex !== undefined) {
-                setHasImage(true)
-                setDrawModeActive(false)
-                await setBase64(undefined)
-                await setBase64(usersCreation[usersCreationIndex].img.base64)
-            }
-        }
-        func()
-    }, [usersCreationIndex])
-
 
     const setText = (texts: MemeTextType[]) => {
-        console.log(texts)
         texts.forEach(textObj => {
 
             const {text, color, xCoordinate, yCoordinate, fontSize} = textObj
-
 
             setTimeout(() => {
                 // @ts-ignore
@@ -187,19 +214,26 @@ export const Editor = () => {
     }
 
 
-    const handleSaveMeme = (title: string, description: string) => {
-        setBase64(undefined)
+    const handleSaveMeme = (title: string, description: string, status: number) => {
+
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;
         const image = imageEditorInst.toDataURL();
 
 
+
         const imageForData = new Image()
         imageForData.onload = () => {
+            setFinishedMeme(image)
+            // @ts-ignore
             const texts = []
+            // @ts-ignore
             const xCoordinates = []
+            // @ts-ignore
             const yCoordinates = []
+            // @ts-ignore
             const fontSizes = []
+            // @ts-ignore
             const colors = []
             let width = 0;
             let height = 0;
@@ -218,37 +252,44 @@ export const Editor = () => {
                     yCoordinates.push(top)
                     colors.push(fill)
                     fontSizes.push(fontSize)
+                    setTimeout(() => {
+                        imageEditorInst.removeObject(currentId)
+                    }, 10)
+
                 }
+
             }
 
-            const finalMeme = {
-                //todo add missing fields
-                //todo was ist status
-                name: title,
-                desc: description,
-                image,
-                texts,
-                xCoordinates,
-                yCoordinates,
-                fontSizes,
-                colors,
-                status: 2,
-                width,
-                height,
-                pixels,
-            }
+            setTimeout(() => {
+                const finalImage = imageEditorInst.toDataURL();
 
-            console.log(jwt)
+                const finalMeme = {
+                    //todo add missing fields
+                    //todo was ist status
+                    name: title,
+                    desc: description,
+                    image: finalImage,
+                    // @ts-ignore
+                    texts, xCoordinates, yCoordinates, fontSizes, colors,
+                    status,
+                    width,
+                    height,
+                    pixels,
+                }
 
-            fetch('http://localhost:3000/editor' + getJwt(), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(finalMeme)
-            }).then(() => {
-                window.alert("Your meme was successfully uploaded")
-            })
+
+                fetch('http://localhost:3000/editor' + getJwt(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(finalMeme)
+                }).then(() => {
+                    window.alert("Your meme was successfully uploaded")
+                })
+            }, 1000)
+
+
         }
         imageForData.src = image
     }
@@ -261,7 +302,6 @@ export const Editor = () => {
             const imageEditorInst = imageEditor.current.imageEditorInst;
             imageEditorInst.loadImageFromFile(fileInput.current.files[0], "image-from-file")
             imageEditorInst.ui.activeMenuEvent()
-
 
             setHasImage(true)
         }
@@ -308,18 +348,26 @@ export const Editor = () => {
     const prevDisabled = usersCreationIndex === 0 || templateIndex === 0 || templateIndex === usersCreationIndex
     const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length - 1 || templateIndex === usersCreationIndex
 
-    // @ts-ignore
+
     return (
         <>
+            {finishedMeme && <img src={finishedMeme}/>}
             <Title>Editor</Title>
-            <SubTitle>Use a template</SubTitle>
-            <Carousel currentSelection={templateIndex}
-                      onCarouselSelect={(index) => handleCarouselSelect(index, "template")}
-                      memes={templates}/>
-            <SubTitle>Use your recent creations</SubTitle>
-            <Carousel currentSelection={usersCreationIndex}
-                      onCarouselSelect={(index) => handleCarouselSelect(index, "userCreation")}
-                      memes={templates}/>
+
+            {templates.length !== 0 && <>
+                <SubTitle>Use a template</SubTitle>
+                <Carousel currentSelection={templateIndex}
+                          onCarouselSelect={(index) => handleCarouselSelect(index, "template")}
+                          memes={templates}/></>
+            }
+
+            {usersCreation.length !== 0 &&
+                <>
+                    <SubTitle>Use your recent creations</SubTitle>
+                    <Carousel currentSelection={usersCreationIndex}
+                              onCarouselSelect={(index) => handleCarouselSelect(index, "userCreation")}
+                              memes={usersCreation}/>
+                </>}
             <SubTitle>Or select an upload option</SubTitle>
             {uploadFromUrlActive ?
                 <StyledForm name="sign-up" onSubmit={handleSubmit(onUrlUpload)}>
@@ -364,6 +412,7 @@ export const Editor = () => {
                         await setBase64(DRAW_IMAGE_TEMPLATE);
                         setTemplateIndex(undefined)
                         setUsersCreationsIndex(undefined)
+                        setHasImage(true)
 
                     }}>
                         Drawn your own meme
@@ -371,19 +420,20 @@ export const Editor = () => {
                 </UploadOptions>
             }
             {hasImage && <MemeSaveArea handleSaveMeme={handleSaveMeme}/>}
+            {(templateIndex !== undefined || usersCreationIndex !== undefined) && <StyledButton onClick={() => {
+                if (templateIndex !== undefined) {
+                    setText(templates[templateIndex].texts)
+                } else if (usersCreationIndex !== undefined) {
+                    setText(usersCreation[usersCreationIndex].texts)
+                }
+            }}>
+                Load Text into Meme
+            </StyledButton>}
             <EditorWrapper>
                 <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
                 <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>
                 <NavigationButton onClick={next} disabled={nextDisabled}>{">"}</NavigationButton>
             </EditorWrapper>
-            <button onClick={
-
-                () => {
-                    // @ts-ignore
-                    setText(usersCreation[usersCreationIndex].texts)
-                }
-            }>Test
-            </button>
         </>
     )
 }

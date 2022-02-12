@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {StyledButton} from "../../pages/editor";
-
 import {DownloadForm} from "./DownloadForm";
 import {AutoPlayForm} from "./AutoPlayForm";
 import {getJwt, objectToQuery} from "../../util/jwt";
@@ -19,10 +18,10 @@ interface memeSingle {
     memeId: string,
     searchParams: any,
     currentAddress: string,
-    next: Function,
+    timer: Function,
 }
 
-export const ActionArea = ({memeId, currentAddress, searchParams, next}: memeSingle) => {
+export const ActionArea = ({memeId, currentAddress, searchParams, timer}: memeSingle) => {
     const filterBy = searchParams.get("filterBy");
     const sortBy = searchParams.get("sortBy");
     let options = ""
@@ -61,8 +60,8 @@ export const ActionArea = ({memeId, currentAddress, searchParams, next}: memeSin
                 <StyledButton onClick={useCopyMemeId}>Copy MemeId</StyledButton>
                 <AutoplayStyledButton onClick={useCopyURL}>Share</AutoplayStyledButton>
                 <DownloadForm currentAddress={comp} memeId={memeId}/>
-                <AutoPlayForm memeId={memeId} gap={searchParams.get("gap")}
-                              currentAddress={currentAddress} next={next}/>
+                <AutoPlayForm gap={searchParams.get("gap")}
+                              currentAddress={currentAddress} timer={timer}/>
             </ActionAreaDiv>
         </>
     )

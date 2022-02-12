@@ -16,3 +16,80 @@ input[type="submit"]:hover {
     opacity: 90%;
     cursor: pointer;
 }
+
+input[type="checkbox"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
+}
+
+.ergebnis {
+    font-size: 2rem;
+    font-family: sans-serif;
+    padding: 2rem 0 2rem 2rem;
+    color: white;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 20%;
+    margin-left: 40%;
+    height: 50%;
+}
+
+.roundbutton {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    bottom: 100%;
+    right: 0;
+    width: 100%;
+    background-color: white;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.roundbutton:before {
+    position: absolute;
+    content: "";
+    height: 80%;
+    width: 25%;
+    display: block;
+    left: 5%;
+    bottom: 10%;
+    background-color: #007900;
+    transition: all 0.3s;
+}
+
+input:checked + .roundbutton {
+    background-color: #007900;
+    color: white;
+}
+
+input:checked + .roundbutton:before {
+    transform: translate(260%, 0);
+    background-color: white;
+}
+
+button[id="start"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
+}
+
+button[id="restart"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
+}
+
+button[id="pause"] {
+    opacity: 0;
+    margin-left: 10%;
+    width: 0;
+    height: 0;
+}

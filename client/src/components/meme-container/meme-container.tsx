@@ -53,11 +53,12 @@ const MemeWrapper = styled.div`
 `
 
 
-export const MemeContainer = ({searchParams,
+export const MemeContainer = ({
+                                  searchParams,
                                   dataUrl,
                                   comments, name, desc, next, prev,
                                   ...props
-                              }: SingleMemeType & {searchParams: any}) => {
+                              }: SingleMemeType & { searchParams: any }) => {
     let navigate = useNavigate()
     const handleNavigation = (isNext: boolean) => {
         const status = searchParams.get("status")
@@ -65,15 +66,27 @@ export const MemeContainer = ({searchParams,
         const end = searchParams.get("end")
         const filterBy = searchParams.get("filterBy")
         const sortBy = searchParams.get("sortBy")
+        const gap = searchParams.get("gap")
+        console.log(gap);
         let options = ""
 
-        if(status || start || end || filterBy || sortBy){
-            options = "?" + objectToQuery({status, start, end, filterBy, sortBy}).slice(1)
+        if (status || start || end || filterBy || sortBy || gap) {
+            options = "?" + objectToQuery({status, start, end, filterBy, sortBy, gap}).slice(1)
         }
 
         const memeId = isNext ? next : prev
 
         navigate('/details/' + memeId + options)
+    }
+
+    const goNext = () => {
+        handleNavigation(true);
+        setTimeout(() => {
+            const restart = document.getElementById("restart");
+            if (restart !== null) {
+                restart.click();
+            }
+        });
     }
 
     return (
@@ -86,7 +99,7 @@ export const MemeContainer = ({searchParams,
                 <NavigationButton onClick={() => handleNavigation(true)}>{">"}</NavigationButton>
             </MemeWrapper>
             <ActionArea memeId={props.memeId} searchParams={searchParams}
-                 currentAddress={window.location.href} next={handleNavigation}/>
+                        currentAddress={window.location.href} timer={goNext}/>
             <StyledMemeInfos setVoteHoverActive={(b => {
             })} comments={comments.length} {...props}/>
         </MemeContainerWrapper>

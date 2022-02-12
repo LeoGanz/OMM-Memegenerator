@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {StyledButton} from "../../pages/editor";
-
 import {DownloadForm} from "./DownloadForm";
 import {AutoPlayForm} from "./AutoPlayForm";
 import {getJwt, objectToQuery} from "../../util/jwt";

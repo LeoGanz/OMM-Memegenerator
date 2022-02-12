@@ -14,14 +14,15 @@ import {useForm} from "react-hook-form";
 export const ButtonLink = styled(Link)`
   background-color: ${colors.background.button};
   border: 1px solid ${colors.background.button};
-  text-decoration: none;
-  color: white;
   border-radius: 10px;
   padding: 8px 16px;
   display: flex;
   height: fit-content;
   cursor: pointer;
   transition: opacity 0.2s;
+  color: white;
+  font-size: 14px;
+  text-decoration: none;
 
   &:hover {
     opacity: 90%;

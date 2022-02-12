@@ -12,9 +12,32 @@ import {getJwt, objectToQuery} from "../util/jwt";
 import {Carousel} from "../components/carousel/carousel";
 import {MemeTextType, SingleMemeType} from "../util/typedef";
 import {MemeSaveArea} from "../components/meme-save-area/meme-save-area";
+import {ButtonLink} from "./overview";
 
 const MAX_TEXT_FIELDS = 100
 
+const EditMode = styled.div<{ show: boolean }>`
+  ${props => !props.show && "display: none"};
+`
+
+const SuccessMode = styled.div`
+  button {
+    width: fit-content;
+    display: inline-block;
+    margin-left: 8px;
+    
+  }
+  
+  a {
+    width: fit-content;
+    display: inline-block;
+  }
+`
+
+const PreviewImage = styled.img`
+  margin-top: 8px;
+  width: 100%;
+`
 
 const UploadOptions = styled.div`
   display: flex;
@@ -98,6 +121,7 @@ export const Editor = () => {
     const [finishedMeme, setFinishedMeme] = useState<string>("")
     const [hasImage, setHasImage] = useState<boolean>(false)
     const [drawModeActive, setDrawModeActive] = useState<boolean>(false)
+
 
     const [templates, setTemplates] = useState<SingleMemeType[]>([])
     const [templateIndex, setTemplateIndex] = useState<number | undefined>(undefined)
@@ -221,10 +245,9 @@ export const Editor = () => {
         const image = imageEditorInst.toDataURL();
 
 
-
         const imageForData = new Image()
         imageForData.onload = () => {
-            setFinishedMeme(image)
+
             // @ts-ignore
             const texts = []
             // @ts-ignore
@@ -285,7 +308,7 @@ export const Editor = () => {
                     },
                     body: JSON.stringify(finalMeme)
                 }).then(() => {
-                    window.alert("Your meme was successfully uploaded")
+                    setFinishedMeme(image)
                 })
             }, 1000)
 
@@ -351,89 +374,103 @@ export const Editor = () => {
 
     return (
         <>
-            {finishedMeme && <img src={finishedMeme}/>}
-            <Title>Editor</Title>
+            {finishedMeme &&
+                <SuccessMode>
+                    <Title>Your meme was successfully uploaded!</Title>
+                    <ButtonLink to={'/'}>Back to Overview</ButtonLink>
+                    <StyledButton onClick={()=>{
+                        let a = document.createElement("a");
+                        a.href = finishedMeme
+                        a.download = "Meme.jpeg";
+                        a.click();
+                    }
+                    }>Download your Meme</StyledButton>
+                <PreviewImage src={finishedMeme}/>
+            </SuccessMode>}
+            <EditMode show={!Boolean(finishedMeme)}>
+                <Title>Editor</Title>
 
-            {templates.length !== 0 && <>
-                <SubTitle>Use a template</SubTitle>
-                <Carousel currentSelection={templateIndex}
-                          onCarouselSelect={(index) => handleCarouselSelect(index, "template")}
-                          memes={templates}/></>
-            }
-
-            {usersCreation.length !== 0 &&
-                <>
-                    <SubTitle>Use your recent creations</SubTitle>
-                    <Carousel currentSelection={usersCreationIndex}
-                              onCarouselSelect={(index) => handleCarouselSelect(index, "userCreation")}
-                              memes={usersCreation}/>
-                </>}
-            <SubTitle>Or select an upload option</SubTitle>
-            {uploadFromUrlActive ?
-                <StyledForm name="sign-up" onSubmit={handleSubmit(onUrlUpload)}>
-                    <TextInput name={'imageURL'} type={'text'} control={control}
-                               rules={{
-                                   required: REQUIRED_FIELD_ERROR,
-                                   pattern: {value: URL_PATTERN, message: URL_ERROR}
-                               }}/>
-                    <StyledButton type="submit">Submit URL</StyledButton>
-                </StyledForm> :
-                <UploadOptions>
-                    {/*file upload button*/}
-                    <StyledButton as="label">
-                        Upload from File
-                        <FileUpload
-                            type="file"
-                            ref={fileInput}
-                            onChange={handleFileUpload}
-                            onClick={(event) => {
-                                setBase64(undefined);
-                                setDrawModeActive(false);
-                                setTemplateIndex(undefined);
-                                setUsersCreationsIndex(undefined);
-                                (event.target as HTMLInputElement).value = "";
-                            }}/>
-                    </StyledButton>
-                    {/*from URL upload button*/}
-                    <StyledButton onClick={() => {
-                        setDrawModeActive(false)
-                        setBase64(undefined);
-                        setUploadFromUrlActive(true)
-                        setTemplateIndex(undefined)
-                        setUsersCreationsIndex(undefined)
-
-                    }}>
-                        Use Image URL
-                    </StyledButton>
-                    {/*draw own meme button*/}
-                    <StyledButton onClick={async () => {
-                        setDrawModeActive(true)
-                        await setBase64(undefined)
-                        await setBase64(DRAW_IMAGE_TEMPLATE);
-                        setTemplateIndex(undefined)
-                        setUsersCreationsIndex(undefined)
-                        setHasImage(true)
-
-                    }}>
-                        Drawn your own meme
-                    </StyledButton>
-                </UploadOptions>
-            }
-            {hasImage && <MemeSaveArea handleSaveMeme={handleSaveMeme}/>}
-            {(templateIndex !== undefined || usersCreationIndex !== undefined) && <StyledButton onClick={() => {
-                if (templateIndex !== undefined) {
-                    setText(templates[templateIndex].texts)
-                } else if (usersCreationIndex !== undefined) {
-                    setText(usersCreation[usersCreationIndex].texts)
+                {templates.length !== 0 && <>
+                    <SubTitle>Use a template</SubTitle>
+                    <Carousel currentSelection={templateIndex}
+                              onCarouselSelect={(index) => handleCarouselSelect(index, "template")}
+                              memes={templates}/></>
                 }
-            }}>
-                Load Text into Meme
-            </StyledButton>}
-            <EditorWrapper>
-                <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
-                <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>
-                <NavigationButton onClick={next} disabled={nextDisabled}>{">"}</NavigationButton>
-            </EditorWrapper>
+
+                {usersCreation.length !== 0 &&
+                    <>
+                        <SubTitle>Use your recent creations</SubTitle>
+                        <Carousel currentSelection={usersCreationIndex}
+                                  onCarouselSelect={(index) => handleCarouselSelect(index, "userCreation")}
+                                  memes={usersCreation}/>
+                    </>}
+                <SubTitle>Or select an upload option</SubTitle>
+                {uploadFromUrlActive ?
+                    <StyledForm name="sign-up" onSubmit={handleSubmit(onUrlUpload)}>
+                        <TextInput name={'imageURL'} type={'text'} control={control}
+                                   rules={{
+                                       required: REQUIRED_FIELD_ERROR,
+                                       pattern: {value: URL_PATTERN, message: URL_ERROR}
+                                   }}/>
+                        <StyledButton type="submit">Submit URL</StyledButton>
+                    </StyledForm> :
+                    <UploadOptions>
+                        {/*file upload button*/}
+                        <StyledButton as="label">
+                            Upload from File
+                            <FileUpload
+                                type="file"
+                                ref={fileInput}
+                                onChange={handleFileUpload}
+                                onClick={(event) => {
+                                    setBase64(undefined);
+                                    setDrawModeActive(false);
+                                    setTemplateIndex(undefined);
+                                    setUsersCreationsIndex(undefined);
+                                    (event.target as HTMLInputElement).value = "";
+                                }}/>
+                        </StyledButton>
+                        {/*from URL upload button*/}
+                        <StyledButton onClick={() => {
+                            setDrawModeActive(false)
+                            setBase64(undefined);
+                            setUploadFromUrlActive(true)
+                            setTemplateIndex(undefined)
+                            setUsersCreationsIndex(undefined)
+
+                        }}>
+                            Use Image URL
+                        </StyledButton>
+                        {/*draw own meme button*/}
+                        <StyledButton onClick={async () => {
+                            setDrawModeActive(true)
+                            await setBase64(undefined)
+                            await setBase64(DRAW_IMAGE_TEMPLATE);
+                            setTemplateIndex(undefined)
+                            setUsersCreationsIndex(undefined)
+                            setHasImage(true)
+
+                        }}>
+                            Drawn your own meme
+                        </StyledButton>
+                    </UploadOptions>
+                }
+                {hasImage && <MemeSaveArea handleSaveMeme={handleSaveMeme}/>}
+                {(templateIndex !== undefined || usersCreationIndex !== undefined) && <StyledButton onClick={() => {
+                    if (templateIndex !== undefined) {
+                        setText(templates[templateIndex].texts)
+                    } else if (usersCreationIndex !== undefined) {
+                        setText(usersCreation[usersCreationIndex].texts)
+                    }
+                }}>
+                    Load Text into Meme
+                </StyledButton>}
+                <EditorWrapper>
+                    <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
+                    <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>
+                    <NavigationButton onClick={next} disabled={nextDisabled}>{">"}</NavigationButton>
+                </EditorWrapper>
+            </EditMode>
         </>
     )
 }

@@ -168,7 +168,7 @@ export const Editor = () => {
                 console.log(err.message)
             })
             //Get drafts for carousel
-            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 1, end: 20, status: 1}), {
+            fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 1}), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

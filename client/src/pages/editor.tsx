@@ -26,6 +26,7 @@ const SuccessMode = styled.div`
     display: inline-block;
     margin: 0 8px;
   }
+
   a {
     width: fit-content;
     display: inline-block;
@@ -35,7 +36,7 @@ const SuccessMode = styled.div`
 const LoadTextButtonContainer = styled.div`
   display: flex;
   gap: 8px;
-  
+
   button {
     margin-bottom: 8px;
   }
@@ -424,6 +425,14 @@ export const Editor = () => {
                     }
                     }>Download your Meme</StyledButton>
                     {memeId && <ButtonLink to={'/details/' + memeId}>Open Details (More Download Options)</ButtonLink>}
+                    {memeId && <StyledButton onClick={() => {
+                        navigator.clipboard.writeText("http://localhost:8888/details/" + memeId).then(() => {
+                            window.alert("Copying of URL to clipboard successful");
+                        }, f => {
+                            window.alert("Copying of URL to clipboard not possible: " + f);
+                        });
+                    }
+                    }>Copy your Meme URL</StyledButton>}
                     <PreviewImage src={finishedMeme}/>
                 </SuccessMode>}
             <EditMode show={!Boolean(finishedMeme)}>

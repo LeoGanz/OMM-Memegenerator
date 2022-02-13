@@ -74,6 +74,8 @@ interface MemeCardProp {
 }
 
 export const CommentCardProfile = ({date, src, children, memeId}: CommentCardProp) => {
+    console.log(src);
+    src = "data:image/png;base64,"+src;
     return (
         <>
             <CardButton to={"/details/" + memeId}>
@@ -87,6 +89,7 @@ export const CommentCardProfile = ({date, src, children, memeId}: CommentCardPro
     )
 }
 export const MemeCardProfile = ({date, src, memeId}: MemeCardProp) => {
+    console.log(src);
     return (
         <>
             <CardButton to={"/editor/" + memeId}>

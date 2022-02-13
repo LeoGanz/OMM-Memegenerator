@@ -73,6 +73,7 @@ export const ActionArea = ({memeId, currentAddress, searchParams, timer, status}
     const split = currentAddress.split("/");
     const parts = split[split.length - 1].split("?");
     const parampart = "?" + parts[parts.length - 1];
+
     const useRandom = () => {
         fetch('http://localhost:3000/image' + getJwt() + "&random=1", {
             method: 'GET',

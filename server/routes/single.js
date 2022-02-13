@@ -1,7 +1,13 @@
 let express = require('express');
 let router = express.Router();
 const {getOrRenderMemeToSize} = require("../renderManager");
-const {collectMetadata, respondSilently, noMemeFoundHandler, dbConnectionFailureHandler, respond} = require("../utils");
+const {
+    collectMetadata,
+    respondSilently,
+    noMemeFoundHandler,
+    dbConnectionFailureHandler,
+    respond
+} = require("../utils");
 const {getMatchingItems} = require("./img");
 const memeSchema = require("../models/memeSchema");
 
@@ -22,7 +28,7 @@ router.get("/", (req, res) => {
             if (err) {
                 onError(err);
             } else {
-                const skip = Math.floor(Math.random() * count)
+                const skip = Math.floor(Math.random() * (count - 1));
                 memeSchema.findOne({status: 2}).skip(skip).exec((err, randMeme) => {
                     if (err) {
                         onError(err);

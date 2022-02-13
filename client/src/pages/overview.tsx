@@ -8,7 +8,6 @@ import {getJwt, objectToQuery} from "../util/jwt";
 import LoginContext from "../login-context";
 import {SingleMemeType} from "../util/typedef";
 import {TextInput} from "../components/text-input/input-field";
-import {StyledButton} from "./editor";
 import {useForm} from "react-hook-form";
 
 export const ButtonLink = styled(Link)`
@@ -23,6 +22,23 @@ export const ButtonLink = styled(Link)`
   color: white;
   font-size: 14px;
   text-decoration: none;
+
+  &:hover {
+    opacity: 90%;
+  }
+`
+
+export const StyledButton = styled.button`
+  background-color: ${colors.background.button};
+  border: 1px solid ${colors.background.button};
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  height: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-size: 14px;
 
   &:hover {
     opacity: 90%;

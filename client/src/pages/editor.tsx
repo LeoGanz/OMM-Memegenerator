@@ -25,15 +25,21 @@ const SuccessMode = styled.div`
     width: fit-content;
     display: inline-block;
     margin: 0 8px;
-    
   }
-  
   a {
     width: fit-content;
     display: inline-block;
   }
 `
 
+const LoadTextButtonContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  
+  button {
+    margin-bottom: 8px;
+  }
+`
 const PreviewImage = styled.img`
   margin-top: 8px;
   width: 100%;
@@ -122,6 +128,7 @@ export const Editor = () => {
     const [hasImage, setHasImage] = useState<boolean>(false)
     const [drawModeActive, setDrawModeActive] = useState<boolean>(false)
     const [memeId, setMemeId] = useState<string | undefined>(undefined)
+    const [keepTextValue, setKeepTextVaue] = useState<MemeTextType[]>([])
 
 
     const [templates, setTemplates] = useState<SingleMemeType[]>([])
@@ -152,7 +159,7 @@ export const Editor = () => {
                         return {...metadata, dataUrl}
                     }
                 })
-                console.log(r)
+
                 setTemplates(data)
 
             }).catch(err => {
@@ -233,7 +240,6 @@ export const Editor = () => {
                 })
                 imageEditorInst.deactivateAll();
                 imageEditorInst.stopDrawingMode();
-                console.log("Alive")
             }, 100)
         })
     }
@@ -309,11 +315,13 @@ export const Editor = () => {
                     },
                     body: JSON.stringify(finalMeme)
                 }).then((r) => {
-                    if(r.ok){
+                    if (r.ok) {
                         setFinishedMeme(image)
                         return r.text()
                     }
-                    return r.text().then(r => {throw new Error(r)})
+                    return r.text().then(r => {
+                        throw new Error(r)
+                    })
                 }).then(r => setMemeId(r.split("=")[1])).catch(err => {
                     window.alert(err.message)
                 })
@@ -349,7 +357,6 @@ export const Editor = () => {
     }
 
     const handleCarouselSelect = (index: number, from: string) => {
-        console.log(index)
         if (from === "template") {
             setUsersCreationsIndex(undefined)
             setTemplateIndex(index)
@@ -362,6 +369,7 @@ export const Editor = () => {
     }
 
     const next = () => {
+        keepText()
         if (templateIndex !== undefined) {
             setTemplateIndex(templateIndex + 1)
         } else if (usersCreationIndex !== undefined) {
@@ -369,11 +377,34 @@ export const Editor = () => {
         }
     }
     const prev = () => {
+        keepText()
         if (templateIndex !== undefined) {
             setTemplateIndex(templateIndex - 1)
         } else if (usersCreationIndex !== undefined) {
             setUsersCreationsIndex(usersCreationIndex - 1)
         }
+    }
+
+    const keepText = () => {
+        // @ts-ignore
+        const imageEditorInst = imageEditor.current.imageEditorInst;
+
+        const texts: MemeTextType[] = []
+
+        for (let currentId = 2; currentId <= MAX_TEXT_FIELDS; currentId++) {
+            const properties = imageEditorInst.getObjectProperties(currentId, ["type", "text", "left", "top", "fill", "fontSize"])
+            if (properties?.type === "i-text") {
+                const {text, left, top, fill, fontSize} = properties
+                texts.push({
+                    text,
+                    xCoordinate: left,
+                    yCoordinate: top,
+                    color: fill,
+                    fontSize
+                })
+            }
+        }
+        setKeepTextVaue(texts)
     }
     const prevDisabled = usersCreationIndex === 0 || templateIndex === 0 || templateIndex === usersCreationIndex
     const nextDisabled = usersCreationIndex === usersCreation.length - 1 || templateIndex === templates.length - 1 || templateIndex === usersCreationIndex
@@ -385,7 +416,7 @@ export const Editor = () => {
                 <SuccessMode>
                     <Title>Your meme was successfully uploaded!</Title>
                     <ButtonLink to={'/'}>Back to Overview</ButtonLink>
-                    <StyledButton onClick={()=>{
+                    <StyledButton onClick={() => {
                         let a = document.createElement("a");
                         a.href = finishedMeme
                         a.download = "Meme.jpeg";
@@ -393,8 +424,8 @@ export const Editor = () => {
                     }
                     }>Download your Meme</StyledButton>
                     {memeId && <ButtonLink to={'/details/' + memeId}>Open Details (More Download Options)</ButtonLink>}
-                <PreviewImage src={finishedMeme}/>
-            </SuccessMode>}
+                    <PreviewImage src={finishedMeme}/>
+                </SuccessMode>}
             <EditMode show={!Boolean(finishedMeme)}>
                 <Title>Editor</Title>
 
@@ -464,15 +495,24 @@ export const Editor = () => {
                     </UploadOptions>
                 }
                 {hasImage && <MemeSaveArea handleSaveMeme={handleSaveMeme}/>}
-                {(templateIndex !== undefined || usersCreationIndex !== undefined) && <StyledButton onClick={() => {
-                    if (templateIndex !== undefined) {
-                        setText(templates[templateIndex].texts)
-                    } else if (usersCreationIndex !== undefined) {
-                        setText(usersCreation[usersCreationIndex].texts)
-                    }
-                }}>
-                    Load Text into Meme
-                </StyledButton>}
+                <LoadTextButtonContainer>
+                    {(templateIndex !== undefined || usersCreationIndex !== undefined) && <StyledButton onClick={() => {
+                        if (templateIndex !== undefined) {
+                            setText(templates[templateIndex].texts)
+                        } else if (usersCreationIndex !== undefined) {
+                            setText(usersCreation[usersCreationIndex].texts)
+                        }
+                    }}>
+                        Load Text into Meme
+                    </StyledButton>}
+
+                    {((templateIndex !== undefined || usersCreationIndex !== undefined) && keepTextValue.length !== 0) &&
+                        <StyledButton onClick={() => {
+                            setText(keepTextValue)
+                        }}>
+                            Load Text from previous Meme
+                        </StyledButton>}
+                </LoadTextButtonContainer>
                 <EditorWrapper>
                     <NavigationButton onClick={prev} disabled={prevDisabled}>{"<"}</NavigationButton>
                     <ImageEditor drawModeActive={drawModeActive} editorRef={imageEditor} base64String={base64}/>

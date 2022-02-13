@@ -140,6 +140,7 @@ export const Editor = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
+            //Get templates four carousel
             fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 0, end: 20, status: 0}), {
                 method: 'GET',
                 headers: {
@@ -166,7 +167,7 @@ export const Editor = () => {
             }).catch(err => {
                 console.log(err.message)
             })
-
+            //Get drafts for carousel
             fetch('http://localhost:3000/images' + getJwt() + objectToQuery({start: 1, end: 20, status: 1}), {
                 method: 'GET',
                 headers: {
@@ -194,6 +195,7 @@ export const Editor = () => {
         }
     }, [isLoggedIn])
 
+    //set draft when selected from carousel
     useEffect(() => {
         const func = async () => {
             if (usersCreationIndex !== undefined) {
@@ -206,7 +208,7 @@ export const Editor = () => {
         }
         func()
     }, [usersCreationIndex])
-
+    //set template when selected from carousel
     useEffect(() => {
         const func = async () => {
             if (templateIndex !== undefined) {
@@ -219,7 +221,7 @@ export const Editor = () => {
         func()
     }, [templateIndex])
 
-
+    //add already saved text to editor
     const setText = (texts: MemeTextType[]) => {
         texts.forEach(textObj => {
 
@@ -385,7 +387,7 @@ export const Editor = () => {
             setUsersCreationsIndex(usersCreationIndex - 1)
         }
     }
-
+    //keep text after navigation button click
     const keepText = () => {
         // @ts-ignore
         const imageEditorInst = imageEditor.current.imageEditorInst;

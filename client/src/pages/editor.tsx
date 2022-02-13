@@ -459,7 +459,7 @@ export const Editor = () => {
                             setHasImage(true)
 
                         }}>
-                            Drawn your own meme
+                            Draw your own meme
                         </StyledButton>
                     </UploadOptions>
                 }

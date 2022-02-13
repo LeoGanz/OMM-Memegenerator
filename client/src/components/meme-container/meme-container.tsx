@@ -67,7 +67,6 @@ export const MemeContainer = ({
         const filterBy = searchParams.get("filterBy")
         const sortBy = searchParams.get("sortBy")
         const gap = searchParams.get("gap")
-        console.log(gap);
         let options = ""
 
         if (status || start || end || filterBy || sortBy || gap) {

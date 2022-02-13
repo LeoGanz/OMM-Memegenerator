@@ -64,7 +64,6 @@ export const MemeDetails = () => {
             })
         })
             .then(r => {
-                console.log(r)
                 const {metadata, dataUrl, prev, next} = r;
                 setMemeData({
                     ...metadata, dataUrl, memeId: id, prev, next

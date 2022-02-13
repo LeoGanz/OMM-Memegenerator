@@ -29,14 +29,10 @@ export const ActionArea = ({memeId, currentAddress, searchParams, timer}: memeSi
     if (filterBy || sortBy) {
         options = objectToQuery({filterBy, sortBy})
     }
-
     const devdByCut = currentAddress.split("/");
-    console.log(devdByCut);
     const locList = devdByCut[2].split(":");
-    console.log(locList)
     const loc = devdByCut[0] + "//" + locList[0] + ":" + "3000";
     const comp = loc + "/image" + getJwt() + options + "&memeId=" + memeId;
-    console.log(comp);
 
     const useCopyMemeId = () => {
         navigator.clipboard.writeText(memeId).then(() => {

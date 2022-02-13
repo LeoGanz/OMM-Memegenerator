@@ -19,9 +19,10 @@ interface memeSingle {
     searchParams: any,
     currentAddress: string,
     timer: Function,
+    status:number,
 }
 
-export const ActionArea = ({memeId, currentAddress, searchParams, timer}: memeSingle) => {
+export const ActionArea = ({memeId, currentAddress, searchParams, timer, status}: memeSingle) => {
     const filterBy = searchParams.get("filterBy");
     const sortBy = searchParams.get("sortBy");
     let options = ""
@@ -43,7 +44,7 @@ export const ActionArea = ({memeId, currentAddress, searchParams, timer}: memeSi
     }
 
     const useCopyURL = () => {
-        navigator.clipboard.writeText(currentAddress + "&memeId=" + memeId).then(() => {
+        navigator.clipboard.writeText("http://localhost:8888/details/" + memeId + "?status="+status+"end=40&start=0").then(() => {
             window.alert("Copying of URL to clipboard successful");
         }, f => {
             window.alert("Copying of URL to clipboard not possible: " + f);

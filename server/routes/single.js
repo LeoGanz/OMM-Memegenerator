@@ -66,7 +66,8 @@ router.get("/", (req, res) => {
                 onError,
                 onNothingFound),
             onNothingFound,
-            onError
+            onError,
+            msg => respond(res, 400, msg)
         );
     }
 });

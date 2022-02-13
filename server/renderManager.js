@@ -32,18 +32,19 @@ function renderMeme(meme, quality = 0.8) {
     return canvas.toDataURL('image/jpeg', quality); // data url with base64 encoding
 }
 
-function renderMemeToSize(meme, bytes) {
+function renderMemeToSize(meme, bytes, onTargetSizeTooSmall) {
     console.log("Rendering to size...")
-    const maxBelowTarget = 0.05;
+    const maxBelowTarget = 0.1; // result must be at most 10% smaller than target
     const bytesBase64 = 1.37 * bytes; // base64 encodings are about 37% larger
     let quality = 1;
 
-    // Perform binary search to find suitable quality for jpeg compression
-    for (let delta = 0.5; delta > 0.01; delta /= 2) {
+    // Perform modified binary search to find suitable quality for jpeg compression
+    let delta = 0.5;
+    for (let it = 0; it < 20 ; it++) {
         const rendering = renderMeme(meme, quality)
         const bytesCurrent = Buffer.byteLength(rendering);
         console.log("Quality: " + quality + " - bytes in base64 string: " + bytesCurrent
-            + " - expected img size: " + Math.round(bytesCurrent / 1.37))
+            + " - expected img size: " + Math.round(bytesCurrent / 1.37) + "Delta: " + delta)
         if (bytesCurrent > bytesBase64) {
             quality -= delta;
         } else if (bytesCurrent < (1 - maxBelowTarget) * bytesBase64 && quality < 1) {
@@ -52,9 +53,12 @@ function renderMemeToSize(meme, bytes) {
         } else {
             return rendering;
         }
+        if (delta > 0.01) { // smaller delta steps make no sense
+            delta = delta /= 2;
+        }
     }
 
-    return "Error. JPEG cannot compress the requested meme this far. Target Size too small!"
+    onTargetSizeTooSmall("JPEG cannot compress the requested meme this far. Target Size too small!");
 }
 
 function renderAndStoreMeme(meme) {
@@ -66,7 +70,7 @@ function renderAndStoreMeme(meme) {
     }).catch(err => console.log("Could not render Meme " + meme.memeId + " Reason: " + err));
 }
 
-function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, retry = true) {
+function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, retry = true, onTargetSizeTooSmall) {
     // use stored rendering if possible and no specific target size is requested.
     // otherwise, perform rendering
     renderSchema
@@ -82,10 +86,10 @@ function getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onN
                         } else {
                             if (meme) {
                                 if (targetFileSize) {
-                                    onSuccess(renderMemeToSize(meme, targetFileSize));
+                                    onSuccess(renderMemeToSize(meme, targetFileSize, onTargetSizeTooSmall));
                                 } else {
                                     renderAndStoreMeme(meme);
-                                    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, false);
+                                    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, false, onTargetSizeTooSmall);
                                 }
                             } else {
                                 onNoMemeFound();
@@ -104,8 +108,8 @@ function getOrRenderMeme(memeId, onSuccess, onError, onNoMemeFound) {
     return getOrRenderMemeInternal(memeId, undefined, onSuccess, onError, onNoMemeFound);
 }
 
-function getOrRenderMemeToSize(memeId, targetFileSize, onSuccess, onError, onNoMemeFound) {
-    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound);
+function getOrRenderMemeToSize(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, onTargetSizeTooSmall) {
+    return getOrRenderMemeInternal(memeId, targetFileSize, onSuccess, onError, onNoMemeFound, true, onTargetSizeTooSmall);
 }
 
 function getOrRenderMemesRec(memeIdArray, onSuccess, onError, result = []) {

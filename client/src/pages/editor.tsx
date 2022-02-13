@@ -325,7 +325,7 @@ export const Editor = () => {
                     return r.text().then(r => {
                         throw new Error(r)
                     })
-                }).then(r => setMemeId(r.split("=")[1])).catch(err => {
+                }).then(r => setMemeId(r.split(" ")[4].split("http")[0])).catch(err => {
                     window.alert(err.message)
                 })
             }, 1000)

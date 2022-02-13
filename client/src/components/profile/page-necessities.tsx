@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 import {Link} from "react-router-dom";
+import {colors} from "../layout/colors";
 
 export const DivGroup = styled.div`
   column-count: 2;
@@ -60,6 +61,23 @@ const CardButton = styled(Link)`
   }
 `
 
+const StyledButton = styled.button`
+  background-color: ${colors.background.button};
+  border: 1px solid ${colors.background.button};
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  height: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-size: 14px;
+
+  &:hover {
+    opacity: 90%;
+  }
+`
+
 interface CommentCardProp {
     date: string,
     src: string,
@@ -90,12 +108,12 @@ export const CommentCardProfile = ({date, src, children, memeId}: CommentCardPro
 export const MemeCardProfile = ({date, src, memeId}: MemeCardProp) => {
     return (
         <>
-            <CardButton to={"/editor/" + memeId}>
+            <StyledButton>
                 <WorkedComment>
                     <Image src={src}/>
                     <Date>Edited on: {date}</Date>
                 </WorkedComment>
-            </CardButton>
+            </StyledButton>
         </>
     )
 }

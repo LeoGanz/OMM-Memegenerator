@@ -63,7 +63,7 @@ const FileUpload = styled.input`
   display: none;
 `
 
-const StyledButton = styled.button`
+export const StyledButton = styled.button`
   background-color: ${colors.background.button};
   border: 1px solid ${colors.background.button};
   border-radius: 10px;

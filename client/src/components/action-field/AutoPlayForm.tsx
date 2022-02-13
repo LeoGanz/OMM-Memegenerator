@@ -15,6 +15,7 @@ const AutoplayDiv = styled.div`
   width: 100%;
   padding: 1%;
   display: grid;
+  margin-top: 50%;
 `
 
 const ToggleDiv = styled.div`

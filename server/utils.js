@@ -5,7 +5,7 @@ const memeSchema = require("./models/memeSchema");
 
 
 function getDomain() {
-    return "localhost:3000"
+    return "http://localhost:8888"
 }
 
 /**

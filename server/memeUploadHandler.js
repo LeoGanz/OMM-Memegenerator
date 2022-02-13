@@ -6,7 +6,7 @@ const {
     respond,
     getCurrentDateString,
     calcMemeIdFor,
-    dbConnectionFailureHandler
+    dbConnectionFailureHandler, getDomain
 } = require("./utils");
 
 /**
@@ -177,7 +177,7 @@ function processMemeCreation(memeJsonArray, creator, res, optionalTemplate, opti
                         optionalTemplate.usages += 1;
                         optionalTemplate.save();
                     }
-                    let memeRelativeUrl = "/image?memeId=" + meme.memeId
+                    let memeRelativeUrl = getDomain() + "/details/" + meme.memeId
                     if (optionalResults === undefined) {
                         // Process single meme directly
                         respond(res, 200, "Saving complete for meme " + meme.memeId + "\n" + memeRelativeUrl);

@@ -2,6 +2,7 @@ GET http://localhost:3000/image?token=THE-TOKEN&memeId=SOME-IDENTIFIER
 
 or specify query params:    token - THE-TOKEN
                             memeId - identifier of the requested meme
+                            random - flag that indicates that a random meme is requested. Overrides memeId!
                             targetFileSize - optional parameter that specifies the requested file size of the rendered meme.
                                              The transmitted base64 encoding is about 37% larger, but the final image should be below this threshold.
                             filterBy - optional parameter used for filtering next and previous memes by username (see ImagesGetTemplate for details)
@@ -46,7 +47,7 @@ Result in JSON-Format:
     "next": "159f48efc96e45b7f7f39c759b6990be"
 }
 
-Returns metadata and a data url with a base64 encoded rendered meme specified by memeId.
+Returns metadata and a data url with a base64 encoded rendered meme specified by memeId or a random meme with status 2.
 MemeIds for previous and next memes matching sort and filter criteria and with the same status as the main meme are included.
 If no memes match the criteria info strings like "No previous meme found" are returned instead.
 A wrap around functionality for prev and next is introduced for easier cycling of all possible memes.

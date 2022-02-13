@@ -15,6 +15,7 @@ No body.
 Result in JSON-Format:
 {
     "metadata": {
+        "memeId": "b717756bf5921681aa91b08feb1af324",
         "name": "Just a test image2",
         "desc": "The server accepts requests upto 50 mb, which also enables larger images to be sent",
         "creator": "Tester",

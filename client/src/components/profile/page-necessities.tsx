@@ -74,6 +74,7 @@ interface MemeCardProp {
 }
 
 export const CommentCardProfile = ({date, src, children, memeId}: CommentCardProp) => {
+    src = "data:image/png;base64,"+src;
     return (
         <>
             <CardButton to={"/details/" + memeId}>

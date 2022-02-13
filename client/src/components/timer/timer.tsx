@@ -20,7 +20,6 @@ export function MyTimer({add, expireFunction, aStart, newTime}: any) {
             <button onClick={start} id="start"/>
             <button onClick={pause} id="pause"/>
             <button onClick={() => {
-                console.log("ADD: " + add);
                 const time = new Date();
                 time.setSeconds(time.getSeconds() + newTime);
                 restart(time)

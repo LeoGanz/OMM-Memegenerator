@@ -4,10 +4,11 @@ import {SingleGraph} from '../pages/single-graph';
 import {render} from '@testing-library/react';
 
 let mockedNavigate = jest.fn();
+let mockedHref = jest.fn();
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom') as any,
-    useNavigate: () => mockedNavigate,
+    useNavigate: () => mockedNavigate, useHref: () => mockedHref,
 }));
 
 test('Displayed login properly except Submit', () => {

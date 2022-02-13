@@ -24,7 +24,7 @@ const ApiSubTitle = styled.h3`
 
 
 const openRetrieve = () => {
-    window.open("http://localhost:3000/retrieve?numberOfMemes=10&text=text1Of&creatorName=API");
+    window.open("http://localhost:3000/retrieve?numberOfMemes=9&text=text1OfMeme&creatorName=API");
 }
 
 const openCreate = () => {

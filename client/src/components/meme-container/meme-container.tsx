@@ -67,7 +67,6 @@ export const MemeContainer = ({
         const filterBy = searchParams.get("filterBy")
         const sortBy = searchParams.get("sortBy")
         const gap = searchParams.get("gap")
-        console.log(gap);
         let options = ""
 
         if (status || start || end || filterBy || sortBy || gap) {
@@ -99,7 +98,7 @@ export const MemeContainer = ({
                 <NavigationButton onClick={() => handleNavigation(true)}>{">"}</NavigationButton>
             </MemeWrapper>
             <ActionArea memeId={props.memeId} searchParams={searchParams}
-                        currentAddress={window.location.href} timer={goNext}/>
+                        currentAddress={window.location.href} timer={goNext} status={2}/>
             <StyledMemeInfos setVoteHoverActive={(b => {
             })} comments={comments.length} {...props}/>
         </MemeContainerWrapper>

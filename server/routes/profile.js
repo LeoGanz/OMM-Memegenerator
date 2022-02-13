@@ -11,12 +11,10 @@ function findMemeBasesAndRespond(comments, memeComments, res, response) {
         respond(res, 200, response);
     } else {
         let comm = comments.shift();
-        console.log(comm.memeId);
         memeSchema.find({memeId: comm.memeId}, (err, lst) => {
             if (err) {
                 respondSilently(res, 500, "Connection to memeDatabase failed");
             } else {
-                console.log(lst[0]);
                 const base = lst[0].img.base64;
                 const newComm = {
                     memeId: comm.memeId,

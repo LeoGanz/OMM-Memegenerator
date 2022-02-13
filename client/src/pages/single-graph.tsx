@@ -1,6 +1,5 @@
 import React, {useEffect, useContext, useState} from 'react';
 import LoginContext from "../login-context";
-import {useNavigate} from "react-router-dom";
 import {HeadlineSection, ButtonLink} from "./overview";
 import {
     useBottomMargin,
@@ -36,7 +35,6 @@ function transformToRechartSingle(memeIds: string[], ups: number[], downs: numbe
         }
         result.push(toAdd);
     }
-    console.log(result);
     return result;
 }
 

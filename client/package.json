@@ -54,5 +54,12 @@
     "@types/styled-components": "^5.1.21",
     "jest": "^27.5.1",
     "jest-styled-components": "^7.0.8"
+  },
+
+  "jest": {
+    "transformIgnorePatterns": [
+      "./src/components/meme-save-area/meme-save-area",
+      "./src/pages/editor"
+    ]
   }
 }

@@ -33,7 +33,7 @@ export const AutoPlayForm = ({currentAddress, gap, timer}: memeSingle) => {
         value = true;
         time = gap as unknown as number;
     } else {
-        time = 60;
+        time = 10;
     }
     const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ export const AutoPlayForm = ({currentAddress, gap, timer}: memeSingle) => {
         if (checkBox.checked) {
             let newUrl;
             if (!currentAddress.includes("gap")) {
-                newUrl = currentAddress + "&gap=" + "30";
+                newUrl = currentAddress + "&gap=" + "10";
             } else {
                 let newUrlArray = currentAddress.split("&");
                 let newUrlArrayWithoutGap = newUrlArray.filter((elem) => {
@@ -51,7 +51,7 @@ export const AutoPlayForm = ({currentAddress, gap, timer}: memeSingle) => {
                 newUrl = newUrlArrayWithoutGap.reduce((a, b) => {
                     return a + "&" + b;
                 })
-                newUrl = newUrl + "&gap=" + "30";
+                newUrl = newUrl + "&gap=" + "10";
             }
             //possibly insert here the number the user can add here
             const to = newUrl.split("/");
@@ -94,7 +94,7 @@ export const AutoPlayForm = ({currentAddress, gap, timer}: memeSingle) => {
                     </label>
                 </ToggleDiv>
                 <MyTimer add={time}
-                         expireFunction={timer} aStart={value} newTime={30} id="timer"/>
+                         expireFunction={timer} aStart={value} newTime={10} id="timer"/>
             </AutoplayDiv>
         </>
     )

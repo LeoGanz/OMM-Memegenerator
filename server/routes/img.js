@@ -185,9 +185,8 @@ function getMatchingItems(status, filterBy, sortBy, userToken, onSuccess, onErro
                 } else if (!user) {
                     // should never occur as login is checked by eternal route
                     onError("Could not find user with the current token");
-                } else if (user.username !== filterBy) {
-                    onNameMismatch("You may only lookup your own drafts");
                 } else {
+                    filterBy = user.username;
                     performRetrieval();
                 }
             }

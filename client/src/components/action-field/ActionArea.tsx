@@ -63,7 +63,7 @@ export const ActionArea = ({memeId, currentAddress, searchParams, timer, status}
     }
 
     const useCopyURL = () => {
-        navigator.clipboard.writeText("http://localhost:8888/details/" + memeId + "?status=" + status + "end=40&start=0").then(() => {
+        navigator.clipboard.writeText("http://localhost:8888/details/" + memeId + "?" + "end=40&start=0").then(() => {
             window.alert("Copying of URL to clipboard successful");
         }, f => {
             window.alert("Copying of URL to clipboard not possible: " + f);

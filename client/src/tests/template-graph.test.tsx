@@ -2,17 +2,10 @@ import React from 'react';
 import 'jest-styled-components';
 import {TemplateGraph} from '../pages/template-graph';
 import {render} from '@testing-library/react';
-
-let mockedNavigate = jest.fn();
-let mockedHref = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom') as any,
-    useNavigate: () => mockedNavigate, useHref: () => mockedHref,
-}));
+import {BrowserRouter} from "react-router-dom";
 
 test('Displayed login properly except Submit', () => {
-    const {getByText} = render(<TemplateGraph/>);
+    const {getByText} = render(<BrowserRouter><TemplateGraph/></BrowserRouter>);
     const title = getByText("Usages of Templates");
     expect(title).toBeDefined();
     const backButton = getByText("Back to Overview Page");

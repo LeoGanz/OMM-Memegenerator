@@ -88,7 +88,7 @@ export const ActionArea = ({memeId, currentAddress, searchParams, timer, status}
                 })
             }
         }).then(r => {
-            const memeId = r.memeId;
+            const memeId = r.metadata.memeId;
             navigate("/details/" + memeId + parampart);
         });
     }

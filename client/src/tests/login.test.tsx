@@ -2,17 +2,10 @@ import React from 'react';
 import 'jest-styled-components';
 import {Login} from '../pages/login';
 import {render} from '@testing-library/react';
-
-
-let mockedNavigate = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom') as any,
-    useNavigate: () => mockedNavigate,
-}));
+import {BrowserRouter} from "react-router-dom";
 
 test('Displayed login properly except Submit', () => {
-    const {getByText, getAllByText} = render(<Login/>);
+    const {getByText, getAllByText} = render(<BrowserRouter><Login/></BrowserRouter>);
     const title = getByText("Log In");
     expect(title).toBeDefined();
     const textInputs = getAllByText("");

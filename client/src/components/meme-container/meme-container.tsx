@@ -5,10 +5,32 @@ import {MemeInfos} from "../meme-infos/meme-infos";
 import {up} from "../../util/breakpoint";
 import {Title} from "../layout/typography";
 import {SingleMemeType} from "../../util/typedef";
-import {NavigationButton} from "../../pages/editor";
 import {useNavigate} from "react-router-dom";
 import {objectToQuery} from "../../util/jwt";
 import {ActionArea} from "../action-field/ActionArea";
+
+const NavigationButton = styled.button`
+  background-color: ${colors.background.button};
+  border: none;
+  border-radius: 10px;
+  padding: 20px 8px;
+  display: flex;
+  height: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-size: 14px;
+
+  &:hover {
+    opacity: 90%;
+  }
+
+  &:disabled {
+    background-color: ${colors.background.memeCard.hover};
+    cursor: default;
+  }
+`
+
 
 const MemeContainerWrapper = styled.div`
 

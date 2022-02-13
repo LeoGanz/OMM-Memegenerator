@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const memeSchema = require("../models/memeSchema");
-const {respond, getDomain, dbConnectionFailureHandler} = require("../utils");
+const {respond, dbConnectionFailureHandler} = require("../utils");
 
 function textInText(text, texts) {
     let inside = false;
@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
             const filteredList = lst.filter((elem) => {
                 let filter = true;
                 filter = filter && textInText(text, elem.texts);
-                filter = filter && (elem.username === creatorName || creatorName === undefined);
+                filter = filter && (elem.creator.username === creatorName || creatorName === undefined);
                 filter = filter && (elem.creationDate === creationDate || creationDate === undefined);
                 return filter;
             });
@@ -43,7 +43,7 @@ router.get('/', (req, res) => {
             } else {
                 for (let i = 0; i < slicedList.length; i++) {
                     const meme = slicedList[i];
-                    result += getDomain() + "image?memeId=" + meme.memeId + "\n";
+                    result += "localhost:8888" + "/details/" + meme.memeId + "?status=2&start=0&end=20"+"\n";
                 }
                 respond(res, 200, result);
             }

@@ -28,7 +28,7 @@ router.get("/", (req, res) => {
             if (err) {
                 onError(err);
             } else {
-                const skip = Math.floor(Math.random() * (count - 1));
+                const skip = Math.floor(Math.random() * Math.max(0, count - 1));
                 memeSchema.findOne({status: 2}).skip(skip).exec((err, randMeme) => {
                     if (err) {
                         onError(err);

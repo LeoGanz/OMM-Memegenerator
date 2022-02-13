@@ -5,7 +5,6 @@ import {
 import {Title, SubTitle} from "../components/layout/typography"
 import React, {useContext, useEffect, useState} from "react";
 import LoginContext from "../login-context";
-import {useNavigate} from "react-router-dom";
 import {ProfileData} from "../util/profile-data";
 import {getJwt} from "../util/jwt";
 import {ButtonLink, HeadlineSection} from "./overview";
@@ -58,7 +57,6 @@ export const Profile = () => {
                 <ImageGroup><SubTitle>History of Pictures</SubTitle>
                     {
                         ProfileData.memeHistory?.map((meme) => {
-                            console.log(meme.dateOfCreation);
                             if (meme.dateOfCreation !== undefined && meme.memeId !== undefined) {
                                 return <MemeCardProfile date={meme.dateOfCreation}
                                                         src={meme.img.base64} memeId={meme.memeId}/>

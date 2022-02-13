@@ -51,7 +51,11 @@ export const DownloadForm = ({currentAddress, memeId}: downloadForm) => {
                         a.click();
                     });
                 } else {
-                    window.alert("Something with downloading did not work out");
+                    r.text().then(r => {
+                        window.alert("Something with downloading did not work out. The Error" +
+                            " message is: " + r);
+                    });
+
                 }
             });
         } else {

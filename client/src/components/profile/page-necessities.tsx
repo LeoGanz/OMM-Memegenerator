@@ -61,23 +61,6 @@ const CardButton = styled(Link)`
   }
 `
 
-const StyledButton = styled.button`
-  background-color: ${colors.background.button};
-  border: 1px solid ${colors.background.button};
-  border-radius: 10px;
-  padding: 8px 16px;
-  display: flex;
-  height: fit-content;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  color: white;
-  font-size: 14px;
-
-  &:hover {
-    opacity: 90%;
-  }
-`
-
 interface CommentCardProp {
     date: string,
     src: string,
@@ -108,12 +91,12 @@ export const CommentCardProfile = ({date, src, children, memeId}: CommentCardPro
 export const MemeCardProfile = ({date, src, memeId}: MemeCardProp) => {
     return (
         <>
-            <StyledButton>
+            <CardButton to={window.location.href}>
                 <WorkedComment>
                     <Image src={src}/>
                     <Date>Edited on: {date}</Date>
                 </WorkedComment>
-            </StyledButton>
+            </CardButton>
         </>
     )
 }

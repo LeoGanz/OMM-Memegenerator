@@ -257,6 +257,15 @@ export const Editor = () => {
 
         const imageForData = new Image()
         imageForData.onload = () => {
+            let memeIdString = ""
+            if(templateIndex !== undefined){
+                memeIdString = templates[templateIndex].memeId
+            }
+            if(usersCreationIndex !== undefined){
+                memeIdString = usersCreation[usersCreationIndex].memeId
+            }
+
+            const memeIdObj = memeIdString ? {memeId: memeIdString} : {}
 
             // @ts-ignore
             const texts = []
@@ -308,6 +317,7 @@ export const Editor = () => {
                     width,
                     height,
                     pixels,
+                    ...memeIdObj
                 }
 
 

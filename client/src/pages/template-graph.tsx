@@ -65,6 +65,8 @@ export const TemplateGraph = () => {
         }
     }, [isLoggedIn])
 
+
+    console.log(templateData);
     return (
         <>
             <HeadlineSection>
@@ -84,12 +86,12 @@ export const TemplateGraph = () => {
             >
                 <CartesianGrid strokeDasharray="3 3"/>
                 <XAxis dataKey="name" angle={90} textAnchor="start" label="memeIds"/>
-                <YAxis label="usages"/>
+                <YAxis label="usage"/>
                 <Tooltip/>
                 <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Line
-                    type="monotone"
-                    dataKey="usages"
+                    type="linearClosed"
+                    dataKey="usage"
                     stroke="#8884d8"
                     activeDot={{r: 8}}
                 />

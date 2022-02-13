@@ -2,6 +2,7 @@ import React from 'react';
 import 'jest-styled-components';
 import {APIDoc} from '../pages/api-doc';
 import {render} from '@testing-library/react';
+import {BrowserRouter} from "react-router-dom";
 
 let mockedNavigate = jest.fn();
 let mockedHref = jest.fn();
@@ -12,7 +13,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 test('Displayed login properly except Submit', () => {
-    const {getByText} = render(<APIDoc/>);
+    const {getByText} = render(<BrowserRouter><APIDoc/></BrowserRouter>);
     const title = getByText("Documentation - API");
     expect(title).toBeDefined();
     const backButton = getByText("Back to Overview Page");

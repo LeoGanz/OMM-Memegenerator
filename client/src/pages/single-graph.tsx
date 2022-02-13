@@ -84,7 +84,7 @@ export const SingleGraph = () => {
             >
                 <CartesianGrid strokeDasharray="3 3"/>
                 <XAxis dataKey="name" angle={90} textAnchor="start" label="memeIds"/>
-                <YAxis label="up/down votes"/>
+                <YAxis/>
                 <Tooltip/>
                 <Legend verticalAlign="top" height={useLegendBottomMargin()}/>
                 <Bar dataKey="down"

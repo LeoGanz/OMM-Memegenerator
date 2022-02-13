@@ -9,14 +9,31 @@ import {TextInput} from "../components/text-input/input-field";
 import {useForm} from "react-hook-form";
 import styled from "styled-components";
 import {up} from "../util/breakpoint";
-import {StyledButton} from "./editor";
 import {REQUIRED_FIELD_ERROR} from "../constants";
+import {colors} from "../components/layout/colors";
 
 const StyledForm = styled.form`
   margin: 30px 0;
 
   ${up('md')} {
     margin: 30px 150px;
+  }
+`
+
+const StyledButton = styled.button`
+  background-color: ${colors.background.button};
+  border: 1px solid ${colors.background.button};
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  height: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-size: 14px;
+
+  &:hover {
+    opacity: 90%;
   }
 `
 
@@ -46,7 +63,7 @@ export const MemeDetails = () => {
         const sortBy = searchParams.get("sortBy")
         let options = ""
 
-        if(filterBy || sortBy){
+        if (filterBy || sortBy) {
             options = objectToQuery({filterBy, sortBy})
         }
 
@@ -95,11 +112,11 @@ export const MemeDetails = () => {
         <>
             {memeData && <MemeContainer searchParams={searchParams} {...memeData}/>}
             {memeData &&
-                <StyledForm onSubmit={handleSubmit(handleComment)}>
-                    <TextInput name={"comment"} type={"textarea"} control={control}
-                               rules={{required: REQUIRED_FIELD_ERROR}}/>
-                    <StyledButton type="submit">Add Comment</StyledButton>
-                </StyledForm>
+            <StyledForm onSubmit={handleSubmit(handleComment)}>
+                <TextInput name={"comment"} type={"textarea"} control={control}
+                           rules={{required: REQUIRED_FIELD_ERROR}}/>
+                <StyledButton type="submit">Add Comment</StyledButton>
+            </StyledForm>
             }
             {memeData?.comments.map(({text, dateOfCreation, username}) => (
                 <Comment author={username} date={dateOfCreation}>{text}</Comment>))}
